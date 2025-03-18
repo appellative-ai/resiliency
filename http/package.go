@@ -1,20 +1,20 @@
 package http
 
 import (
-	"github.com/behavioral-ai/operations/module"
+	"github.com/behavioral-ai/resiliency/module"
 	"net/http"
 )
 
 // http://localhost:8080/resiliency?event=startup
 
 const (
-	resiliencyResource = "resiliency"
+	operationsResource = "operations"
 	eventKey           = "event"
 )
 
 // Exchange - HTTP exchange function
 func Exchange(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/"+resiliencyResource {
+	if r.URL.Path != "/"+operationsResource {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("error: invalid path"))
 		return
