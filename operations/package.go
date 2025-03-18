@@ -1,4 +1,4 @@
-package invoke
+package operations
 
 import (
 	"errors"

@@ -2,6 +2,7 @@ package module
 
 import (
 	"github.com/behavioral-ai/core/messaging"
+	"github.com/behavioral-ai/resiliency/operations"
 )
 
 const (
