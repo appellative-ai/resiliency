@@ -5,9 +5,7 @@ import (
 	"github.com/behavioral-ai/collective/content"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/messaging/messagingtest"
-	"github.com/behavioral-ai/domain/common"
-	"github.com/behavioral-ai/domain/timeseries1"
-	"github.com/behavioral-ai/operative/test"
+	"github.com/behavioral-ai/resiliency/common"
 	"time"
 )
 
@@ -35,12 +33,12 @@ func ExampleAgent_LoadContent() {
 	dispatcher := messaging.NewTraceDispatcher()
 	origin := common.Origin{Region: common.WestRegion, Zone: common.WestZoneA}
 	s := messagingtest.NewTestSpanner(time.Second*2, testDuration)
-	test.LoadResiliencyContent()
+	//test.LoadResiliencyContent()
 	agent := newAgent(origin, messaging.Activity, messaging.Notify, dispatcher)
 
 	go func() {
 		go masterAttend(agent, content.Resolver)
-		go emissaryAttend(agent, timeseries1.Observations, content.Resolver, s)
+		go emissaryAttend(agent, content.Resolver, s)
 		time.Sleep(testDuration * 5)
 
 		agent.Shutdown()

@@ -1,4 +1,4 @@
-package redirect
+package invoke
 
 import (
 	"github.com/behavioral-ai/collective/content"
@@ -45,6 +45,16 @@ func ExampleEmissary_Observation() {
 	go func() {
 		go emissaryAttend(agent, content.Resolver, s)
 		time.Sleep(testDuration * 2)
+
+		// Receive observation message
+		/*
+			msg := <-agent.master.C
+			o, status := getObservation(msg)
+			status.AgentUri = agent.Uri()
+			status.Msg = o.String()
+			agent.notify(status)
+
+		*/
 
 		agent.Shutdown()
 		time.Sleep(testDuration * 3)

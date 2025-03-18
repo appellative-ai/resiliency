@@ -6,9 +6,6 @@ import (
 	"github.com/behavioral-ai/collective/event"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/common"
-	"github.com/behavioral-ai/domain/metrics1"
-	"github.com/behavioral-ai/domain/timeseries1"
-	"net/http"
 	"strconv"
 	"time"
 )
@@ -20,6 +17,7 @@ const (
 	NamespaceName = "resiliency:agent/behavioral-ai/resiliency/rate-limiting"
 	minDuration   = time.Second * 10
 	maxDuration   = time.Second * 15
+	version       = 1
 )
 
 type agentT struct {
@@ -94,7 +92,7 @@ func (a *agentT) Run() {
 		return
 	}
 	go masterAttend(a, content.Resolver)
-	go emissaryAttend(a, timeseries1.Observations, content.Resolver, nil)
+	go emissaryAttend(a, content.Resolver, nil)
 	a.running = true
 }
 
@@ -135,34 +133,7 @@ func (a *agentT) dispatch(channel any, event string) {
 }
 
 func (a *agentT) reviseTicker(resolver *content.Resolution, s messaging.Spanner) {
-	if s != nil {
-		dur := s.Span()
-		a.ticker.Start(dur)
-		a.notify(messaging.NewStatusMessage(http.StatusOK, fmt.Sprintf("revised ticker -> traffic: %v duration: %v", a.traffic, dur), a.uri))
-		return
-	}
-	p, status := content.Resolve[metrics1.TrafficProfile](metrics1.ProfileName, 1, resolver)
-	if !status.OK() {
-		a.ticker.Start(maxDuration)
-		if status.NotFound() {
-			status.SetAgent(a.Uri())
-		}
-		a.notify(status)
-		return
-	}
-	traffic := p.Now()
-	if p.IsMedium(traffic) || traffic == a.traffic {
-		return
-	}
-	var dur time.Duration
-	if p.IsLow(traffic) {
-		dur = maxDuration
-	} else {
-		dur = minDuration
-	}
-	a.ticker.Start(dur)
-	a.traffic = traffic
-	a.notify(messaging.NewStatusMessage(http.StatusOK, fmt.Sprintf("revised ticker -> traffic: %v duration: %v", a.traffic, dur), a.uri))
+	
 }
 
 func (a *agentT) emissaryFinalize() {

@@ -1,4 +1,4 @@
-package redirect
+package invoke
 
 import (
 	"github.com/behavioral-ai/collective/content"

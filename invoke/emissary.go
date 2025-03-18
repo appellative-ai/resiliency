@@ -1,4 +1,4 @@
-package limit
+package invoke
 
 import (
 	"github.com/behavioral-ai/collective/content"

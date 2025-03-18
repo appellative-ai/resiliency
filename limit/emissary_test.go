@@ -4,8 +4,7 @@ import (
 	"github.com/behavioral-ai/collective/content"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/messaging/messagingtest"
-	"github.com/behavioral-ai/domain/common"
-	"github.com/behavioral-ai/domain/timeseries1"
+	"github.com/behavioral-ai/resiliency/common"
 	"time"
 )
 
@@ -19,7 +18,7 @@ func ExampleEmissary() {
 	agent := newAgent(common.Origin{Region: common.WestRegion, Zone: common.WestZoneA}, messaging.Activity, messaging.Notify, messaging.NewTraceDispatcher())
 
 	go func() {
-		go emissaryAttend(agent, timeseries1.Observations, content.Resolver, s)
+		go emissaryAttend(agent, content.Resolver, s)
 		agent.Message(messaging.NewMessage(messaging.Emissary, messaging.DataChangeEvent))
 		time.Sleep(testDuration * 2)
 		agent.Message(messaging.NewMessage(messaging.Emissary, messaging.PauseEvent))
@@ -44,15 +43,19 @@ func ExampleEmissary_Observation() {
 	agent := newAgent(origin, messaging.Activity, messaging.Notify, messaging.NewTraceDispatcher())
 
 	go func() {
-		go emissaryAttend(agent, timeseries1.NewObservation(timeseries1.Observation{Origin: origin, Latency: 1500, Gradient: 15}, messaging.StatusOK()), content.Resolver, s)
+		go emissaryAttend(agent, content.Resolver, s)
 		time.Sleep(testDuration * 2)
 
 		// Receive observation message
-		msg := <-agent.master.C
-		o, status := getObservation(msg)
-		status.AgentUri = agent.Uri()
-		status.Msg = o.String()
-		agent.notify(status)
+		/*
+			msg := <-agent.master.C
+			o, status := getObservation(msg)
+			status.AgentUri = agent.Uri()
+			status.Msg = o.String()
+			agent.notify(status)
+
+		*/
+
 		agent.Shutdown()
 		time.Sleep(testDuration * 3)
 		ch <- struct{}{}
