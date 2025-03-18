@@ -16,7 +16,6 @@ func emissaryAttend(agent *agentT, resolver *content.Resolution, s messaging.Spa
 		case <-agent.ticker.C():
 			agent.dispatch(agent.ticker, messaging.ObservationEvent)
 			if !paused {
-
 				agent.reviseTicker(resolver, s)
 			}
 		default:

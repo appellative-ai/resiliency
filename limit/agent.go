@@ -26,10 +26,10 @@ type agentT struct {
 	traffic string
 	origin  common.Origin
 
-	ticker     *messaging.Ticker
-	emissary   *messaging.Channel
-	master     *messaging.Channel
-	resolver   content.Resolution
+	ticker   *messaging.Ticker
+	emissary *messaging.Channel
+	master   *messaging.Channel
+
 	notifier   messaging.NotifyFunc
 	dispatcher messaging.Dispatcher
 	activity   messaging.ActivityFunc
@@ -133,7 +133,7 @@ func (a *agentT) dispatch(channel any, event string) {
 }
 
 func (a *agentT) reviseTicker(resolver *content.Resolution, s messaging.Spanner) {
-	
+
 }
 
 func (a *agentT) emissaryFinalize() {
