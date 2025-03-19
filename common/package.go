@@ -16,4 +16,4 @@ const (
 	EastZoneB  = "e-zone-b"
 )
 
-type NewAgentFunc func(origin Origin, notifier messaging.NotifyFunc, dispatcher messaging.Dispatcher)
+type NewAgentFunc func(origin Origin, handler messaging.Agent)

@@ -12,31 +12,31 @@ func Exchange(r *http.Request) (*http.Response, error) {
 }
 
 var (
-	opsAgent messaging.Agent
+	Agent messaging.Agent
 )
 
 func Message(event string) error {
 	switch event {
 	case messaging.StartupEvent:
-		if opsAgent == nil {
-			opsAgent = New()
-			opsAgent.Run()
+		if Agent == nil {
+			Agent = New()
+			Agent.Run()
 		}
 	case messaging.ShutdownEvent:
-		if opsAgent != nil {
-			opsAgent.Shutdown()
-			opsAgent = nil
+		if Agent != nil {
+			Agent.Message(messaging.ShutdownMessage)
+			Agent = nil
 		}
 	case messaging.PauseEvent:
-		if opsAgent != nil {
-			opsAgent.Message(messaging.Pause)
+		if Agent != nil {
+			Agent.Message(messaging.PauseMessage)
 		}
 	case messaging.ResumeEvent:
-		if opsAgent != nil {
-			opsAgent.Message(messaging.Resume)
+		if Agent != nil {
+			Agent.Message(messaging.ResumeMessage)
 		}
 	default:
-		return errors.New(fmt.Sprintf("operative1.Message() -> [%v] [%v]", "error: invalid event", event))
+		return errors.New(fmt.Sprintf("operations.Message() -> [%v] [%v]", "error: invalid event", event))
 	}
 	return nil
 }

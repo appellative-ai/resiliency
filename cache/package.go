@@ -1,14 +1,26 @@
-package invoke
+package cache
 
 import (
-	"github.com/behavioral-ai/core/messaging"
+	http2 "github.com/behavioral-ai/core/http"
 	"net/http"
 )
 
-func Exchange(r *http.Request) (*http.Response, error) {
-	status := messaging.StatusOK
-	if status != nil {
+// Agent needs to be configured with the URL of the caching service
+var (
+	Agent = New()
+)
 
+func Exchange(r *http.Request) (*http.Response, error) {
+	resp, err := Agent.Exchange(r)
+	if err != nil {
+		return resp, err
 	}
-	return &http.Response{StatusCode: http.StatusOK}, nil
+	return nil, nil
+}
+
+func NewIntermediary() http2.Exchange {
+	return func(r *http.Request) (resp *http.Response, err error) {
+		resp, err = Agent.Exchange(r)
+		return
+	}
 }

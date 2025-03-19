@@ -15,7 +15,7 @@ const (
 func ExampleEmissary() {
 	ch := make(chan struct{})
 	s := messagingtest.NewTestSpanner(time.Second*2, testDuration)
-	agent := newAgent(common.Origin{Region: common.WestRegion, Zone: common.WestZoneA}, messaging.Activity, messaging.Notify, messaging.NewTraceDispatcher())
+	agent := newAgent(common.Origin{Region: common.WestRegion, Zone: common.WestZoneA}, nil)
 
 	go func() {
 		go emissaryAttend(agent, content.Resolver, s)
@@ -25,7 +25,7 @@ func ExampleEmissary() {
 		time.Sleep(testDuration * 2)
 		agent.Message(messaging.NewMessage(messaging.Emissary, messaging.ResumeEvent))
 		time.Sleep(testDuration * 2)
-		agent.Shutdown()
+		agent.Message(messaging.ShutdownMessage)
 		time.Sleep(testDuration * 2)
 		ch <- struct{}{}
 	}()
@@ -40,7 +40,7 @@ func ExampleEmissary_Observation() {
 	ch := make(chan struct{})
 	s := messagingtest.NewTestSpanner(testDuration, testDuration)
 	origin := common.Origin{Region: common.WestRegion, Zone: common.WestZoneB}
-	agent := newAgent(origin, messaging.Activity, messaging.Notify, messaging.NewTraceDispatcher())
+	agent := newAgent(origin, nil)
 
 	go func() {
 		go emissaryAttend(agent, content.Resolver, s)
@@ -56,7 +56,7 @@ func ExampleEmissary_Observation() {
 
 		*/
 
-		agent.Shutdown()
+		agent.Message(messaging.ShutdownMessage)
 		time.Sleep(testDuration * 3)
 		ch <- struct{}{}
 	}()

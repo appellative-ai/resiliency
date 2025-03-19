@@ -11,9 +11,5 @@ const (
 
 func Startup(hostName string) {
 	//test.Startup()
-	AgentMessage(messaging.StartupEvent)
-}
-
-func AgentMessage(event string) error {
-	return operations.Message(event)
+	operations.Message(messaging.StartupEvent)
 }

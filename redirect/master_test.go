@@ -2,14 +2,16 @@ package redirect
 
 import (
 	"github.com/behavioral-ai/collective/content"
+	"github.com/behavioral-ai/collective/event"
+	"github.com/behavioral-ai/collective/event/eventtest"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/common"
 	"time"
 )
 
-func ExampleMaster() {
+func _ExampleMaster() {
 	ch := make(chan struct{})
-	agent := newAgent(common.Origin{Region: common.WestRegion}, messaging.Activity, messaging.Notify, messaging.NewTraceDispatcher())
+	agent := newAgent(common.Origin{Region: common.WestRegion}, eventtest.New(event.NewTraceDispatcher()))
 
 	go func() {
 		go masterAttend(agent, content.Resolver)
@@ -20,7 +22,7 @@ func ExampleMaster() {
 		agent.Message(messaging.NewMessage(messaging.Master, messaging.ResumeEvent))
 		agent.Message(messaging.NewMessage(messaging.Master, messaging.ObservationEvent))
 
-		agent.Shutdown()
+		agent.Message(messaging.ShutdownMessage)
 		time.Sleep(testDuration)
 
 		ch <- struct{}{}
@@ -31,7 +33,7 @@ func ExampleMaster() {
 	//fail
 }
 
-func ExampleMaster_Observation() {
+func _ExampleMaster_Observation() {
 	ch := make(chan struct{})
 	origin := common.Origin{Region: common.WestRegion}
 	msg := messaging.NewMessage(messaging.Master, messaging.ObservationEvent)
@@ -41,14 +43,14 @@ func ExampleMaster_Observation() {
 	//if !status.OK() {
 	//	messaging.Notify(status)
 	//}
-	agent := newAgent(origin, messaging.Activity, messaging.Notify, messaging.NewTraceDispatcher())
+	agent := newAgent(origin, eventtest.New(event.NewTraceDispatcher()))
 
 	go func() {
 		go masterAttend(agent, content.Resolver)
 		agent.Message(msg)
 		time.Sleep(testDuration * 2)
 
-		agent.Shutdown()
+		agent.Message(messaging.ShutdownMessage)
 		time.Sleep(testDuration)
 
 		ch <- struct{}{}

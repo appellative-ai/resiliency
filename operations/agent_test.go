@@ -1,19 +1,21 @@
 package operations
 
 import (
+	"github.com/behavioral-ai/collective/event"
+	"github.com/behavioral-ai/collective/event/eventtest"
 	"github.com/behavioral-ai/core/messaging"
 	"time"
 )
 
 func _ExampleAgent_NotFound() {
 	ch := make(chan struct{})
-	agent := newAgent(messaging.Activity, messaging.Notify, messaging.NewTraceDispatcher())
+	agent := newAgent(nil)
 
 	go func() {
 		agent.Run()
 		time.Sleep(testDuration * 20)
 
-		agent.Shutdown()
+		messaging.Shutdown(agent)
 		time.Sleep(testDuration * 5)
 
 		ch <- struct{}{}
@@ -28,18 +30,17 @@ func _ExampleAgent_NotFound() {
 
 func ExampleAgent() {
 	ch := make(chan struct{})
-	dispatcher := messaging.NewFilteredTraceDispatcher([]string{messaging.ResumeEvent, messaging.PauseEvent}, "")
-	agent := newAgent(messaging.Activity, messaging.Notify, dispatcher) //content.NewEphemeralResolver(), messaging.NewTraceDispatcher())
-	//test.Startup()
+	dispatcher := event.NewFilteredTraceDispatcher([]string{messaging.ResumeEvent, messaging.PauseEvent}, "")
+	agent := newAgent(eventtest.New(dispatcher))
 
 	go func() {
 		agent.Run()
 		time.Sleep(testDuration * 6)
-		agent.Message(messaging.Pause)
+		agent.Message(messaging.PauseMessage)
 		time.Sleep(testDuration * 6)
-		agent.Message(messaging.Resume)
+		agent.Message(messaging.ResumeMessage)
 		time.Sleep(testDuration * 6)
-		agent.Shutdown()
+		messaging.Shutdown(agent)
 		time.Sleep(testDuration * 4)
 
 		ch <- struct{}{}

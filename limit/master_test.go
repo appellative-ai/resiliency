@@ -9,7 +9,7 @@ import (
 
 func ExampleMaster() {
 	ch := make(chan struct{})
-	agent := newAgent(common.Origin{Region: common.WestRegion}, messaging.Activity, messaging.Notify, messaging.NewTraceDispatcher())
+	agent := newAgent(common.Origin{Region: common.WestRegion}, nil)
 
 	go func() {
 		go masterAttend(agent, content.Resolver)
@@ -20,7 +20,7 @@ func ExampleMaster() {
 		agent.Message(messaging.NewMessage(messaging.Master, messaging.ResumeEvent))
 		agent.Message(messaging.NewMessage(messaging.Master, messaging.ObservationEvent))
 
-		agent.Shutdown()
+		agent.Message(messaging.ShutdownMessage)
 		time.Sleep(testDuration)
 
 		ch <- struct{}{}
@@ -41,14 +41,14 @@ func ExampleMaster_Observation() {
 	//if !status.OK() {
 	//	messaging.Notify(status)
 	//}
-	agent := newAgent(origin, messaging.Activity, messaging.Notify, messaging.NewTraceDispatcher())
+	agent := newAgent(origin, nil)
 
 	go func() {
 		go masterAttend(agent, content.Resolver)
 		//agent.Message(msg)
 		time.Sleep(testDuration * 2)
 
-		agent.Shutdown()
+		messaging.Shutdown(agent)
 		time.Sleep(testDuration)
 
 		ch <- struct{}{}

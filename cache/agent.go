@@ -1,38 +1,38 @@
-package operations
+package cache
 
 import (
 	"github.com/behavioral-ai/collective/event"
+	http2 "github.com/behavioral-ai/core/http"
 	"github.com/behavioral-ai/core/messaging"
+	"net/http"
 )
 
 const (
-	NamespaceName = "resiliency:agent/behavioral-ai/agency/operations"
+	NamespaceName = "resiliency:agent/behavioral-ai/resiliency/cache"
 )
 
 // TODO : need host name
 type agentT struct {
 	running bool
+	url     string
 
 	handler  messaging.Agent
 	emissary *messaging.Channel
-	agents   *messaging.Exchange
 }
 
-// New - create a new operative
-func New() messaging.Agent {
+// New - create a new cache agent
+func New() http2.Agent {
 	return newAgent(nil)
 }
 
 func newAgent(handler messaging.Agent) *agentT {
 	a := new(agentT)
 	if handler == nil {
-		a.handler = handler
-	} else {
 		a.handler = event.Agent
+	} else {
+		a.handler = handler
 	}
-	a.agents = messaging.NewExchange()
 	a.emissary = messaging.NewEmissaryChannel()
-
 	return a
 }
 
@@ -44,7 +44,15 @@ func (a *agentT) Uri() string { return NamespaceName }
 
 // Message - message the agent
 func (a *agentT) Message(m *messaging.Message) {
-	if m == nil || !a.running {
+	if m == nil {
+		return
+	}
+	if m.Event() == messaging.ConfigEvent {
+		if url, ok := m.Body.(string); ok {
+			a.url = url
+		}
+	}
+	if !a.running {
 		return
 	}
 	a.emissary.C <- m
@@ -55,8 +63,12 @@ func (a *agentT) Run() {
 	if a.running {
 		return
 	}
-	go emissaryAttend(a)
+	//go emissaryAttend(a)
 	a.running = true
+}
+
+func (a *agentT) Exchange(r *http.Request) (*http.Response, error) {
+	return nil, nil
 }
 
 func (a *agentT) dispatch(channel any, event1 string) {
@@ -65,5 +77,4 @@ func (a *agentT) dispatch(channel any, event1 string) {
 
 func (a *agentT) finalize() {
 	a.emissary.Close()
-	a.agents.Shutdown()
 }
