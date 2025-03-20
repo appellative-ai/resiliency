@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/collective/content"
 	"github.com/behavioral-ai/collective/event"
+	http2 "github.com/behavioral-ai/core/http"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/common"
+	"net/http"
 	"strconv"
 	"time"
 )
@@ -24,6 +26,7 @@ type agentT struct {
 	running bool
 	traffic string
 	origin  common.Origin
+	limiter *rateLimiter
 
 	handler  messaging.Agent
 	ticker   *messaging.Ticker
@@ -36,7 +39,7 @@ func agentUri(origin common.Origin) string {
 }
 
 // New - create a new agent1 agent
-func New() messaging.Agent {
+func New() http2.Agent {
 	return newAgent(common.Origin{}, nil)
 }
 
@@ -94,6 +97,22 @@ func (a *agentT) Run() {
 	go masterAttend(a, content.Resolver)
 	go emissaryAttend(a, content.Resolver, nil)
 	a.running = true
+}
+
+// Exchange - run the agent
+func (a *agentT) Exchange(req *http.Request, next *http2.Frame) (resp *http.Response, err error) {
+	// TODO: process rate limiting, and if not allowed, return
+	if !a.limiter.Allow() {
+		return &http.Response{StatusCode: http.StatusTooManyRequests}, nil
+	}
+	if next != nil {
+		resp, err = next.Fn(req, next.Next)
+		// TODO: need to update the response metrics
+		a.Message(nil)
+	} else {
+		resp = &http.Response{StatusCode: http.StatusOK}
+	}
+	return
 }
 
 func (a *agentT) dispatch(channel any, event1 string) {

@@ -25,7 +25,7 @@ func rateLimiterSetValues(limit rate.Limit, burst int) url.Values {
 }
 
 func Example_newRateLimiter() {
-	t := newRateLimiter("test-route", newTable(true), NewRateLimiterConfig(true, 503, 1, 100))
+	t := newRateLimiter("test-routing", newTable(true), NewRateLimiterConfig(true, 503, 1, 100))
 	fmt.Printf("test: newRateLimiter() -> [name:%v] [limit:%v] [burst:%v] [statusCode:%v]\n", t.name, t.config.Limit, t.config.Burst, t.StatusCode())
 
 	t = newRateLimiter("test-route2", newTable(true), NewRateLimiterConfig(true, 429, rate.Inf, DefaultBurst))
@@ -36,7 +36,7 @@ func Example_newRateLimiter() {
 	fmt.Printf("test: cloneRateLimiter() -> [prev-limit:%v] [prev-name:%v] [curr-limit:%v] [curr-name:%v]\n", t.config.Limit, t.name, t2.config.Limit, t2.name)
 
 	//Output:
-	//test: newRateLimiter() -> [name:test-route] [limit:1] [burst:100] [statusCode:503]
+	//test: newRateLimiter() -> [name:test-routing] [limit:1] [burst:100] [statusCode:503]
 	//test: newRateLimiter() -> [name:test-route2] [limit:1.7976931348623157e+308] [burst:1] [statusCode:429]
 	//test: cloneRateLimiter() -> [prev-limit:1.7976931348623157e+308] [prev-name:test-route2] [curr-limit:123] [curr-name:test-route2]
 
@@ -44,7 +44,7 @@ func Example_newRateLimiter() {
 
 func ExampleRateLimiter_State() {
 	tbl := newTable(true)
-	t := newRateLimiter("test-route", tbl, NewRateLimiterConfig(true, 503, rate.Inf, 5))
+	t := newRateLimiter("test-routing", tbl, NewRateLimiterConfig(true, 503, rate.Inf, 5))
 	fmt.Printf("test: newRateLimiter() -> [name:%v] [limit:%v] [burst:%v] [statusCode:%v]\n", t.name, t.config.Limit, t.config.Burst, t.StatusCode())
 
 	limit, burst := t.state()
@@ -56,14 +56,14 @@ func ExampleRateLimiter_State() {
 	fmt.Printf("test: rateLimiterState(t) -> [enabled:%v] [limit:%v] [burst:%v]\n", t.IsEnabled(), limit, burst)
 
 	//Output:
-	//test: newRateLimiter() -> [name:test-route] [limit:1.7976931348623157e+308] [burst:5] [statusCode:503]
+	//test: newRateLimiter() -> [name:test-routing] [limit:1.7976931348623157e+308] [burst:5] [statusCode:503]
 	//test: rateLimiterState(t) -> [enabled:true] [limit:99999] [burst:5]
 	//test: rateLimiterState(t) -> [enabled:false] [limit:-1] [burst:-1]
 
 }
 
 func ExampleRateLimiter_Toggle() {
-	name := "test-route"
+	name := "test-routing"
 	config := NewRateLimiterConfig(true, 503, 100, 10)
 	t := newTable(true)
 	err := t.add(newConfig(name, config))
@@ -91,7 +91,7 @@ func ExampleRateLimiter_Toggle() {
 }
 
 func ExampleRateLimiter_Signal() {
-	name := "test-route"
+	name := "test-routing"
 	burst := 1
 	var limit rate.Limit
 	config := NewRateLimiterConfig(true, 503, 100, 10)

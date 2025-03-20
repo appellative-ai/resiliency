@@ -12,7 +12,7 @@ const (
 	SubZoneKey                = "sub-zone"
 	HostKey                   = "host"
 	InstanceIdKey             = "id"
-	RouteKey                  = "route"
+	RouteKey                  = "routing"
 	RegionZoneHostFmt         = "%v:%v.%v.%v"
 	RegionZoneSubZoneHostFmt  = "%v:%v.%v.%v.%v"
 	uriFmt                    = "%v:%v"
@@ -25,7 +25,7 @@ type Origin struct {
 	Zone       string `json:"zone"`
 	SubZone    string `json:"sub-zone"`
 	Host       string `json:"host"`
-	Route      string `json:"route"`
+	Route      string `json:"routing"`
 	InstanceId string `json:"instance-id"`
 }
 

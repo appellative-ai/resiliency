@@ -1,8 +1,14 @@
 package http
 
 import (
+	http2 "github.com/behavioral-ai/core/http"
+	"github.com/behavioral-ai/resiliency/cache"
+	"github.com/behavioral-ai/resiliency/limit"
 	"github.com/behavioral-ai/resiliency/operations"
+	"github.com/behavioral-ai/resiliency/redirect"
+	"github.com/behavioral-ai/resiliency/routing"
 	"net/http"
+	"strings"
 )
 
 // http://localhost:8080/resiliency?event=startup
@@ -12,13 +18,26 @@ const (
 	eventKey           = "event"
 )
 
+var (
+	pipeline = http2.NewExchangePipeline(redirect.Agent.Exchange, cache.Agent.Exchange, limit.Agent.Exchange, routing.Agent.Exchange)
+)
+
 // Exchange - HTTP exchange function
 func Exchange(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/"+operationsResource {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("error: invalid path"))
+	if strings.HasPrefix(r.URL.Path, "/"+operationsResource) {
+		opsRequest(w, r)
 		return
 	}
+	resp, err := pipeline.Run(r)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+	} else {
+		http2.WriteResponse(w, resp.Header, resp.StatusCode, resp.Body, r.Header)
+	}
+}
+
+func opsRequest(w http.ResponseWriter, r *http.Request) {
 	values := r.URL.Query()
 	if len(values) == 0 {
 		w.WriteHeader(http.StatusBadRequest)

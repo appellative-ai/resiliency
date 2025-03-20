@@ -1,4 +1,4 @@
-package cache
+package routing
 
 import (
 	"errors"
@@ -9,13 +9,13 @@ import (
 )
 
 const (
-	NamespaceName = "resiliency:agent/behavioral-ai/resiliency/cache"
+	NamespaceName = "resiliency:agent/behavioral-ai/resiliency/routing"
 )
 
 // TODO : need host name
 type agentT struct {
-	running  bool
-	hostName string
+	running bool
+	config  string
 
 	handler  messaging.Agent
 	emissary *messaging.Channel
@@ -49,8 +49,8 @@ func (a *agentT) Message(m *messaging.Message) {
 		return
 	}
 	if m.Event() == messaging.ConfigEvent {
-		if host, ok := m.Body.(string); ok {
-			a.hostName = host
+		if cfg, ok := m.Body.(string); ok {
+			a.config = cfg
 		}
 	}
 	if !a.running {
@@ -70,10 +70,10 @@ func (a *agentT) Run() {
 
 // Exchange - run the agent
 func (a *agentT) Exchange(req *http.Request, next *http2.Frame) (resp *http.Response, err error) {
-	if a.hostName == "" {
-		return &http.Response{StatusCode: http.StatusInternalServerError}, errors.New("cache host name is empty and not configured")
+	if a.config == "" {
+		return &http.Response{StatusCode: http.StatusInternalServerError}, errors.New("configuration is empty and not configured")
 	}
-	// TODO: create request and send to the cache
+	// TODO: create request and send to the application
 
 	if next != nil {
 		resp, err = next.Fn(req, next.Next)

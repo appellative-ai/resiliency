@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/collective/content"
 	"github.com/behavioral-ai/collective/event"
+	http2 "github.com/behavioral-ai/core/http"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/common"
+	"net/http"
 	"strconv"
 	"time"
 )
@@ -36,7 +38,7 @@ func agentUri(origin common.Origin) string {
 }
 
 // New - create a new agent
-func New() messaging.Agent {
+func New() http2.Agent {
 	return newAgent(common.Origin{}, nil)
 }
 
@@ -91,6 +93,17 @@ func (a *agentT) Run() {
 	go masterAttend(a, content.Resolver)
 	go emissaryAttend(a, content.Resolver, nil)
 	a.running = true
+}
+
+// Exchange - run the agent
+func (a *agentT) Exchange(req *http.Request, next *http2.Frame) (resp *http.Response, err error) {
+	// TODO: if a redirect is configured, then process and ignore rest of pipeline
+	if next != nil {
+		resp, err = next.Fn(req, next.Next)
+	} else {
+		resp = &http.Response{StatusCode: http.StatusOK}
+	}
+	return
 }
 
 func (a *agentT) dispatch(channel any, event1 string) {
