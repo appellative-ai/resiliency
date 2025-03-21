@@ -94,13 +94,13 @@ func (a *agentT) finalize() {
 func (a *agentT) configure(m *messaging.Message) {
 	cfg := messaging.ConfigMapContent(m)
 	if cfg == nil {
-		messaging.Reply(m, common.ConfigEmptyStatusError(a))
+		messaging.Reply(m, common.ConfigEmptyStatusError(a), a.Uri())
 		return
 	}
 	a.hostName = cfg[HostKey]
 	if a.hostName == "" {
-		messaging.Reply(m, common.ConfigContentStatusError(a, HostKey))
+		messaging.Reply(m, common.ConfigContentStatusError(a, HostKey), a.Uri())
 		return
 	}
-	messaging.Reply(m, messaging.StatusOK())
+	messaging.Reply(m, messaging.StatusOK(), a.Uri())
 }

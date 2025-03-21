@@ -124,9 +124,9 @@ func (a *agentT) masterFinalize() {
 func (a *agentT) configure(m *messaging.Message) {
 	cfg := messaging.ConfigMapContent(m)
 	if cfg == nil {
-		messaging.Reply(m, common.ConfigEmptyStatusError(a))
+		messaging.Reply(m, common.ConfigEmptyStatusError(a), a.Uri())
 		return
 	}
 	// TODO: configure
-	messaging.Reply(m, messaging.StatusOK())
+	messaging.Reply(m, messaging.StatusOK(), a.Uri())
 }
