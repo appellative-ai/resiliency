@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/common"
-	"time"
 )
 
 func ExampleNewAgent() {
@@ -12,8 +11,14 @@ func ExampleNewAgent() {
 	a := newAgent(common.Origin{}, nil)
 	fmt.Printf("test: newAgent() -> [origin:%v] [uri:%v}\n", a.origin, a.Uri())
 
-	a.Message(messaging.NewConfigMessage(origin))
-	time.Sleep(time.Second * 2)
+	m := make(map[string]string)
+	m[common.RegionKey] = origin.Region
+	m[common.ZoneKey] = origin.Zone
+	m[common.SubZoneKey] = origin.SubZone
+	m[common.HostKey] = origin.Host
+	a.Message(messaging.NewConfigMessage(m))
+
+	//time.Sleep(time.Second * 2)
 	fmt.Printf("test: Message() -> %v\n", a.origin)
 
 	//agent := agentT{}

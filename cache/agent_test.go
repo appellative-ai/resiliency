@@ -3,22 +3,21 @@ package cache
 import (
 	"fmt"
 	"github.com/behavioral-ai/core/messaging"
-	"time"
 )
 
 func ExampleNew() {
-	url := "https://www.google.com/search"
-	a := newAgent(nil)
+	//url := "https://www.google.com/search"
+	a := newAgent(nil, "")
 
 	fmt.Printf("test: newAgent() -> %v\n", a.Uri())
-
-	a.Message(messaging.NewConfigMessage(url))
-	time.Sleep(time.Second * 2)
-	fmt.Printf("test: Message() -> %v\n", a.url)
+	m := make(map[string]string)
+	m[HostKey] = "google.com"
+	a.Message(messaging.NewConfigMessage(m))
+	fmt.Printf("test: Message() -> %v\n", a.hostName)
 
 	//Output:
 	//test: newAgent() -> resiliency:agent/behavioral-ai/resiliency/cache
-	//test: Message() -> https://www.google.com/search
+	//test: Message() -> google.com
 
 }
 

@@ -16,8 +16,13 @@ func ExampleNewAgent() {
 	a := newAgent(common.Origin{}, nil)
 	fmt.Printf("test: newAgent() -> [origin:%v] [uri:%v}\n", a.origin, a.Uri())
 
-	a.Message(messaging.NewConfigMessage(origin))
-	time.Sleep(time.Second * 2)
+	m := make(map[string]string)
+	m[common.RegionKey] = origin.Region
+	m[common.ZoneKey] = origin.Zone
+	m[common.SubZoneKey] = origin.SubZone
+	m[common.HostKey] = origin.Host
+
+	a.Message(messaging.NewConfigMessage(m))
 	fmt.Printf("test: Message() -> %v\n", a.origin)
 
 	//Output:
@@ -57,7 +62,7 @@ func _ExampleAgent_NotFound() {
 	agent := newAgent(origin, eventtest.New(dispatcher))
 
 	go func() {
-		agent.Run()
+		agent.Message(messaging.StartupMessage)
 		time.Sleep(testDuration * 5)
 		agent.Message(messaging.ShutdownMessage)
 		time.Sleep(testDuration * 2)
@@ -78,7 +83,7 @@ func _ExampleAgent_Resolver() {
 	//test2.Startup()
 
 	go func() {
-		agent.Run()
+		agent.Message(messaging.StartupMessage)
 		time.Sleep(testDuration * 5)
 		agent.Message(messaging.ShutdownMessage)
 		time.Sleep(testDuration * 2)

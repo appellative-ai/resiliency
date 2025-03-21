@@ -5,7 +5,6 @@ import (
 	"github.com/behavioral-ai/collective/event"
 	http2 "github.com/behavioral-ai/core/http"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/resiliency/common"
 	"net/http"
 )
 
@@ -99,12 +98,12 @@ func (a *agentT) finalize() {
 func (a *agentT) configure(m *messaging.Message) {
 	cfg := messaging.ConfigMapContent(m)
 	if cfg == nil {
-		messaging.Reply(m, common.ConfigEmptyStatusError(a), a.Uri())
+		messaging.Reply(m, messaging.ConfigEmptyStatusError(a), a.Uri())
 		return
 	}
 	a.hostName = cfg[HostKey]
 	if a.hostName == "" {
-		messaging.Reply(m, common.ConfigContentStatusError(a, HostKey), a.Uri())
+		messaging.Reply(m, messaging.ConfigContentStatusError(a, HostKey), a.Uri())
 		return
 	}
 	messaging.Reply(m, messaging.StatusOK(), a.Uri())

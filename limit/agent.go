@@ -138,27 +138,27 @@ func (a *agentT) masterFinalize() {
 func (a *agentT) configure(m *messaging.Message) {
 	cfg := messaging.ConfigMapContent(m)
 	if cfg == nil {
-		messaging.Reply(m, common.ConfigEmptyStatusError(a), a.Uri())
+		messaging.Reply(m, messaging.ConfigEmptyStatusError(a), a.Uri())
 		return
 	}
 	a.origin.Region = cfg[RegionKey]
 	if a.origin.Region == "" {
-		messaging.Reply(m, common.ConfigContentStatusError(a, RegionKey), a.Uri())
+		messaging.Reply(m, messaging.ConfigContentStatusError(a, RegionKey), a.Uri())
 		return
 	}
 	a.origin.Zone = cfg[ZoneKey]
 	if a.origin.Zone == "" {
-		messaging.Reply(m, common.ConfigContentStatusError(a, ZoneKey), a.Uri())
+		messaging.Reply(m, messaging.ConfigContentStatusError(a, ZoneKey), a.Uri())
 		return
 	}
 	a.origin.SubZone = cfg[SubZoneKey]
 	if a.origin.SubZone == "" {
-		messaging.Reply(m, common.ConfigContentStatusError(a, SubZoneKey), a.Uri())
+		messaging.Reply(m, messaging.ConfigContentStatusError(a, SubZoneKey), a.Uri())
 		return
 	}
 	a.origin.Host = cfg[HostKey]
 	if a.origin.Host == "" {
-		messaging.Reply(m, common.ConfigContentStatusError(a, HostKey), a.Uri())
+		messaging.Reply(m, messaging.ConfigContentStatusError(a, HostKey), a.Uri())
 		return
 	}
 	messaging.Reply(m, messaging.StatusOK(), a.Uri())
