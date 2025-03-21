@@ -1,6 +1,11 @@
 package cache
 
-// Agent needs to be configured with the URL of the caching service
+// Configuration map keys
+
+const (
+	HostKey = "host" // Host name for cache service
+)
+
 var (
 	Agent = New()
 )

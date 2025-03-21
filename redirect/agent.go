@@ -65,9 +65,8 @@ func (a *agentT) Message(m *messaging.Message) {
 		return
 	}
 	if m.Event() == messaging.ConfigEvent {
-		if origin, ok := m.Body.(common.Origin); ok {
-			a.origin = origin
-		}
+		a.configure(m)
+		return
 	}
 	if !a.running {
 		return
@@ -120,4 +119,14 @@ func (a *agentT) emissaryFinalize() {
 
 func (a *agentT) masterFinalize() {
 	a.master.Close()
+}
+
+func (a *agentT) configure(m *messaging.Message) {
+	cfg := messaging.ConfigMapContent(m)
+	if cfg == nil {
+		messaging.Reply(m, common.ConfigEmptyStatusError(a))
+		return
+	}
+	// TODO: configure
+	messaging.Reply(m, messaging.StatusOK())
 }

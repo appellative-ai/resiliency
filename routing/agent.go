@@ -5,6 +5,7 @@ import (
 	"github.com/behavioral-ai/collective/event"
 	http2 "github.com/behavioral-ai/core/http"
 	"github.com/behavioral-ai/core/messaging"
+	"github.com/behavioral-ai/resiliency/common"
 	"net/http"
 )
 
@@ -14,8 +15,9 @@ const (
 
 // TODO : need host name
 type agentT struct {
-	running bool
-	config  string
+	running  bool
+	config   string
+	hostName string
 
 	handler  messaging.Agent
 	emissary *messaging.Channel
@@ -23,11 +25,12 @@ type agentT struct {
 
 // New - create a new cache agent
 func New() http2.Agent {
-	return newAgent(nil)
+	return newAgent(nil, "")
 }
 
-func newAgent(handler messaging.Agent) *agentT {
+func newAgent(handler messaging.Agent, hostName string) *agentT {
 	a := new(agentT)
+	a.hostName = hostName
 	if handler == nil {
 		a.handler = event.Agent
 	} else {
@@ -49,9 +52,8 @@ func (a *agentT) Message(m *messaging.Message) {
 		return
 	}
 	if m.Event() == messaging.ConfigEvent {
-		if cfg, ok := m.Body.(string); ok {
-			a.config = cfg
-		}
+		a.configure(m)
+		return
 	}
 	if !a.running {
 		return
@@ -89,4 +91,18 @@ func (a *agentT) dispatch(channel any, event1 string) {
 
 func (a *agentT) finalize() {
 	a.emissary.Close()
+}
+
+func (a *agentT) configure(m *messaging.Message) {
+	cfg := messaging.ConfigMapContent(m)
+	if cfg == nil {
+		messaging.Reply(m, common.ConfigEmptyStatusError(a))
+		return
+	}
+	a.hostName = cfg[HostKey]
+	if a.hostName == "" {
+		messaging.Reply(m, common.ConfigContentStatusError(a, HostKey))
+		return
+	}
+	messaging.Reply(m, messaging.StatusOK())
 }
