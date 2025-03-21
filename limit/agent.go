@@ -72,6 +72,10 @@ func (a *agentT) Message(m *messaging.Message) {
 		a.configure(m)
 		return
 	}
+	if m.Event() == messaging.StartupEvent {
+		a.run()
+		return
+	}
 	if !a.running {
 		return
 	}
@@ -89,7 +93,7 @@ func (a *agentT) Message(m *messaging.Message) {
 }
 
 // Run - run the agent
-func (a *agentT) Run() {
+func (a *agentT) run() {
 	if a.running {
 		return
 	}

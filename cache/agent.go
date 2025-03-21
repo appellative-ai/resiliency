@@ -24,11 +24,12 @@ type agentT struct {
 
 // New - create a new cache agent
 func New() http2.Agent {
-	return newAgent(nil)
+	return newAgent(nil, "")
 }
 
-func newAgent(handler messaging.Agent) *agentT {
+func newAgent(handler messaging.Agent, hostName string) *agentT {
 	a := new(agentT)
+	a.hostName = hostName
 	if handler == nil {
 		a.handler = event.Agent
 	} else {
@@ -53,6 +54,10 @@ func (a *agentT) Message(m *messaging.Message) {
 		a.configure(m)
 		return
 	}
+	if m.Event() == messaging.StartupEvent {
+		a.run()
+		return
+	}
 	if !a.running {
 		return
 	}
@@ -60,7 +65,7 @@ func (a *agentT) Message(m *messaging.Message) {
 }
 
 // Run - run the agent
-func (a *agentT) Run() {
+func (a *agentT) run() {
 	if a.running {
 		return
 	}
