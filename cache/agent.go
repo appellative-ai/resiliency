@@ -3,7 +3,7 @@ package cache
 import (
 	"errors"
 	"github.com/behavioral-ai/collective/event"
-	http2 "github.com/behavioral-ai/core/http"
+	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/messaging"
 	"net/http"
 )
@@ -22,7 +22,7 @@ type agentT struct {
 }
 
 // New - create a new cache agent
-func New() http2.Agent {
+func New() httpx.Agent {
 	return newAgent(nil, "")
 }
 
@@ -73,7 +73,7 @@ func (a *agentT) run() {
 }
 
 // Exchange - run the agent
-func (a *agentT) Exchange(req *http.Request, next *http2.Frame) (resp *http.Response, err error) {
+func (a *agentT) Exchange(req *http.Request, next *httpx.Frame) (resp *http.Response, err error) {
 	if a.hostName == "" {
 		return &http.Response{StatusCode: http.StatusInternalServerError}, errors.New("cache host name is empty and not configured")
 	}

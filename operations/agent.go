@@ -44,14 +44,21 @@ func (a *agentT) Uri() string { return NamespaceName }
 
 // Message - message the agent
 func (a *agentT) Message(m *messaging.Message) {
-	if m == nil || !a.running {
+	if m == nil {
+		return
+	}
+	if m.Event() == messaging.StartupEvent {
+		a.run()
+		return
+	}
+	if !a.running {
 		return
 	}
 	a.emissary.C <- m
 }
 
 // Run - run the agent
-func (a *agentT) Run() {
+func (a *agentT) run() {
 	if a.running {
 		return
 	}

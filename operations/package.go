@@ -44,7 +44,7 @@ func Message(event string) error {
 	case messaging.StartupEvent:
 		if Agent == nil {
 			Agent = New()
-			Agent.Run()
+			Agent.Message(messaging.StartupMessage)
 		}
 	case messaging.ShutdownEvent:
 		if Agent != nil {

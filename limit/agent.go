@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/collective/content"
 	"github.com/behavioral-ai/collective/event"
-	http2 "github.com/behavioral-ai/core/http"
+	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/common"
 	"net/http"
@@ -39,7 +39,7 @@ func agentUri(origin common.Origin) string {
 }
 
 // New - create a new agent1 agent
-func New() http2.Agent {
+func New() httpx.Agent {
 	return newAgent(common.Origin{}, nil)
 }
 
@@ -103,7 +103,7 @@ func (a *agentT) run() {
 }
 
 // Exchange - run the agent
-func (a *agentT) Exchange(req *http.Request, next *http2.Frame) (resp *http.Response, err error) {
+func (a *agentT) Exchange(req *http.Request, next *httpx.Frame) (resp *http.Response, err error) {
 	// TODO: process rate limiting, and if not allowed, return
 	if !a.limiter.Allow() {
 		return &http.Response{StatusCode: http.StatusTooManyRequests}, nil

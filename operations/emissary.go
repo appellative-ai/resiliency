@@ -22,8 +22,6 @@ func emissaryAttend(agent *agentT) {
 			case messaging.ResumeEvent:
 				paused = false
 				agent.agents.Broadcast(messaging.ResumeMessage)
-			case messaging.StopEvent:
-			case messaging.StartEvent:
 			case messaging.ShutdownEvent:
 				agent.finalize()
 				return

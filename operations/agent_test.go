@@ -12,7 +12,7 @@ func _ExampleAgent_NotFound() {
 	agent := newAgent(nil)
 
 	go func() {
-		agent.Run()
+		agent.Message(messaging.StartupMessage)
 		time.Sleep(testDuration * 20)
 
 		messaging.Shutdown(agent)
@@ -34,7 +34,7 @@ func ExampleAgent() {
 	agent := newAgent(eventtest.New(dispatcher))
 
 	go func() {
-		agent.Run()
+		agent.Message(messaging.StartupMessage)
 		time.Sleep(testDuration * 6)
 		agent.Message(messaging.PauseMessage)
 		time.Sleep(testDuration * 6)

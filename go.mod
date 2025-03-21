@@ -3,8 +3,8 @@ module github.com/behavioral-ai/resiliency
 go 1.23.0
 
 require (
-	github.com/behavioral-ai/collective v0.0.0-20250321155554-edeef7a2d5a9
-	github.com/behavioral-ai/core v0.0.0-20250321143545-9458a91bda83
+	github.com/behavioral-ai/collective v0.0.0-20250321221549-e4e478559cd0
+	github.com/behavioral-ai/core v0.0.0-20250321202833-07f0e22cda05
 	golang.org/x/time v0.11.0
 )
 
