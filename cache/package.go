@@ -3,7 +3,8 @@ package cache
 // Configuration map keys
 
 const (
-	HostKey = "host" // Cache service host name
+	CacheHostKey = "cache-host" // Cache service host name
+	TimeoutKey   = "timeout"
 )
 
 var (

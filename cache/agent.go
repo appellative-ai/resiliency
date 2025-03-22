@@ -3,9 +3,11 @@ package cache
 import (
 	"errors"
 	"github.com/behavioral-ai/collective/event"
+	"github.com/behavioral-ai/core/fmtx"
 	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/messaging"
 	"net/http"
+	"time"
 )
 
 const (
@@ -16,6 +18,7 @@ const (
 type agentT struct {
 	running  bool
 	hostName string
+	timeout  time.Duration
 
 	handler  messaging.Agent
 	emissary *messaging.Channel
@@ -23,12 +26,13 @@ type agentT struct {
 
 // New - create a new cache agent
 func New() httpx.Agent {
-	return newAgent(nil, "")
+	return newAgent(nil, "", 0)
 }
 
-func newAgent(handler messaging.Agent, hostName string) *agentT {
+func newAgent(handler messaging.Agent, hostName string, timeout time.Duration) *agentT {
 	a := new(agentT)
 	a.hostName = hostName
+	a.timeout = timeout
 	if handler == nil {
 		a.handler = event.Agent
 	} else {
@@ -103,10 +107,19 @@ func (a *agentT) configure(m *messaging.Message) {
 		messaging.Reply(m, messaging.ConfigEmptyStatusError(a), a.Uri())
 		return
 	}
-	a.hostName = cfg[HostKey]
+	a.hostName = cfg[CacheHostKey]
 	if a.hostName == "" {
-		messaging.Reply(m, messaging.ConfigContentStatusError(a, HostKey), a.Uri())
+		messaging.Reply(m, messaging.ConfigContentStatusError(a, CacheHostKey), a.Uri())
 		return
+	}
+	s := cfg[TimeoutKey]
+	if s != "" {
+		var err error
+		a.timeout, err = fmtx.ParseDuration(s)
+		if err != nil {
+			messaging.Reply(m, messaging.ConfigContentStatusError(a, TimeoutKey), a.Uri())
+			return
+		}
 	}
 	messaging.Reply(m, messaging.StatusOK(), a.Uri())
 }

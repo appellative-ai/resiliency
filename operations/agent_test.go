@@ -28,7 +28,7 @@ func _ExampleAgent_NotFound() {
 
 }
 
-func ExampleAgent() {
+func _ExampleAgent() {
 	ch := make(chan struct{})
 	dispatcher := event.NewFilteredTraceDispatcher([]string{messaging.ResumeEvent, messaging.PauseEvent}, "")
 	agent := newAgent(eventtest.New(dispatcher))

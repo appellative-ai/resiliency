@@ -7,11 +7,11 @@ import (
 
 func ExampleNew() {
 	//url := "https://www.google.com/search"
-	a := newAgent(nil, "")
+	a := newAgent(nil, "", 0)
 
 	fmt.Printf("test: newAgent() -> %v\n", a.Uri())
 	m := make(map[string]string)
-	m[HostKey] = "google.com"
+	m[CacheHostKey] = "google.com"
 	a.Message(messaging.NewConfigMessage(m))
 	fmt.Printf("test: Message() -> %v\n", a.hostName)
 

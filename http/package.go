@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/behavioral-ai/core/host"
 	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/resiliency/cache"
 	"github.com/behavioral-ai/resiliency/limit"
@@ -19,7 +20,7 @@ const (
 )
 
 var (
-	run = httpx.NewPipeline(redirect.Agent.Exchange, cache.Agent.Exchange, limit.Agent.Exchange, routing.Agent.Exchange)
+	chain = httpx.Link(host.AccessLogExchange, host.AuthorizationExchange, redirect.Agent.Exchange, cache.Agent.Exchange, limit.Agent.Exchange, routing.Agent.Exchange)
 )
 
 // Exchange - HTTP exchange function
@@ -28,13 +29,15 @@ func Exchange(w http.ResponseWriter, r *http.Request) {
 		opsRequest(w, r)
 		return
 	}
-	resp, err := run(r)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-	} else {
-		httpx.WriteResponse(w, resp.Header, resp.StatusCode, resp.Body, r.Header)
-	}
+	host.Exchange(w, r, chain)
+	/*
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
+		} else {
+			httpx.WriteResponse(w, resp.Header, resp.StatusCode, resp.Body, r.Header)
+		}
+	*/
 }
 
 func opsRequest(w http.ResponseWriter, r *http.Request) {

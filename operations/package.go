@@ -3,11 +3,24 @@ package operations
 import (
 	"errors"
 	"fmt"
+	"github.com/behavioral-ai/core/access"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/cache"
+	"github.com/behavioral-ai/resiliency/common"
 	"github.com/behavioral-ai/resiliency/limit"
 	"github.com/behavioral-ai/resiliency/redirect"
 	"github.com/behavioral-ai/resiliency/routing"
+)
+
+const (
+	TimeoutKey    = "timeout"
+	CacheHostKey  = cache.CacheHostKey
+	AppHostKey    = routing.AppHostKey
+	RegionKey     = common.RegionKey
+	ZoneKey       = common.ZoneKey
+	SubZoneKey    = common.SubZoneKey
+	HostKey       = common.HostKey
+	InstanceIdKey = common.InstanceIdKey
 )
 
 var (
@@ -16,25 +29,14 @@ var (
 
 // Agent configuration
 
-func ConfigureLimitAgent(m *messaging.Message) {
-	message(limit.Agent, m)
-}
-
-func ConfigureRoutingAgent(m *messaging.Message) {
-	message(routing.Agent, m)
-}
-
-func ConfigureCacheAgent(m *messaging.Message) {
-	message(cache.Agent, m)
-}
-
-func ConfigureRedirectAgent(m *messaging.Message) {
-	message(redirect.Agent, m)
-}
-
-func message(agent messaging.Agent, m *messaging.Message) {
+// Configure - configure all agents
+func Configure(m *messaging.Message) {
 	if m.Event() == messaging.ConfigEvent && m.ContentType() == messaging.ContentTypeMap {
-		agent.Message(m)
+		access.SetOrigin(configure(m))
+		limit.Agent.Message(m)
+		redirect.Agent.Message(m)
+		routing.Agent.Message(m)
+		cache.Agent.Message(m)
 	}
 }
 

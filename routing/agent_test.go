@@ -7,12 +7,12 @@ import (
 )
 
 func ExampleNew() {
-	a := newAgent(nil, "")
+	a := newAgent(nil, "", 0)
 
 	fmt.Printf("test: newAgent() -> %v\n", a.Uri())
 
 	m := make(map[string]string)
-	m[HostKey] = "google.com"
+	m[AppHostKey] = "google.com"
 	a.Message(messaging.NewConfigMessage(m))
 	time.Sleep(time.Second * 2)
 	fmt.Printf("test: Message() -> %v\n", a.hostName)

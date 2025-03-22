@@ -3,7 +3,8 @@ package routing
 // Configuration map keys
 
 const (
-	HostKey = "host" // Application host name
+	AppHostKey = "app-host" // Application host name
+	TimeoutKey = "timeout"
 )
 
 var (

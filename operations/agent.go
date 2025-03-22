@@ -3,6 +3,10 @@ package operations
 import (
 	"github.com/behavioral-ai/collective/event"
 	"github.com/behavioral-ai/core/messaging"
+	"github.com/behavioral-ai/resiliency/cache"
+	"github.com/behavioral-ai/resiliency/limit"
+	"github.com/behavioral-ai/resiliency/redirect"
+	"github.com/behavioral-ai/resiliency/routing"
 )
 
 const (
@@ -31,6 +35,10 @@ func newAgent(handler messaging.Agent) *agentT {
 		a.handler = event.Agent
 	}
 	a.agents = messaging.NewExchange()
+	a.agents.RegisterMailbox(cache.Agent)
+	a.agents.RegisterMailbox(limit.Agent)
+	a.agents.RegisterMailbox(redirect.Agent)
+	a.agents.RegisterMailbox(routing.Agent)
 	a.emissary = messaging.NewEmissaryChannel()
 
 	return a
