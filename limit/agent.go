@@ -102,20 +102,21 @@ func (a *agentT) run() {
 	a.running = true
 }
 
-// Exchange - run the agent
-func (a *agentT) Exchange(req *http.Request, next *httpx.Frame) (resp *http.Response, err error) {
-	// TODO: process rate limiting, and if not allowed, return
-	if !a.limiter.Allow() {
-		return &http.Response{StatusCode: http.StatusTooManyRequests}, nil
+// Exchange - chainable exchange
+func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
+	return func(req *http.Request) (resp *http.Response, err error) {
+		if !a.limiter.Allow() {
+			return &http.Response{StatusCode: http.StatusTooManyRequests}, nil
+		}
+		if next != nil {
+			resp, err = next(req)
+			// TODO: need to update the response metrics
+			a.Message(nil)
+		} else {
+			resp = &http.Response{StatusCode: http.StatusOK}
+		}
+		return
 	}
-	if next != nil {
-		resp, err = next.Fn(req, next.Next)
-		// TODO: need to update the response metrics
-		a.Message(nil)
-	} else {
-		resp = &http.Response{StatusCode: http.StatusOK}
-	}
-	return
 }
 
 func (a *agentT) dispatch(channel any, event1 string) {

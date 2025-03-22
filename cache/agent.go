@@ -72,19 +72,21 @@ func (a *agentT) run() {
 	a.running = true
 }
 
-// Exchange - run the agent
-func (a *agentT) Exchange(req *http.Request, next *httpx.Frame) (resp *http.Response, err error) {
-	if a.hostName == "" {
-		return &http.Response{StatusCode: http.StatusInternalServerError}, errors.New("cache host name is empty and not configured")
-	}
-	// TODO: create request and send to the cache
+// Exchange - chainable exchange
+func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
+	return func(req *http.Request) (resp *http.Response, err error) {
+		if a.hostName == "" {
+			return &http.Response{StatusCode: http.StatusInternalServerError}, errors.New("cache host name is empty and not configured")
+		}
+		// TODO: create request and send to the cache
 
-	if next != nil {
-		resp, err = next.Fn(req, next.Next)
-	} else {
-		resp = &http.Response{StatusCode: http.StatusOK}
+		if next != nil {
+			resp, err = next(req)
+		} else {
+			resp = &http.Response{StatusCode: http.StatusOK}
+		}
+		return
 	}
-	return
 }
 
 func (a *agentT) dispatch(channel any, event1 string) {

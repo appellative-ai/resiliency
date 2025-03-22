@@ -98,15 +98,17 @@ func (a *agentT) run() {
 	a.running = true
 }
 
-// Exchange - run the agent
-func (a *agentT) Exchange(req *http.Request, next *httpx.Frame) (resp *http.Response, err error) {
-	// TODO: if a redirect is configured, then process and ignore rest of pipeline
-	if next != nil {
-		resp, err = next.Fn(req, next.Next)
-	} else {
-		resp = &http.Response{StatusCode: http.StatusOK}
+// Exchange - chainable exchange
+func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
+	return func(req *http.Request) (resp *http.Response, err error) {
+		// TODO: if a redirect is configured, then process and ignore rest of pipeline
+		if next != nil {
+			resp, err = next(req)
+		} else {
+			resp = &http.Response{StatusCode: http.StatusOK}
+		}
+		return
 	}
-	return
 }
 
 func (a *agentT) dispatch(channel any, event1 string) {

@@ -19,7 +19,7 @@ const (
 )
 
 var (
-	pipeline = httpx.NewExchangePipeline(redirect.Agent.Exchange, cache.Agent.Exchange, limit.Agent.Exchange, routing.Agent.Exchange)
+	run = httpx.NewPipeline(redirect.Agent.Exchange, cache.Agent.Exchange, limit.Agent.Exchange, routing.Agent.Exchange)
 )
 
 // Exchange - HTTP exchange function
@@ -28,7 +28,7 @@ func Exchange(w http.ResponseWriter, r *http.Request) {
 		opsRequest(w, r)
 		return
 	}
-	resp, err := pipeline.Run(r)
+	resp, err := run(r)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
