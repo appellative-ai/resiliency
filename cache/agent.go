@@ -14,14 +14,11 @@ const (
 	NamespaceName = "resiliency:agent/behavioral-ai/resiliency/cache"
 )
 
-// TODO : need host name
 type agentT struct {
-	running  bool
 	hostName string
 	timeout  time.Duration
 
-	handler  messaging.Agent
-	emissary *messaging.Channel
+	handler messaging.Agent
 }
 
 // New - create a new cache agent
@@ -38,7 +35,6 @@ func newAgent(handler messaging.Agent, hostName string, timeout time.Duration) *
 	} else {
 		a.handler = handler
 	}
-	a.emissary = messaging.NewEmissaryChannel()
 	return a
 }
 
@@ -57,23 +53,6 @@ func (a *agentT) Message(m *messaging.Message) {
 		a.configure(m)
 		return
 	}
-	if m.Event() == messaging.StartupEvent {
-		a.run()
-		return
-	}
-	if !a.running {
-		return
-	}
-	a.emissary.C <- m
-}
-
-// Run - run the agent
-func (a *agentT) run() {
-	if a.running {
-		return
-	}
-	//go emissaryAttend(a)
-	a.running = true
 }
 
 // Exchange - chainable exchange
@@ -91,14 +70,6 @@ func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
 		}
 		return
 	}
-}
-
-func (a *agentT) dispatch(channel any, event1 string) {
-	a.handler.Message(event.NewDispatchMessage(a, channel, event1))
-}
-
-func (a *agentT) finalize() {
-	a.emissary.Close()
 }
 
 func (a *agentT) configure(m *messaging.Message) {
