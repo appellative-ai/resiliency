@@ -20,7 +20,8 @@ const (
 )
 
 var (
-	chain = httpx.Link(host.AccessLogExchange, host.AuthorizationExchange, redirect.Agent.Exchange, cache.Agent.Exchange, limit.Agent.Exchange, routing.Agent.Exchange)
+	chain = httpx.Link(host.AccessLogExchange, host.AuthorizationExchange, redirect.Agent.Exchange,
+		cache.Agent.Exchange, limit.Agent.Exchange, routing.Agent.Exchange)
 )
 
 // Exchange - HTTP exchange function
