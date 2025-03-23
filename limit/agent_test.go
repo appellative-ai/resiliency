@@ -2,24 +2,11 @@ package limit
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/resiliency/common"
 )
 
 func ExampleNewAgent() {
-	origin := common.Origin{Region: "us-central", Zone: "c-zone-a", SubZone: "sub-zone", Host: "www.host.com"}
-	a := newAgent(common.Origin{}, nil)
-	fmt.Printf("test: newAgent() -> [origin:%v] [uri:%v}\n", a.origin, a.Uri())
-
-	m := make(map[string]string)
-	m[common.RegionKey] = origin.Region
-	m[common.ZoneKey] = origin.Zone
-	m[common.SubZoneKey] = origin.SubZone
-	m[common.HostKey] = origin.Host
-	a.Message(messaging.NewConfigMessage(m))
-
-	//time.Sleep(time.Second * 2)
-	fmt.Printf("test: Message() -> %v\n", a.origin)
+	a := newAgent(nil, -1, -1)
+	fmt.Printf("test: newAgent() -> [limit:%v] [burst:%v] [uri:%v}\n", a.limiter.Limit(), a.limiter.Burst(), a.Uri())
 
 	//agent := agentT{}
 	//t := reflect.TypeOf(agent)
@@ -29,8 +16,7 @@ func ExampleNewAgent() {
 	//fmt.Printf("test: New() -> [%v] [name:%v] [path:%v] [kind:%v]\n", t, t.Name(), t.PkgPath(), t.Kind())
 
 	//Output:
-	//test: newAgent() -> [origin:] [uri:resiliency:agent/behavioral-ai/resiliency/rate-limiting1#}
-	//test: Message() -> us-central.c-zone-a.sub-zone.www.host.com
+	//test: newAgent() -> [limit:50] [burst:10] [uri:resiliency:agent/behavioral-ai/resiliency/rate-limiting}
 
 }
 

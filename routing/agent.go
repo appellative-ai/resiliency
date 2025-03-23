@@ -3,9 +3,9 @@ package routing
 import (
 	"errors"
 	"github.com/behavioral-ai/collective/event"
-	"github.com/behavioral-ai/core/fmtx"
 	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/messaging"
+	"github.com/behavioral-ai/resiliency/common"
 	"net/http"
 	"time"
 )
@@ -102,24 +102,13 @@ func (a *agentT) finalize() {
 }
 
 func (a *agentT) configure(m *messaging.Message) {
-	cfg := messaging.ConfigMapContent(m)
-	if cfg == nil {
-		messaging.Reply(m, messaging.ConfigEmptyStatusError(a), a.Uri())
+	var ok bool
+
+	if a.hostName, ok = common.AppHostName(a, m); !ok {
 		return
 	}
-	a.hostName = cfg[AppHostKey]
-	if a.hostName == "" {
-		messaging.Reply(m, messaging.ConfigContentStatusError(a, AppHostKey), a.Uri())
+	if a.timeout, ok = common.Timeout(a, m); !ok {
 		return
-	}
-	s := cfg[TimeoutKey]
-	if s != "" {
-		var err error
-		a.timeout, err = fmtx.ParseDuration(s)
-		if err != nil {
-			messaging.Reply(m, messaging.ConfigContentStatusError(a, TimeoutKey), a.Uri())
-			return
-		}
 	}
 	messaging.Reply(m, messaging.StatusOK(), a.Uri())
 }

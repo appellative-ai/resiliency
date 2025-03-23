@@ -7,12 +7,6 @@ import (
 )
 
 const (
-	RegionKey                 = "region"
-	ZoneKey                   = "zone"
-	SubZoneKey                = "sub-zone"
-	HostKey                   = "host"
-	InstanceIdKey             = "id"
-	RouteKey                  = "routing"
 	RegionZoneHostFmt         = "%v:%v.%v.%v"
 	RegionZoneSubZoneHostFmt  = "%v:%v.%v.%v.%v"
 	uriFmt                    = "%v:%v"
@@ -68,19 +62,19 @@ func (o Origin) String() string {
 func NewValues(o Origin) url.Values {
 	values := make(url.Values)
 	if o.Region != "" {
-		values.Add(RegionKey, o.Region)
+		values.Add(regionKey, o.Region)
 	}
 	if o.Zone != "" {
-		values.Add(ZoneKey, o.Zone)
+		values.Add(zoneKey, o.Zone)
 	}
 	if o.SubZone != "" {
-		values.Add(SubZoneKey, o.SubZone)
+		values.Add(subZoneKey, o.SubZone)
 	}
 	if o.Host != "" {
-		values.Add(HostKey, o.Host)
+		values.Add(hostKey, o.Host)
 	}
 	if o.Route != "" {
-		values.Add(RouteKey, o.Route)
+		values.Add(routeKey, o.Route)
 	}
 	return values
 }
@@ -88,11 +82,11 @@ func NewValues(o Origin) url.Values {
 func NewOrigin(values url.Values) Origin {
 	o := Origin{}
 	if values != nil {
-		o.Region = values.Get(RegionKey)
-		o.Zone = values.Get(ZoneKey)
-		o.SubZone = values.Get(SubZoneKey)
-		o.Host = values.Get(HostKey)
-		o.Route = values.Get(RouteKey)
+		o.Region = values.Get(regionKey)
+		o.Zone = values.Get(zoneKey)
+		o.SubZone = values.Get(subZoneKey)
+		o.Host = values.Get(hostKey)
+		o.Route = values.Get(routeKey)
 	}
 	return o
 }

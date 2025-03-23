@@ -3,6 +3,7 @@ package cache
 import (
 	"fmt"
 	"github.com/behavioral-ai/core/messaging"
+	"github.com/behavioral-ai/resiliency/common"
 )
 
 func ExampleNew() {
@@ -11,7 +12,7 @@ func ExampleNew() {
 
 	fmt.Printf("test: newAgent() -> %v\n", a.Uri())
 	m := make(map[string]string)
-	m[CacheHostKey] = "google.com"
+	m[common.CacheHostKey] = "google.com"
 	a.Message(messaging.NewConfigMessage(m))
 	fmt.Printf("test: Message() -> %v\n", a.hostName)
 

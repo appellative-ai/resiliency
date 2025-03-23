@@ -1,14 +1,12 @@
 package limit
 
 import (
-	"fmt"
 	"github.com/behavioral-ai/collective/content"
 	"github.com/behavioral-ai/collective/event"
 	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/resiliency/common"
+	"golang.org/x/time/rate"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -19,13 +17,13 @@ const (
 	NamespaceName = "resiliency:agent/behavioral-ai/resiliency/rate-limiting"
 	minDuration   = time.Second * 10
 	maxDuration   = time.Second * 15
-	version       = 1
+	defaultLimit  = rate.Limit(50)
+	defaultBurst  = 10
 )
 
 type agentT struct {
 	running bool
 	traffic string
-	origin  common.Origin
 	limiter *rateLimiter
 
 	handler  messaging.Agent
@@ -34,18 +32,20 @@ type agentT struct {
 	master   *messaging.Channel
 }
 
-func agentUri(origin common.Origin) string {
-	return fmt.Sprintf("%v%v#%v", NamespaceName, strconv.Itoa(version), origin)
-}
-
 // New - create a new agent1 agent
 func New() httpx.Agent {
-	return newAgent(common.Origin{}, nil)
+	return newAgent(nil, 0, 0)
 }
 
-func newAgent(origin common.Origin, handler messaging.Agent) *agentT {
+func newAgent(handler messaging.Agent, limit rate.Limit, burst int) *agentT {
 	a := new(agentT)
-	a.origin = origin
+	if limit == -1 {
+		limit = defaultLimit
+	}
+	if burst == -1 {
+		burst = defaultBurst
+	}
+	a.limiter = NewRateLimiter(limit, burst)
 	if handler != nil {
 		a.handler = handler
 	} else {
@@ -61,7 +61,7 @@ func newAgent(origin common.Origin, handler messaging.Agent) *agentT {
 func (a *agentT) String() string { return a.Uri() }
 
 // Uri - agent identifier
-func (a *agentT) Uri() string { return agentUri(a.origin) }
+func (a *agentT) Uri() string { return NamespaceName }
 
 // Message - message the agent
 func (a *agentT) Message(m *messaging.Message) {
@@ -137,30 +137,5 @@ func (a *agentT) masterFinalize() {
 }
 
 func (a *agentT) configure(m *messaging.Message) {
-	cfg := messaging.ConfigMapContent(m)
-	if cfg == nil {
-		messaging.Reply(m, messaging.ConfigEmptyStatusError(a), a.Uri())
-		return
-	}
-	a.origin.Region = cfg[RegionKey]
-	if a.origin.Region == "" {
-		messaging.Reply(m, messaging.ConfigContentStatusError(a, RegionKey), a.Uri())
-		return
-	}
-	a.origin.Zone = cfg[ZoneKey]
-	if a.origin.Zone == "" {
-		messaging.Reply(m, messaging.ConfigContentStatusError(a, ZoneKey), a.Uri())
-		return
-	}
-	a.origin.SubZone = cfg[SubZoneKey]
-	if a.origin.SubZone == "" {
-		messaging.Reply(m, messaging.ConfigContentStatusError(a, SubZoneKey), a.Uri())
-		return
-	}
-	a.origin.Host = cfg[HostKey]
-	if a.origin.Host == "" {
-		messaging.Reply(m, messaging.ConfigContentStatusError(a, HostKey), a.Uri())
-		return
-	}
 	messaging.Reply(m, messaging.StatusOK(), a.Uri())
 }

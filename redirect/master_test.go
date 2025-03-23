@@ -5,13 +5,12 @@ import (
 	"github.com/behavioral-ai/collective/event"
 	"github.com/behavioral-ai/collective/event/eventtest"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/resiliency/common"
 	"time"
 )
 
 func _ExampleMaster() {
 	ch := make(chan struct{})
-	agent := newAgent(common.Origin{Region: common.WestRegion}, eventtest.New(event.NewTraceDispatcher()))
+	agent := newAgent(eventtest.New(event.NewTraceDispatcher()), "", 0)
 
 	go func() {
 		go masterAttend(agent, content.Resolver)
@@ -35,7 +34,6 @@ func _ExampleMaster() {
 
 func _ExampleMaster_Observation() {
 	ch := make(chan struct{})
-	origin := common.Origin{Region: common.WestRegion}
 	msg := messaging.NewMessage(messaging.Master, messaging.ObservationEvent)
 	//msg.SetContent(contentTypeObservation, observation{origin: origin, latency: 2350, gradient: 15})
 	//test.LoadResiliencyContent()
@@ -43,7 +41,7 @@ func _ExampleMaster_Observation() {
 	//if !status.OK() {
 	//	messaging.Notify(status)
 	//}
-	agent := newAgent(origin, eventtest.New(event.NewTraceDispatcher()))
+	agent := newAgent(eventtest.New(event.NewTraceDispatcher()), "", 0)
 
 	go func() {
 		go masterAttend(agent, content.Resolver)

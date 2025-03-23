@@ -7,7 +7,7 @@ app-host : localhost:8080
 // timeout value for routing, redirect, and cache agents
 timeout : 1500ms
 
-// Origin for limit agent
+// Origin for access logging
 region : region
 zone : zone
 sub-zone : sub-zone

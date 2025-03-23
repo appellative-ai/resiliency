@@ -6,7 +6,6 @@ import (
 	"github.com/behavioral-ai/collective/event/eventtest"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/messaging/messagingtest"
-	"github.com/behavioral-ai/resiliency/common"
 	"time"
 )
 
@@ -17,7 +16,7 @@ const (
 func ExampleEmissary() {
 	ch := make(chan struct{})
 	s := messagingtest.NewTestSpanner(time.Second*2, testDuration)
-	agent := newAgent(common.Origin{Region: common.WestRegion, Zone: common.WestZoneA}, eventtest.New(event.NewTraceDispatcher()))
+	agent := newAgent(eventtest.New(event.NewTraceDispatcher()), "", 0)
 
 	go func() {
 		go emissaryAttend(agent, content.Resolver, s)
@@ -41,8 +40,7 @@ func ExampleEmissary() {
 func ExampleEmissary_Observation() {
 	ch := make(chan struct{})
 	s := messagingtest.NewTestSpanner(testDuration, testDuration)
-	origin := common.Origin{Region: common.WestRegion, Zone: common.WestZoneB}
-	agent := newAgent(origin, eventtest.New(event.NewTraceDispatcher()))
+	agent := newAgent(eventtest.New(event.NewTraceDispatcher()), "", 0)
 
 	go func() {
 		go emissaryAttend(agent, content.Resolver, s)

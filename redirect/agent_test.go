@@ -7,37 +7,24 @@ import (
 	"github.com/behavioral-ai/collective/event/eventtest"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/messaging/messagingtest"
-	"github.com/behavioral-ai/resiliency/common"
 	"time"
 )
 
 func ExampleNewAgent() {
-	origin := common.Origin{Region: "us-central", Zone: "c-zone-a", SubZone: "sub-zone", Host: "www.host.com"}
-	a := newAgent(common.Origin{}, nil)
-	fmt.Printf("test: newAgent() -> [origin:%v] [uri:%v}\n", a.origin, a.Uri())
-
-	m := make(map[string]string)
-	m[common.RegionKey] = origin.Region
-	m[common.ZoneKey] = origin.Zone
-	m[common.SubZoneKey] = origin.SubZone
-	m[common.HostKey] = origin.Host
-
-	a.Message(messaging.NewConfigMessage(m))
-	fmt.Printf("test: Message() -> %v\n", a.origin)
+	a := newAgent(nil, "localhost:8080", 0)
+	fmt.Printf("test: newAgent() -> [host:%v] [uri:%v}\n", a.hostName, a.Uri())
 
 	//Output:
-	//test: newAgent() -> [origin:] [uri:resiliency:agent/behavioral-ai/resiliency/redirect1#}
-	//test: Message() -> us-central.c-zone-a.sub-zone.www.host.com
+	//test: newAgent() -> [host:localhost:8080] [uri:resiliency:agent/behavioral-ai/resiliency/redirect}
 
 }
 
 func _ExampleAgent_LoadContent() {
 	ch := make(chan struct{})
 	dispatcher := event.NewTraceDispatcher()
-	origin := common.Origin{Region: common.WestRegion, Zone: common.WestZoneA}
 	s := messagingtest.NewTestSpanner(time.Second*2, testDuration)
 	//test.LoadResiliencyContent()
-	agent := newAgent(origin, eventtest.New(dispatcher))
+	agent := newAgent(eventtest.New(dispatcher), "", 0)
 
 	go func() {
 		go masterAttend(agent, content.Resolver)
@@ -58,8 +45,7 @@ func _ExampleAgent_LoadContent() {
 func _ExampleAgent_NotFound() {
 	ch := make(chan struct{})
 	dispatcher := event.NewTraceDispatcher()
-	origin := common.Origin{Region: common.WestRegion, Zone: common.WestZoneA}
-	agent := newAgent(origin, eventtest.New(dispatcher))
+	agent := newAgent(eventtest.New(dispatcher), "", 0)
 
 	go func() {
 		agent.Message(messaging.StartupMessage)
@@ -78,8 +64,7 @@ func _ExampleAgent_NotFound() {
 func _ExampleAgent_Resolver() {
 	ch := make(chan struct{})
 	dispatcher := event.NewTraceDispatcher()
-	origin := common.Origin{Region: common.WestRegion, Zone: common.WestZoneA}
-	agent := newAgent(origin, eventtest.New(dispatcher))
+	agent := newAgent(eventtest.New(dispatcher), "", 0)
 	//test2.Startup()
 
 	go func() {

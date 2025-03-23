@@ -3,13 +3,12 @@ package limit
 import (
 	"github.com/behavioral-ai/collective/content"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/resiliency/common"
 	"time"
 )
 
 func ExampleMaster() {
 	ch := make(chan struct{})
-	agent := newAgent(common.Origin{Region: common.WestRegion}, nil)
+	agent := newAgent(nil, -1, -1)
 
 	go func() {
 		go masterAttend(agent, content.Resolver)
@@ -33,7 +32,6 @@ func ExampleMaster() {
 
 func ExampleMaster_Observation() {
 	ch := make(chan struct{})
-	origin := common.Origin{Region: common.WestRegion}
 	//msg := messaging.NewMessage(messaging.Master, messaging.ObservationEvent)
 	//msg.SetContent(contentTypeObservation, observation{origin: origin, latency: 2350, gradient: 15})
 	//test.LoadResiliencyContent()
@@ -41,7 +39,7 @@ func ExampleMaster_Observation() {
 	//if !status.OK() {
 	//	messaging.Notify(status)
 	//}
-	agent := newAgent(origin, nil)
+	agent := newAgent(nil, -1, -1)
 
 	go func() {
 		go masterAttend(agent, content.Resolver)
