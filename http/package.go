@@ -30,14 +30,6 @@ func Exchange(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	host.Exchange(w, r, chain)
-	/*
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
-		} else {
-			httpx.WriteResponse(w, resp.Header, resp.StatusCode, resp.Body, r.Header)
-		}
-	*/
 }
 
 func opsRequest(w http.ResponseWriter, r *http.Request) {

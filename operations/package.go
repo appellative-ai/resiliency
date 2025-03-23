@@ -6,21 +6,9 @@ import (
 	"github.com/behavioral-ai/core/access"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/cache"
-	"github.com/behavioral-ai/resiliency/common"
 	"github.com/behavioral-ai/resiliency/limit"
 	"github.com/behavioral-ai/resiliency/redirect"
 	"github.com/behavioral-ai/resiliency/routing"
-)
-
-const (
-	TimeoutKey    = "timeout"
-	CacheHostKey  = cache.CacheHostKey
-	AppHostKey    = routing.AppHostKey
-	RegionKey     = common.RegionKey
-	ZoneKey       = common.ZoneKey
-	SubZoneKey    = common.SubZoneKey
-	HostKey       = common.HostKey
-	InstanceIdKey = common.InstanceIdKey
 )
 
 var (

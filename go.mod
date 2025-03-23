@@ -4,7 +4,7 @@ go 1.23.0
 
 require (
 	github.com/behavioral-ai/collective v0.0.0-20250321221549-e4e478559cd0
-	github.com/behavioral-ai/core v0.0.0-20250322221220-ab518ad8f999
+	github.com/behavioral-ai/core v0.0.0-20250323130308-7d9b432918b7
 	golang.org/x/time v0.11.0
 )
 

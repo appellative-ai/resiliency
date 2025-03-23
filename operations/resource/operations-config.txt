@@ -1,0 +1,20 @@
+// cache service host for cache agent
+cache-host : localhost:8082
+
+// application service host for routing agent
+app-host : localhost:8080
+
+// timeout value for routing, redirect, and cache agents
+timeout : 1500ms
+
+// Origin for limit agent
+region : region
+zone : zone
+sub-zone : sub-zone
+host : host-name
+instance-id : instance-id
+
+
+
+
+
