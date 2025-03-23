@@ -114,12 +114,12 @@ func (a *agentT) dispatch(channel any, event1 string) {
 func (a *agentT) reviseTicker(resolver *content.Resolution, s messaging.Spanner) {
 }
 
-func (a *agentT) emissaryFinalize() {
+func (a *agentT) emissaryShutdown() {
 	a.emissary.Close()
 	a.ticker.Stop()
 }
 
-func (a *agentT) masterFinalize() {
+func (a *agentT) masterShutdown() {
 	a.master.Close()
 }
 

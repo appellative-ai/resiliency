@@ -20,7 +20,7 @@ func masterAttend(agent *agentT, resolver *content.Resolution) {
 			case messaging.ResumeEvent:
 				paused = false
 			case messaging.ShutdownEvent:
-				agent.masterFinalize()
+				agent.masterShutdown()
 				return
 			case messaging.ObservationEvent:
 				if paused {

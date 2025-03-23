@@ -29,7 +29,7 @@ func emissaryAttend(agent *agentT, resolver *content.Resolution, s messaging.Spa
 			case messaging.ResumeEvent:
 				paused = false
 			case messaging.ShutdownEvent:
-				agent.emissaryFinalize()
+				agent.emissaryShutdown()
 				return
 			default:
 			}
