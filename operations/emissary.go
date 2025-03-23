@@ -23,7 +23,7 @@ func emissaryAttend(agent *agentT) {
 				paused = false
 				agent.agents.Broadcast(messaging.ResumeMessage)
 			case messaging.ShutdownEvent:
-				agent.finalize()
+				agent.shutdown()
 				return
 			default:
 			}

@@ -8,10 +8,10 @@ app-host : localhost:8080
 timeout : 1500ms
 
 // Origin for access logging
-region : region
-zone : zone
+region   : region
+zone     : zone
 sub-zone : sub-zone
-host : host-name
+host     : host-name
 instance-id : instance-id
 
 

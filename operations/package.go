@@ -16,8 +16,6 @@ var (
 	Agent messaging.Agent
 )
 
-// Agent configuration
-
 // Configure - configure all agents
 func Configure(m *messaging.Message) {
 	if m.Event() == messaging.ConfigEvent && m.ContentType() == messaging.ContentTypeMap {

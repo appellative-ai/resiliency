@@ -55,8 +55,9 @@ func (a *agentT) Message(m *messaging.Message) {
 	if m == nil {
 		return
 	}
-	if m.Event() == messaging.StartupEvent {
+	if m.Event() == messaging.StartupEvent && !a.running {
 		a.run()
+		a.agents.Broadcast(m)
 		return
 	}
 	if !a.running {
@@ -78,7 +79,7 @@ func (a *agentT) dispatch(channel any, event1 string) {
 	a.handler.Message(event.NewDispatchMessage(a, channel, event1))
 }
 
-func (a *agentT) finalize() {
+func (a *agentT) shutdown() {
 	a.emissary.Close()
 	a.agents.Shutdown()
 }
