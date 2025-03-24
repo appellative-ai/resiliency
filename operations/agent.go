@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	NamespaceName = "resiliency:agent/behavioral-ai/agency/operations"
+	NamespaceName = "resiliency:agent/behavioral-ai/resiliency/operations"
 )
 
 // TODO : need host name
@@ -18,7 +18,6 @@ type agentT struct {
 	running bool
 
 	notifier event.NotifyFunc
-	emissary *messaging.Channel
 	agents   *messaging.Exchange
 }
 
@@ -39,8 +38,6 @@ func newAgent(notifier event.NotifyFunc) *agentT {
 	a.agents.RegisterMailbox(limit.Agent)
 	a.agents.RegisterMailbox(redirect.Agent)
 	a.agents.RegisterMailbox(routing.Agent)
-	a.emissary = messaging.NewEmissaryChannel()
-
 	return a
 }
 
@@ -55,24 +52,32 @@ func (a *agentT) Message(m *messaging.Message) {
 	if m == nil {
 		return
 	}
-	if m.Event() == messaging.StartupEvent && !a.running {
-		a.run()
+	switch m.Event() {
+	case messaging.StartupEvent:
 		a.agents.Broadcast(m)
-		return
+	case messaging.ShutdownEvent:
+		a.agents.Broadcast(m)
+	case messaging.PauseEvent:
+		a.agents.Broadcast(m)
+	case messaging.ResumeEvent:
+		a.agents.Broadcast(m)
+	case event.NotifyEvent:
+		a.notifier(event.NotifyContent(m))
+	case event.DispatchEvent:
+		/*
+			if m.ContentType() == ContentTypeDispatch {
+				a.dispatch(DispatchContent(m))
+				return
+			}
+		*/
+	case event.ActivityEvent:
+		/*
+			if m.ContentType() == ContentTypeActivity {
+				a.addActivity(ActivityContent(m))
+				return
+			}
+		*/
 	}
-	if !a.running {
-		return
-	}
-	a.emissary.C <- m
-}
-
-// Run - run the agent
-func (a *agentT) run() {
-	if a.running {
-		return
-	}
-	go emissaryAttend(a)
-	a.running = true
 }
 
 func (a *agentT) dispatch(channel any, event1 string) {
@@ -80,6 +85,5 @@ func (a *agentT) dispatch(channel any, event1 string) {
 }
 
 func (a *agentT) shutdown() {
-	a.emissary.Close()
 	a.agents.Shutdown()
 }

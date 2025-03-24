@@ -1,50 +1,18 @@
 package operations
 
 import (
+	"errors"
+	"github.com/behavioral-ai/collective/event"
 	"github.com/behavioral-ai/core/messaging"
-	"time"
+	"net/http"
 )
 
-func _ExampleAgent_NotFound() {
-	ch := make(chan struct{})
+func ExampleNewAgent() {
 	agent := newAgent(nil)
-
-	go func() {
-		agent.Message(messaging.StartupMessage)
-		time.Sleep(testDuration * 20)
-
-		messaging.Shutdown(agent)
-		time.Sleep(testDuration * 5)
-
-		ch <- struct{}{}
-	}()
-	<-ch
-	close(ch)
-
-	//Output:
-	//fail
-
-}
-
-func _ExampleAgent() {
-	ch := make(chan struct{})
-	//dispatcher := event.NewFilteredTraceDispatcher([]string{messaging.ResumeEvent, messaging.PauseEvent}, "")
-	agent := newAgent(nil)
-
-	go func() {
-		agent.Message(messaging.StartupMessage)
-		time.Sleep(testDuration * 6)
-		agent.Message(messaging.PauseMessage)
-		time.Sleep(testDuration * 6)
-		agent.Message(messaging.ResumeMessage)
-		time.Sleep(testDuration * 6)
-		messaging.Shutdown(agent)
-		time.Sleep(testDuration * 4)
-
-		ch <- struct{}{}
-	}()
-	<-ch
-	close(ch)
+	status := messaging.NewStatusError(http.StatusTeapot, errors.New("error"), agent.Uri())
+	status.WithMessage("notify message")
+	status.WithRequestId("123-request-id")
+	agent.Message(event.NewNotifyMessage(status))
 
 	//Output:
 	//fail

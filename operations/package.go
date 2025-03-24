@@ -17,8 +17,8 @@ var (
 	Agent messaging.Agent
 )
 
-func Initialize(notifier event.Notifier) {
-	Agent = New()
+func Initialize(notifier event.NotifyFunc) {
+	Agent = New(notifier)
 }
 
 // Configure - configure all agents
@@ -46,8 +46,7 @@ func Configure(m *messaging.Message) {
 func Message(event string) error {
 	switch event {
 	case messaging.StartupEvent:
-		if Agent == nil {
-			Agent = New()
+		if Agent != nil {
 			Agent.Message(messaging.StartupMessage)
 		}
 	case messaging.ShutdownEvent:
