@@ -31,7 +31,7 @@ func ExampleDo_Get() {
 
 }
 
-func xampleDo_Get_Timeout() {
+func ExampleDo_Get_Timeout() {
 	a := newAgent(eventtest.New(nil))
 	a.timeout = time.Millisecond * 10
 

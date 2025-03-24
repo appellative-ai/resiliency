@@ -26,6 +26,7 @@ type agentT struct {
 	hostName string
 	timeout  time.Duration
 
+	exchange httpx.Exchange
 	handler  messaging.Agent
 	ticker   *messaging.Ticker
 	emissary *messaging.Channel
@@ -34,14 +35,12 @@ type agentT struct {
 
 // New - create a new agent
 func New(handler messaging.Agent) httpx.Agent {
-	return newAgent(handler, "", 0)
+	return newAgent(handler)
 }
 
-func newAgent(handler messaging.Agent, hostName string, timeout time.Duration) *agentT {
+func newAgent(handler messaging.Agent) *agentT {
 	a := new(agentT)
-	a.hostName = hostName
-	a.timeout = timeout
-
+	a.exchange = httpx.Do
 	a.handler = handler
 	a.ticker = messaging.NewTicker(messaging.Emissary, maxDuration)
 	a.emissary = messaging.NewEmissaryChannel()
@@ -95,10 +94,17 @@ func (a *agentT) run() {
 	a.running = true
 }
 
+func (a *agentT) enabled() bool {
+	return false
+}
+
 // Exchange - chainable exchange
 func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
 	return func(req *http.Request) (resp *http.Response, err error) {
 		// TODO: if a redirect is configured, then process and ignore rest of pipeline
+		if a.enabled() {
+			return common.OkResponse, nil
+		}
 		if next != nil {
 			resp, err = next(req)
 		} else {

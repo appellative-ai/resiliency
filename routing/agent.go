@@ -5,6 +5,7 @@ import (
 	"github.com/behavioral-ai/collective/eventing"
 	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/messaging"
+	"github.com/behavioral-ai/core/uri"
 	"github.com/behavioral-ai/resiliency/common"
 	"net/http"
 	"time"
@@ -73,7 +74,7 @@ func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
 			a.handler.Message(eventing.NewNotifyMessage(status))
 			return &http.Response{StatusCode: http.StatusInternalServerError}, err
 		}
-		resp, err = a.do(r, common.NewUrl(a.hostName, r.URL))
+		resp, err = a.do(r, uri.BuildURL(a.hostName, "", r.URL.Path, r.URL.Query()))
 		if next != nil && resp.StatusCode == http.StatusOK {
 			resp, err = next(r)
 		}

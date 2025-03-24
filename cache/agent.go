@@ -7,6 +7,7 @@ import (
 	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/iox"
 	"github.com/behavioral-ai/core/messaging"
+	"github.com/behavioral-ai/core/uri"
 	"github.com/behavioral-ai/resiliency/common"
 	"io"
 	"net/http"
@@ -74,14 +75,14 @@ func (a *agentT) enabled(r *http.Request) bool {
 func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
 	return func(r *http.Request) (resp *http.Response, err error) {
 		var (
-			uri string
+			url string
 		)
 
 		if a.enabled(r) {
-			uri = common.NewUrl(a.hostName, r.URL)
+			url = uri.BuildURL(a.hostName, "", r.URL.Path, r.URL.Query())
 			h := httpx.CloneHeader(r.Header)
 			h.Add(iox.AcceptEncoding, "gzip")
-			resp, err = a.do(uri, h, http.MethodGet, nil)
+			resp, err = a.do(url, h, http.MethodGet, nil)
 			if resp.StatusCode == http.StatusOK {
 				resp.Header.Add(access.XCached, "true")
 				return resp, nil
@@ -95,7 +96,7 @@ func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
 				resp.Body = io.NopCloser(reader)
 				go func() {
 					h := httpx.CloneHeader(r.Header)
-					go a.do(uri, h, http.MethodPut, io.NopCloser(bufio.NewReader(buf)))
+					go a.do(url, h, http.MethodPut, io.NopCloser(bufio.NewReader(buf)))
 				}()
 			}
 		} else {

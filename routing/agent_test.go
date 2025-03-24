@@ -2,8 +2,11 @@ package routing
 
 import (
 	"fmt"
+	"github.com/behavioral-ai/collective/eventing/eventtest"
+	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/common"
+	"net/http"
 	"time"
 )
 
@@ -24,53 +27,33 @@ func ExampleNew() {
 
 }
 
-/*
-func _ExampleAgent_NotFound() {
-	ch := make(chan struct{})
-	agent := newAgent(messaging.Activity, messaging.Notify, messaging.NewTraceDispatcher())
+func testExchange(r *http.Request) (resp *http.Response, err error) {
+	resp = common.OkResponse
 
-	go func() {
-		agent.Run()
-		time.Sleep(testDuration * 20)
-
-		agent.Shutdown()
-		time.Sleep(testDuration * 5)
-
-		ch <- struct{}{}
-	}()
-	<-ch
-	close(ch)
-
-	//Output:
-	//fail
-
+	switch r.Method {
+	case http.MethodGet:
+	case http.MethodPut:
+	}
+	return
 }
 
-func ExampleAgent() {
-	ch := make(chan struct{})
-	dispatcher := event.NewFilteredTraceDispatcher([]string{messaging.ResumeEvent, messaging.PauseEvent}, "")
-	agent := newAgent("",eventtest.New(dispatcher)) //content.NewEphemeralResolver(), messaging.NewTraceDispatcher())
-	//test.Startup()
+func ExampleExchange() {
+	url := "http://localhost:8080/search?q=golang"
+	a := newAgent(eventtest.New(nil))
+	ex := a.Exchange(nil)
 
-	go func() {
-		agent.Run()
-		time.Sleep(testDuration * 6)
-		agent.Message(messaging.Pause)
-		time.Sleep(testDuration * 6)
-		agent.Message(messaging.Resume)
-		time.Sleep(testDuration * 6)
-		agent.Shutdown()
-		time.Sleep(testDuration * 4)
+	req, _ := http.NewRequest(http.MethodGet, url, nil)
+	req.Header.Add(httpx.XRequestId, "1234-request-id")
+	resp, err := ex(req)
+	fmt.Printf("test: Exchange() -> [resp:%v] [err:%v]\n", resp.StatusCode, err)
 
-		ch <- struct{}{}
-	}()
-	<-ch
-	close(ch)
+	a.hostName = "www.google.com"
+	req, _ = http.NewRequest(http.MethodGet, url, nil)
+	req.Header.Add(httpx.XRequestId, "1234-request-id")
+	resp, err = ex(req)
+	fmt.Printf("test: Exchange() -> [resp:%v] [err:%v]\n", resp.StatusCode, err)
 
 	//Output:
-	//fail
-
+	//test: Exchange() -> [resp:500] [err:host configuration is empty]
+	
 }
-
-
-*/

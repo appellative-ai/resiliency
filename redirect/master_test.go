@@ -10,7 +10,7 @@ import (
 
 func _ExampleMaster() {
 	ch := make(chan struct{})
-	agent := newAgent(eventtest.New(eventing.NewTraceDispatcher()), "", 0)
+	agent := newAgent(eventtest.New(eventing.NewTraceDispatcher()))
 
 	go func() {
 		go masterAttend(agent, content.Resolver)
@@ -41,7 +41,7 @@ func _ExampleMaster_Observation() {
 	//if !status.OK() {
 	//	messaging.Notify(status)
 	//}
-	agent := newAgent(eventtest.New(eventing.NewTraceDispatcher()), "", 0)
+	agent := newAgent(eventtest.New(eventing.NewTraceDispatcher()))
 
 	go func() {
 		go masterAttend(agent, content.Resolver)

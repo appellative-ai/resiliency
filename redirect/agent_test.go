@@ -11,7 +11,8 @@ import (
 )
 
 func ExampleNewAgent() {
-	a := newAgent(nil, "localhost:8080", 0)
+	a := newAgent(nil)
+	a.hostName = "localhost:8080"
 	fmt.Printf("test: newAgent() -> [host:%v] [uri:%v}\n", a.hostName, a.Uri())
 
 	//Output:
@@ -24,7 +25,7 @@ func _ExampleAgent_LoadContent() {
 	dispatcher := eventing.NewTraceDispatcher()
 	s := messagingtest.NewTestSpanner(time.Second*2, testDuration)
 	//test.LoadResiliencyContent()
-	agent := newAgent(eventtest.New(dispatcher), "", 0)
+	agent := newAgent(eventtest.New(dispatcher))
 
 	go func() {
 		go masterAttend(agent, content.Resolver)
@@ -45,7 +46,7 @@ func _ExampleAgent_LoadContent() {
 func _ExampleAgent_NotFound() {
 	ch := make(chan struct{})
 	dispatcher := eventing.NewTraceDispatcher()
-	agent := newAgent(eventtest.New(dispatcher), "", 0)
+	agent := newAgent(eventtest.New(dispatcher))
 
 	go func() {
 		agent.Message(messaging.StartupMessage)
@@ -64,7 +65,7 @@ func _ExampleAgent_NotFound() {
 func _ExampleAgent_Resolver() {
 	ch := make(chan struct{})
 	dispatcher := eventing.NewTraceDispatcher()
-	agent := newAgent(eventtest.New(dispatcher), "", 0)
+	agent := newAgent(eventtest.New(dispatcher))
 	//test2.Startup()
 
 	go func() {

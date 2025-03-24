@@ -16,7 +16,7 @@ const (
 func ExampleEmissary() {
 	ch := make(chan struct{})
 	s := messagingtest.NewTestSpanner(time.Second*2, testDuration)
-	agent := newAgent(eventtest.New(eventing.NewTraceDispatcher()), "", 0)
+	agent := newAgent(eventtest.New(eventing.NewTraceDispatcher()))
 
 	go func() {
 		go emissaryAttend(agent, content.Resolver, s)
@@ -40,7 +40,7 @@ func ExampleEmissary() {
 func ExampleEmissary_Observation() {
 	ch := make(chan struct{})
 	s := messagingtest.NewTestSpanner(testDuration, testDuration)
-	agent := newAgent(eventtest.New(eventing.NewTraceDispatcher()), "", 0)
+	agent := newAgent(eventtest.New(eventing.NewTraceDispatcher()))
 
 	go func() {
 		go emissaryAttend(agent, content.Resolver, s)

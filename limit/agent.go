@@ -1,8 +1,10 @@
 package limit
 
 import (
+	"fmt"
 	"github.com/behavioral-ai/collective/content"
 	"github.com/behavioral-ai/collective/eventing"
+	"github.com/behavioral-ai/core/access"
 	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/messaging"
 	"golang.org/x/time/rate"
@@ -26,6 +28,7 @@ type agentT struct {
 	traffic string
 	limiter *rateLimiter
 
+	exchange httpx.Exchange
 	handler  messaging.Agent
 	ticker   *messaging.Ticker
 	emissary *messaging.Channel
@@ -34,19 +37,14 @@ type agentT struct {
 
 // New - create a new agent1 agent
 func New(handler messaging.Agent) httpx.Agent {
-	return newAgent(handler, 0, 0)
+	return newAgent(handler)
 }
 
-func newAgent(handler messaging.Agent, limit rate.Limit, burst int) *agentT {
+func newAgent(handler messaging.Agent) *agentT {
 	a := new(agentT)
-	if limit == -1 {
-		limit = defaultLimit
-	}
-	if burst == -1 {
-		burst = defaultBurst
-	}
-	a.limiter = NewRateLimiter(limit, burst)
+	a.limiter = NewRateLimiter(defaultLimit, defaultBurst)
 
+	a.exchange = httpx.Do
 	a.handler = handler
 	a.ticker = messaging.NewTicker(messaging.Emissary, maxDuration)
 	a.emissary = messaging.NewEmissaryChannel()
@@ -103,7 +101,10 @@ func (a *agentT) run() {
 func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
 	return func(req *http.Request) (resp *http.Response, err error) {
 		if !a.limiter.Allow() {
-			return &http.Response{StatusCode: http.StatusTooManyRequests}, nil
+			h := make(http.Header)
+			h.Add(access.XRateLimit, fmt.Sprintf("%v", a.limiter.Limit()))
+			h.Add(access.XRateBurst, fmt.Sprintf("%v", a.limiter.Burst()))
+			return &http.Response{StatusCode: http.StatusTooManyRequests, Header: h}, nil
 		}
 		if next != nil {
 			resp, err = next(req)
