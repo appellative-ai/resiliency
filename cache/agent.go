@@ -2,9 +2,6 @@ package cache
 
 import (
 	"bytes"
-	"context"
-	"errors"
-	"fmt"
 	"github.com/behavioral-ai/collective/event"
 	"github.com/behavioral-ai/core/access"
 	"github.com/behavioral-ai/core/httpx"
@@ -12,7 +9,6 @@ import (
 	"github.com/behavioral-ai/resiliency/common"
 	"io"
 	"net/http"
-	"net/url"
 	"time"
 )
 
@@ -61,30 +57,6 @@ func (a *agentT) Message(m *messaging.Message) {
 	}
 }
 
-// Exchange - chainable exchange
-func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
-	return func(r *http.Request) (resp *http.Response, err error) {
-		if a.hostName == "" {
-			err = errors.New("cache host name is empty and not configured")
-			return &http.Response{StatusCode: http.StatusInternalServerError, Body: io.NopCloser(bytes.NewReader([]byte(err.Error())))}, err
-		}
-		url := newUrl(a.hostName, r.URL)
-		h := httpx.Copy(r.Header)
-		resp, err = a.get(url, h)
-		if resp.StatusCode == http.StatusOK {
-			resp.Header.Add(access.XCached, "true")
-			return resp, nil
-		}
-		if next != nil {
-			resp, err = next(r)
-			if resp.StatusCode == http.StatusOK {
-				go a.put(url, h, resp)
-			}
-		}
-		return
-	}
-}
-
 func (a *agentT) configure(m *messaging.Message) {
 	var ok bool
 
@@ -97,11 +69,43 @@ func (a *agentT) configure(m *messaging.Message) {
 	messaging.Reply(m, messaging.StatusOK(), a.Uri())
 }
 
-func (a *agentT) get(url string, h http.Header) (*http.Response, error) {
+//err = errors.New("cache host name is empty and not configured")
+//return &http.Response{StatusCode: http.StatusInternalServerError, Body: io.NopCloser(bytes.NewReader([]byte(err.Error())))}, err
+
+func (a *agentT) cacheEnabled() bool {
+	return a.hostName != ""
+}
+
+// Exchange - chainable exchange
+func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
+	return func(r *http.Request) (resp *http.Response, err error) {
+		uri := common.NewUrl(a.hostName, r.URL)
+		h := httpx.Copy(r.Header)
+
+		if a.cacheEnabled() {
+			resp, err = a.do(uri, h, http.MethodGet, nil)
+			if resp.StatusCode == http.StatusOK {
+				resp.Header.Add(access.XCached, "true")
+				return resp, nil
+			}
+		}
+		if next != nil {
+			resp, err = next(r)
+			if resp.StatusCode == http.StatusOK && a.cacheEnabled() {
+				go a.do(uri, h, http.MethodPut, resp.Body)
+			}
+		}
+		return
+	}
+}
+
+func (a *agentT) do(url string, h http.Header, method string, body io.ReadCloser) (*http.Response, error) {
+	ctx, cancel := common.NewContext(a.timeout)
+	if cancel != nil {
+		defer cancel()
+	}
 	start := time.Now().UTC()
-	ctx, cancel := context.WithTimeout(context.Background(), a.timeout)
-	defer cancel()
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	req, err := http.NewRequestWithContext(ctx, method, url, body)
 	if err != nil {
 		return &http.Response{StatusCode: http.StatusInternalServerError, Body: io.NopCloser(bytes.NewReader([]byte(err.Error())))}, err
 	}
@@ -115,10 +119,13 @@ func (a *agentT) get(url string, h http.Header) (*http.Response, error) {
 	return resp, nil
 }
 
+/*
 func (a *agentT) put(url string, h http.Header, appResp *http.Response) {
+	ctx,cancel := common.NewContext(a.timeout)
+	if cancel != nil {
+		defer cancel()
+	}
 	start := time.Now().UTC()
-	ctx, cancel := context.WithTimeout(context.Background(), a.timeout)
-	defer cancel()
 	req, err := http.NewRequestWithContext(ctx, http.MethodPut, url, appResp.Body)
 	if err != nil {
 		return
@@ -133,6 +140,5 @@ func (a *agentT) put(url string, h http.Header, appResp *http.Response) {
 	return
 }
 
-func newUrl(hostName string, url *url.URL) string {
-	return fmt.Sprintf("https://%v%v", hostName, url.String())
-}
+
+*/
