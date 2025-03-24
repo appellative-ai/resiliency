@@ -11,20 +11,11 @@ import (
 	"time"
 )
 
-func (a *agentT) do(url string, h http.Header, method string, r io.Reader) (*http.Response, error) {
-	var (
-		req *http.Request
-		err error
-	)
+func (a *agentT) do(url string, h http.Header, method string, r io.ReadCloser) (*http.Response, error) {
 	ctx, cancel := common.NewContext(a.timeout)
 	defer cancel()
 	start := time.Now().UTC()
-
-	if r == nil {
-		req, err = http.NewRequestWithContext(ctx, method, url, nil)
-	} else {
-		req, err = http.NewRequestWithContext(ctx, method, url, io.NopCloser(r))
-	}
+	req, err := http.NewRequestWithContext(ctx, method, url, r)
 	if err != nil {
 		status := messaging.NewStatusError(messaging.StatusInvalidArgument, err, a.Uri())
 		a.handler.Message(eventing.NewNotifyMessage(status))

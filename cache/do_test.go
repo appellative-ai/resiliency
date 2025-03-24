@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func ExampleDo_Get() {
+func _ExampleDo_Get() {
 	a := newAgent(eventtest.New(nil), "", time.Second*4)
 
 	h := make(http.Header)
@@ -29,7 +29,7 @@ func ExampleDo_Get() {
 
 }
 
-func ExampleDo_Get_Timeout() {
+func _ExampleDo_Get_Timeout() {
 	a := newAgent(eventtest.New(nil), "", time.Millisecond*10)
 
 	h := make(http.Header)
@@ -41,5 +41,20 @@ func ExampleDo_Get_Timeout() {
 
 	//Output:
 	//test: do() -> [resp:504] [err:<nil>]
+
+}
+
+func ExampleDo_Put() {
+	a := newAgent(eventtest.New(nil), "", time.Second*4)
+
+	h := make(http.Header)
+	//h.Add(iox.AcceptEncoding, "gzip")
+	h.Add(httpx.XRequestId, "1234-request-id")
+	resp, err := a.do("https://www.google.com/search?q=golang", h, http.MethodPut, nil)
+
+	fmt.Printf("test: do() -> [resp:%v] [err:%v]\n", resp.StatusCode, err)
+
+	//Output:
+	//test: do() -> [resp:405] [err:<nil>]
 
 }

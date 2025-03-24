@@ -95,7 +95,7 @@ func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
 				reader := io.TeeReader(resp.Body, buf)
 				resp.Body = io.NopCloser(reader)
 				h := httpx.CloneHeader(r.Header)
-				go a.do(uri, h, http.MethodPut, bufio.NewReader(buf))
+				go a.do(uri, h, http.MethodPut, io.NopCloser(bufio.NewReader(buf)))
 			}
 		}
 		return
