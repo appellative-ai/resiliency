@@ -2,7 +2,7 @@ package redirect
 
 import (
 	"github.com/behavioral-ai/collective/content"
-	"github.com/behavioral-ai/collective/event"
+	"github.com/behavioral-ai/collective/eventing"
 	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/common"
@@ -109,7 +109,7 @@ func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
 }
 
 func (a *agentT) dispatch(channel any, event1 string) {
-	a.handler.Message(event.NewDispatchMessage(a, channel, event1))
+	a.handler.Message(eventing.NewDispatchMessage(a, channel, event1))
 }
 
 func (a *agentT) reviseTicker(resolver *content.Resolution, s messaging.Spanner) {

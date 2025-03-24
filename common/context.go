@@ -15,13 +15,16 @@ const (
 	httpsScheme = "https"
 )
 
-var OkResponse = &http.Response{StatusCode: http.StatusOK}
+var (
+	OkResponse = &http.Response{StatusCode: http.StatusOK}
+	cancel     = func() {}
+)
 
 func NewContext(timeout time.Duration) (context.Context, func()) {
 	if timeout > 0 {
 		return context.WithTimeout(context.Background(), timeout)
 	}
-	return context.Background(), func() {}
+	return context.Background(), cancel
 }
 
 func NewUrl(hostName string, url *url.URL) string {

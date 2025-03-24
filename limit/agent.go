@@ -2,7 +2,7 @@ package limit
 
 import (
 	"github.com/behavioral-ai/collective/content"
-	"github.com/behavioral-ai/collective/event"
+	"github.com/behavioral-ai/collective/eventing"
 	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/messaging"
 	"golang.org/x/time/rate"
@@ -47,7 +47,7 @@ func newAgent(handler messaging.Agent, limit rate.Limit, burst int) *agentT {
 	}
 	a.limiter = NewRateLimiter(limit, burst)
 
-	a.handler = event.Agent
+	a.handler = handler
 	a.ticker = messaging.NewTicker(messaging.Emissary, maxDuration)
 	a.emissary = messaging.NewEmissaryChannel()
 	a.master = messaging.NewMasterChannel()
@@ -108,7 +108,7 @@ func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
 		if next != nil {
 			resp, err = next(req)
 			// TODO: need to update the response metrics
-			a.Message(nil)
+			//a.Message(nil)
 		} else {
 			resp = &http.Response{StatusCode: http.StatusOK}
 		}
@@ -117,7 +117,7 @@ func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
 }
 
 func (a *agentT) dispatch(channel any, event1 string) {
-	a.handler.Message(event.NewDispatchMessage(a, channel, event1))
+	a.handler.Message(eventing.NewDispatchMessage(a, channel, event1))
 }
 
 func (a *agentT) reviseTicker(resolver *content.Resolution, s messaging.Spanner) {

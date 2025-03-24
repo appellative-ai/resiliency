@@ -2,15 +2,15 @@ package redirect
 
 import (
 	"github.com/behavioral-ai/collective/content"
-	"github.com/behavioral-ai/collective/event"
-	"github.com/behavioral-ai/collective/event/eventtest"
+	"github.com/behavioral-ai/collective/eventing"
+	"github.com/behavioral-ai/collective/eventing/eventtest"
 	"github.com/behavioral-ai/core/messaging"
 	"time"
 )
 
 func _ExampleMaster() {
 	ch := make(chan struct{})
-	agent := newAgent(eventtest.New(event.NewTraceDispatcher()), "", 0)
+	agent := newAgent(eventtest.New(eventing.NewTraceDispatcher()), "", 0)
 
 	go func() {
 		go masterAttend(agent, content.Resolver)
@@ -41,7 +41,7 @@ func _ExampleMaster_Observation() {
 	//if !status.OK() {
 	//	messaging.Notify(status)
 	//}
-	agent := newAgent(eventtest.New(event.NewTraceDispatcher()), "", 0)
+	agent := newAgent(eventtest.New(eventing.NewTraceDispatcher()), "", 0)
 
 	go func() {
 		go masterAttend(agent, content.Resolver)

@@ -3,7 +3,7 @@ package operations
 import (
 	"errors"
 	"fmt"
-	"github.com/behavioral-ai/collective/event"
+	"github.com/behavioral-ai/collective/eventing"
 	"github.com/behavioral-ai/core/access"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/cache"
@@ -17,7 +17,7 @@ var (
 	Agent messaging.Agent
 )
 
-func Initialize(notifier event.NotifyFunc) {
+func Initialize(notifier eventing.NotifyFunc) {
 	Agent = New(notifier)
 }
 

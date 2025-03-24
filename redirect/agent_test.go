@@ -3,8 +3,8 @@ package redirect
 import (
 	"fmt"
 	"github.com/behavioral-ai/collective/content"
-	"github.com/behavioral-ai/collective/event"
-	"github.com/behavioral-ai/collective/event/eventtest"
+	"github.com/behavioral-ai/collective/eventing"
+	"github.com/behavioral-ai/collective/eventing/eventtest"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/messaging/messagingtest"
 	"time"
@@ -21,7 +21,7 @@ func ExampleNewAgent() {
 
 func _ExampleAgent_LoadContent() {
 	ch := make(chan struct{})
-	dispatcher := event.NewTraceDispatcher()
+	dispatcher := eventing.NewTraceDispatcher()
 	s := messagingtest.NewTestSpanner(time.Second*2, testDuration)
 	//test.LoadResiliencyContent()
 	agent := newAgent(eventtest.New(dispatcher), "", 0)
@@ -44,7 +44,7 @@ func _ExampleAgent_LoadContent() {
 
 func _ExampleAgent_NotFound() {
 	ch := make(chan struct{})
-	dispatcher := event.NewTraceDispatcher()
+	dispatcher := eventing.NewTraceDispatcher()
 	agent := newAgent(eventtest.New(dispatcher), "", 0)
 
 	go func() {
@@ -63,7 +63,7 @@ func _ExampleAgent_NotFound() {
 
 func _ExampleAgent_Resolver() {
 	ch := make(chan struct{})
-	dispatcher := event.NewTraceDispatcher()
+	dispatcher := eventing.NewTraceDispatcher()
 	agent := newAgent(eventtest.New(dispatcher), "", 0)
 	//test2.Startup()
 

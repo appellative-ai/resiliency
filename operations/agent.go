@@ -1,7 +1,7 @@
 package operations
 
 import (
-	"github.com/behavioral-ai/collective/event"
+	"github.com/behavioral-ai/collective/eventing"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/cache"
 	"github.com/behavioral-ai/resiliency/limit"
@@ -17,27 +17,35 @@ const (
 type agentT struct {
 	running bool
 
-	notifier event.NotifyFunc
-	agents   *messaging.Exchange
+	agents     *messaging.Exchange
+	notifier   eventing.NotifyFunc
+	dispatcher eventing.Dispatcher
 }
 
 // New - create a new operations agent
-func New(notifier event.NotifyFunc) messaging.Agent {
-	return newAgent(notifier)
+func New(notifier eventing.NotifyFunc) messaging.Agent {
+	return newAgent(notifier, nil)
 }
 
-func newAgent(notifier event.NotifyFunc) *agentT {
+func newAgent(notifier eventing.NotifyFunc, dispatcher eventing.Dispatcher) *agentT {
 	a := new(agentT)
-	if notifier == nil {
-		a.notifier = event.OutputNotify
-	} else {
-		a.notifier = notifier
-	}
+
 	a.agents = messaging.NewExchange()
 	a.agents.RegisterMailbox(cache.Agent)
 	a.agents.RegisterMailbox(limit.Agent)
 	a.agents.RegisterMailbox(redirect.Agent)
 	a.agents.RegisterMailbox(routing.Agent)
+
+	if notifier == nil {
+		a.notifier = eventing.OutputNotify
+	} else {
+		a.notifier = notifier
+	}
+	if dispatcher == nil {
+		a.dispatcher = eventing.NewTraceDispatcher()
+	} else {
+		a.dispatcher = dispatcher
+	}
 	return a
 }
 
@@ -61,16 +69,12 @@ func (a *agentT) Message(m *messaging.Message) {
 		a.agents.Broadcast(m)
 	case messaging.ResumeEvent:
 		a.agents.Broadcast(m)
-	case event.NotifyEvent:
-		a.notifier(event.NotifyContent(m))
-	case event.DispatchEvent:
-		/*
-			if m.ContentType() == ContentTypeDispatch {
-				a.dispatch(DispatchContent(m))
-				return
-			}
-		*/
-	case event.ActivityEvent:
+	case eventing.NotifyEvent:
+		a.notifier(eventing.NotifyContent(m))
+	case eventing.DispatchEvent:
+		i := eventing.DispatchContent(m)
+		a.dispatcher.Dispatch(a, i.Channel, i.Event)
+	case eventing.ActivityEvent:
 		/*
 			if m.ContentType() == ContentTypeActivity {
 				a.addActivity(ActivityContent(m))

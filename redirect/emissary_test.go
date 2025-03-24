@@ -2,8 +2,8 @@ package redirect
 
 import (
 	"github.com/behavioral-ai/collective/content"
-	"github.com/behavioral-ai/collective/event"
-	"github.com/behavioral-ai/collective/event/eventtest"
+	"github.com/behavioral-ai/collective/eventing"
+	"github.com/behavioral-ai/collective/eventing/eventtest"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/messaging/messagingtest"
 	"time"
@@ -16,7 +16,7 @@ const (
 func ExampleEmissary() {
 	ch := make(chan struct{})
 	s := messagingtest.NewTestSpanner(time.Second*2, testDuration)
-	agent := newAgent(eventtest.New(event.NewTraceDispatcher()), "", 0)
+	agent := newAgent(eventtest.New(eventing.NewTraceDispatcher()), "", 0)
 
 	go func() {
 		go emissaryAttend(agent, content.Resolver, s)
@@ -40,7 +40,7 @@ func ExampleEmissary() {
 func ExampleEmissary_Observation() {
 	ch := make(chan struct{})
 	s := messagingtest.NewTestSpanner(testDuration, testDuration)
-	agent := newAgent(eventtest.New(event.NewTraceDispatcher()), "", 0)
+	agent := newAgent(eventtest.New(eventing.NewTraceDispatcher()), "", 0)
 
 	go func() {
 		go emissaryAttend(agent, content.Resolver, s)
