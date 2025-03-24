@@ -21,7 +21,7 @@ func NewContext(timeout time.Duration) (context.Context, func()) {
 	if timeout > 0 {
 		return context.WithTimeout(context.Background(), timeout)
 	}
-	return context.Background(), nil
+	return context.Background(), func() {}
 }
 
 func NewUrl(hostName string, url *url.URL) string {

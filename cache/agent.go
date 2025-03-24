@@ -1,8 +1,6 @@
 package cache
 
 import (
-	"bytes"
-	"github.com/behavioral-ai/collective/event"
 	"github.com/behavioral-ai/core/access"
 	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/messaging"
@@ -24,19 +22,16 @@ type agentT struct {
 }
 
 // New - create a new cache agent
-func New() httpx.Agent {
-	return newAgent(nil, "", 0)
+func New(handler messaging.Agent) httpx.Agent {
+	return newAgent(handler, "", 0)
 }
 
 func newAgent(handler messaging.Agent, hostName string, timeout time.Duration) *agentT {
 	a := new(agentT)
 	a.hostName = hostName
 	a.timeout = timeout
-	if handler == nil {
-		a.handler = event.Agent
-	} else {
-		a.handler = handler
-	}
+
+	a.handler = handler
 	return a
 }
 
@@ -72,17 +67,17 @@ func (a *agentT) configure(m *messaging.Message) {
 //err = errors.New("cache host name is empty and not configured")
 //return &http.Response{StatusCode: http.StatusInternalServerError, Body: io.NopCloser(bytes.NewReader([]byte(err.Error())))}, err
 
-func (a *agentT) cacheEnabled() bool {
-	return a.hostName != ""
+func (a *agentT) cacheEnabled(r *http.Request) bool {
+	return a.hostName != "" && r.Method == http.MethodGet
 }
 
 // Exchange - chainable exchange
 func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
 	return func(r *http.Request) (resp *http.Response, err error) {
 		uri := common.NewUrl(a.hostName, r.URL)
-		h := httpx.Copy(r.Header)
+		h := httpx.CloneHeader(r.Header)
 
-		if a.cacheEnabled() {
+		if a.cacheEnabled(r) {
 			resp, err = a.do(uri, h, http.MethodGet, nil)
 			if resp.StatusCode == http.StatusOK {
 				resp.Header.Add(access.XCached, "true")
@@ -91,7 +86,7 @@ func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
 		}
 		if next != nil {
 			resp, err = next(r)
-			if resp.StatusCode == http.StatusOK && a.cacheEnabled() {
+			if resp.StatusCode == http.StatusOK && a.cacheEnabled(r) {
 				go a.do(uri, h, http.MethodPut, resp.Body)
 			}
 		}
@@ -101,21 +96,22 @@ func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
 
 func (a *agentT) do(url string, h http.Header, method string, body io.ReadCloser) (*http.Response, error) {
 	ctx, cancel := common.NewContext(a.timeout)
-	if cancel != nil {
-		defer cancel()
-	}
+	defer cancel()
 	start := time.Now().UTC()
 	req, err := http.NewRequestWithContext(ctx, method, url, body)
 	if err != nil {
-		return &http.Response{StatusCode: http.StatusInternalServerError, Body: io.NopCloser(bytes.NewReader([]byte(err.Error())))}, err
+		status := messaging.NewStatusError(messaging.StatusInvalidArgument, err, a.Uri())
+		a.handler.Message(messaging.NewStatusMessage(status, ""))
+		return &http.Response{StatusCode: http.StatusInternalServerError}, err
 	}
 	req.Header = h
-	resp, _ := httpx.Do(req)
-	reasonCode := ""
-	if resp.StatusCode == http.StatusGatewayTimeout {
-		reasonCode = access.ControllerTimeout
+	resp, err1 := httpx.Do(req)
+	// Handle error, but continue as response status code reflects error
+	if err1 != nil {
+		status := messaging.NewStatusError(http.StatusBadRequest, err, a.Uri())
+		a.handler.Message(messaging.NewStatusMessage(status, ""))
 	}
-	access.Log(access.EgressTraffic, start, time.Since(start), req, resp, access.Controller{Timeout: a.timeout, Code: reasonCode})
+	access.Log(access.EgressTraffic, start, time.Since(start), req, resp, access.Controller{Timeout: a.timeout})
 	return resp, nil
 }
 

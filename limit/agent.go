@@ -33,8 +33,8 @@ type agentT struct {
 }
 
 // New - create a new agent1 agent
-func New() httpx.Agent {
-	return newAgent(nil, 0, 0)
+func New(handler messaging.Agent) httpx.Agent {
+	return newAgent(handler, 0, 0)
 }
 
 func newAgent(handler messaging.Agent, limit rate.Limit, burst int) *agentT {
@@ -46,11 +46,8 @@ func newAgent(handler messaging.Agent, limit rate.Limit, burst int) *agentT {
 		burst = defaultBurst
 	}
 	a.limiter = NewRateLimiter(limit, burst)
-	if handler != nil {
-		a.handler = handler
-	} else {
-		a.handler = event.Agent
-	}
+
+	a.handler = event.Agent
 	a.ticker = messaging.NewTicker(messaging.Emissary, maxDuration)
 	a.emissary = messaging.NewEmissaryChannel()
 	a.master = messaging.NewMasterChannel()

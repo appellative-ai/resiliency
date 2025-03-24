@@ -33,8 +33,8 @@ type agentT struct {
 }
 
 // New - create a new agent
-func New() httpx.Agent {
-	return newAgent(nil, "", 0)
+func New(handler messaging.Agent) httpx.Agent {
+	return newAgent(handler, "", 0)
 }
 
 func newAgent(handler messaging.Agent, hostName string, timeout time.Duration) *agentT {
@@ -42,6 +42,7 @@ func newAgent(handler messaging.Agent, hostName string, timeout time.Duration) *
 	a.hostName = hostName
 	a.timeout = timeout
 
+	a.handler = handler
 	a.ticker = messaging.NewTicker(messaging.Emissary, maxDuration)
 	a.emissary = messaging.NewEmissaryChannel()
 	a.master = messaging.NewMasterChannel()

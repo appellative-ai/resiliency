@@ -17,22 +17,22 @@ const (
 type agentT struct {
 	running bool
 
-	handler  messaging.Agent
+	notifier event.NotifyFunc
 	emissary *messaging.Channel
 	agents   *messaging.Exchange
 }
 
-// New - create a new operative
-func New() messaging.Agent {
-	return newAgent(nil)
+// New - create a new operations agent
+func New(notifier event.NotifyFunc) messaging.Agent {
+	return newAgent(notifier)
 }
 
-func newAgent(handler messaging.Agent) *agentT {
+func newAgent(notifier event.NotifyFunc) *agentT {
 	a := new(agentT)
-	if handler == nil {
-		a.handler = handler
+	if notifier == nil {
+		a.notifier = event.OutputNotify
 	} else {
-		a.handler = event.Agent
+		a.notifier = notifier
 	}
 	a.agents = messaging.NewExchange()
 	a.agents.RegisterMailbox(cache.Agent)
@@ -76,7 +76,7 @@ func (a *agentT) run() {
 }
 
 func (a *agentT) dispatch(channel any, event1 string) {
-	a.handler.Message(event.NewDispatchMessage(a, channel, event1))
+	//a.handler.Message(event.NewDispatchMessage(a, channel, event1))
 }
 
 func (a *agentT) shutdown() {

@@ -3,6 +3,7 @@ package operations
 import (
 	"errors"
 	"fmt"
+	"github.com/behavioral-ai/collective/event"
 	"github.com/behavioral-ai/core/access"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/cache"
@@ -15,6 +16,10 @@ import (
 var (
 	Agent messaging.Agent
 )
+
+func Initialize(notifier event.Notifier) {
+	Agent = New()
+}
 
 // Configure - configure all agents
 func Configure(m *messaging.Message) {

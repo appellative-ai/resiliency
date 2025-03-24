@@ -1,8 +1,6 @@
 package operations
 
 import (
-	"github.com/behavioral-ai/collective/event"
-	"github.com/behavioral-ai/collective/event/eventtest"
 	"github.com/behavioral-ai/core/messaging"
 	"time"
 )
@@ -30,8 +28,8 @@ func _ExampleAgent_NotFound() {
 
 func _ExampleAgent() {
 	ch := make(chan struct{})
-	dispatcher := event.NewFilteredTraceDispatcher([]string{messaging.ResumeEvent, messaging.PauseEvent}, "")
-	agent := newAgent(eventtest.New(dispatcher))
+	//dispatcher := event.NewFilteredTraceDispatcher([]string{messaging.ResumeEvent, messaging.PauseEvent}, "")
+	agent := newAgent(nil)
 
 	go func() {
 		agent.Message(messaging.StartupMessage)

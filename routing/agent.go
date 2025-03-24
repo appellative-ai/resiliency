@@ -2,7 +2,6 @@ package routing
 
 import (
 	"errors"
-	"github.com/behavioral-ai/collective/event"
 	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/common"
@@ -22,19 +21,16 @@ type agentT struct {
 }
 
 // New - create a new cache agent
-func New() httpx.Agent {
-	return newAgent(nil, "", 0)
+func New(handler messaging.Agent) httpx.Agent {
+	return newAgent(handler, "", 0)
 }
 
 func newAgent(handler messaging.Agent, hostName string, timeout time.Duration) *agentT {
 	a := new(agentT)
 	a.hostName = hostName
 	a.timeout = timeout
-	if handler == nil {
-		a.handler = event.Agent
-	} else {
-		a.handler = handler
-	}
+
+	a.handler = handler
 	return a
 }
 

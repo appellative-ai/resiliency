@@ -1,12 +1,11 @@
 package routing
 
-// Configuration map keys
-
-const (
-	HostKey    = "app-host" // Application host name
-	TimeoutKey = "timeout"
-)
+import "github.com/behavioral-ai/core/messaging"
 
 var (
-	Agent = New()
+	Agent messaging.Agent
 )
+
+func Initialize(ops messaging.Agent) {
+	Agent = New(ops)
+}
