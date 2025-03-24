@@ -8,7 +8,7 @@ import (
 
 func ExampleNew() {
 	//url := "https://www.google.com/search"
-	a := newAgent(nil, "", 0)
+	a := newAgent(nil)
 
 	fmt.Printf("test: newAgent() -> %v\n", a.Uri())
 	m := make(map[string]string)

@@ -9,8 +9,10 @@ import (
 	"time"
 )
 
-func _ExampleDo_Get() {
-	a := newAgent(eventtest.New(nil), "", time.Second*4)
+func ExampleDo_Get() {
+	a := newAgent(eventtest.New(nil))
+	a.hostName = ""
+	a.timeout = time.Second * 4
 
 	h := make(http.Header)
 	h.Add(iox.AcceptEncoding, "gzip")
@@ -29,8 +31,9 @@ func _ExampleDo_Get() {
 
 }
 
-func _ExampleDo_Get_Timeout() {
-	a := newAgent(eventtest.New(nil), "", time.Millisecond*10)
+func xampleDo_Get_Timeout() {
+	a := newAgent(eventtest.New(nil))
+	a.timeout = time.Millisecond * 10
 
 	h := make(http.Header)
 	h.Add(iox.AcceptEncoding, "gzip")
@@ -44,17 +47,22 @@ func _ExampleDo_Get_Timeout() {
 
 }
 
-func ExampleDo_Put() {
-	a := newAgent(eventtest.New(nil), "", time.Second*4)
+func testExchange(r *http.Request) (*http.Response, error) {
+	//fmt.Printf()
+	return &http.Response{StatusCode: http.StatusOK}, nil
+}
 
+func ExampleDo_Put() {
+	a := newAgent(eventtest.New(nil))
+	a.timeout = time.Second * 4
+	a.exchange = testExchange
 	h := make(http.Header)
-	//h.Add(iox.AcceptEncoding, "gzip")
 	h.Add(httpx.XRequestId, "1234-request-id")
 	resp, err := a.do("https://www.google.com/search?q=golang", h, http.MethodPut, nil)
 
 	fmt.Printf("test: do() -> [resp:%v] [err:%v]\n", resp.StatusCode, err)
 
 	//Output:
-	//test: do() -> [resp:405] [err:<nil>]
+	//test: do() -> [resp:200] [err:<nil>]
 
 }

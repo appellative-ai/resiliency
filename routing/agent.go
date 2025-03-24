@@ -2,6 +2,7 @@ package routing
 
 import (
 	"errors"
+	"github.com/behavioral-ai/collective/eventing"
 	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/common"
@@ -17,19 +18,19 @@ type agentT struct {
 	hostName string
 	timeout  time.Duration
 
-	handler messaging.Agent
+	exchange httpx.Exchange
+	handler  messaging.Agent
 }
 
 // New - create a new cache agent
 func New(handler messaging.Agent) httpx.Agent {
-	return newAgent(handler, "", 0)
+	return newAgent(handler)
 }
 
-func newAgent(handler messaging.Agent, hostName string, timeout time.Duration) *agentT {
+func newAgent(handler messaging.Agent) *agentT {
 	a := new(agentT)
-	a.hostName = hostName
-	a.timeout = timeout
 
+	a.exchange = httpx.Do
 	a.handler = handler
 	return a
 }
@@ -51,23 +52,6 @@ func (a *agentT) Message(m *messaging.Message) {
 	}
 }
 
-// Exchange - chainable exchange
-func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
-	return func(req *http.Request) (resp *http.Response, err error) {
-		if a.hostName == "" {
-			return &http.Response{StatusCode: http.StatusInternalServerError}, errors.New("configuration is empty and not configured")
-		}
-		// TODO: create request and send to the application
-
-		if next != nil {
-			resp, err = next(req)
-		} else {
-			resp = &http.Response{StatusCode: http.StatusOK}
-		}
-		return
-	}
-}
-
 func (a *agentT) configure(m *messaging.Message) {
 	var ok bool
 
@@ -78,4 +62,21 @@ func (a *agentT) configure(m *messaging.Message) {
 		return
 	}
 	messaging.Reply(m, messaging.StatusOK(), a.Uri())
+}
+
+// Exchange - chainable exchange
+func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
+	return func(r *http.Request) (resp *http.Response, err error) {
+		if a.hostName == "" {
+			err = errors.New("host configuration is empty")
+			status := messaging.NewStatusError(messaging.StatusInvalidArgument, err, a.Uri())
+			a.handler.Message(eventing.NewNotifyMessage(status))
+			return &http.Response{StatusCode: http.StatusInternalServerError}, err
+		}
+		resp, err = a.do(r, common.NewUrl(a.hostName, r.URL))
+		if next != nil && resp.StatusCode == http.StatusOK {
+			resp, err = next(r)
+		}
+		return
+	}
 }

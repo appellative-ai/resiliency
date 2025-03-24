@@ -8,7 +8,7 @@ import (
 )
 
 func ExampleNew() {
-	a := newAgent(nil, "", 0)
+	a := newAgent(nil)
 
 	fmt.Printf("test: newAgent() -> %v\n", a.Uri())
 

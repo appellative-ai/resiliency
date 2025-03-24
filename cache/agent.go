@@ -20,20 +20,19 @@ const (
 type agentT struct {
 	hostName string
 	timeout  time.Duration
-
-	handler messaging.Agent
+	exchange httpx.Exchange
+	handler  messaging.Agent
 }
 
 // New - create a new cache agent
 func New(handler messaging.Agent) httpx.Agent {
-	return newAgent(handler, "", 0)
+	return newAgent(handler)
 }
 
-func newAgent(handler messaging.Agent, hostName string, timeout time.Duration) *agentT {
+func newAgent(handler messaging.Agent) *agentT {
 	a := new(agentT)
-	a.hostName = hostName
-	a.timeout = timeout
 
+	a.exchange = httpx.Do
 	a.handler = handler
 	return a
 }
@@ -94,9 +93,14 @@ func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
 				buf := &bytes.Buffer{}
 				reader := io.TeeReader(resp.Body, buf)
 				resp.Body = io.NopCloser(reader)
-				h := httpx.CloneHeader(r.Header)
-				go a.do(uri, h, http.MethodPut, io.NopCloser(bufio.NewReader(buf)))
+				go func() {
+					h := httpx.CloneHeader(r.Header)
+					go a.do(uri, h, http.MethodPut, io.NopCloser(bufio.NewReader(buf)))
+				}()
 			}
+		} else {
+			resp = common.OkResponse
+			err = nil
 		}
 		return
 	}
