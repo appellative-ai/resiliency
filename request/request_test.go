@@ -67,6 +67,8 @@ func ExampleDo_Get_Timeout() {
 	fmt.Printf("test: Do() -> [resp:%v] [status:%v]\n", resp.StatusCode, status)
 
 	//Output:
-	//test: do() -> [resp:504] [err:<nil>]
+	//test: Do() -> [resp:200] [status:OK]
+	//test: iox.ReadAll() -> [buf:82920] [err:<nil>]
+	//test: Do() -> [resp:504] [status:OK]
 
 }
