@@ -7,12 +7,17 @@ import (
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/uri"
 	"github.com/behavioral-ai/resiliency/common"
+	"github.com/behavioral-ai/resiliency/request"
 	"net/http"
 	"time"
 )
 
 const (
 	NamespaceName = "resiliency:agent/behavioral-ai/resiliency/routing"
+)
+
+var (
+	serverErrorResponse = httpx.NewResponse(http.StatusInternalServerError, nil, nil)
 )
 
 type agentT struct {
@@ -24,7 +29,7 @@ type agentT struct {
 }
 
 // New - create a new cache agent
-func New(handler messaging.Agent) httpx.Agent {
+func New(handler messaging.Agent) request.Agent {
 	return newAgent(handler)
 }
 
@@ -53,6 +58,9 @@ func (a *agentT) Message(m *messaging.Message) {
 	}
 }
 
+func (a *agentT) Timeout() time.Duration { return a.timeout }
+func (a *agentT) Do() httpx.Exchange     { return a.exchange }
+
 func (a *agentT) configure(m *messaging.Message) {
 	var ok bool
 
@@ -72,9 +80,9 @@ func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
 			err = errors.New("host configuration is empty")
 			status := messaging.NewStatusError(messaging.StatusInvalidArgument, err, a.Uri())
 			a.handler.Message(eventing.NewNotifyMessage(status))
-			return &http.Response{StatusCode: http.StatusInternalServerError}, err
+			return serverErrorResponse, err
 		}
-		resp, err = a.do(r, uri.BuildURL(a.hostName, "", r.URL.Path, r.URL.Query()))
+		resp, err = a.do(r, uri.BuildURL(a.hostName, r.URL.Path, r.URL.Query()))
 		if next != nil && resp.StatusCode == http.StatusOK {
 			resp, err = next(r)
 		}

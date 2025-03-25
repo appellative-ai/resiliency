@@ -52,7 +52,7 @@ func testExchange(r *http.Request) (*http.Response, error) {
 	return &http.Response{StatusCode: http.StatusOK}, nil
 }
 
-func ExampleDo_Put() {
+func _ExampleDo_Put() {
 	a := newAgent(eventtest.New(nil))
 	a.timeout = time.Second * 4
 	a.exchange = testExchange

@@ -1,14 +1,15 @@
 package cache
 
 import (
-	"bufio"
 	"bytes"
+	"github.com/behavioral-ai/collective/eventing"
 	"github.com/behavioral-ai/core/access"
 	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/iox"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/uri"
 	"github.com/behavioral-ai/resiliency/common"
+	"github.com/behavioral-ai/resiliency/request"
 	"io"
 	"net/http"
 	"time"
@@ -16,6 +17,11 @@ import (
 
 const (
 	NamespaceName = "resiliency:agent/behavioral-ai/resiliency/cache"
+)
+
+var (
+	okResponse          = httpx.NewResponse(http.StatusOK, nil, nil)
+	serverErrorResponse = httpx.NewResponse(http.StatusInternalServerError, nil, nil)
 )
 
 type agentT struct {
@@ -26,7 +32,7 @@ type agentT struct {
 }
 
 // New - create a new cache agent
-func New(handler messaging.Agent) httpx.Agent {
+func New(handler messaging.Agent) request.Agent {
 	return newAgent(handler)
 }
 
@@ -55,6 +61,10 @@ func (a *agentT) Message(m *messaging.Message) {
 	}
 }
 
+func (a *agentT) HostName() string       { return a.hostName }
+func (a *agentT) Timeout() time.Duration { return a.timeout }
+func (a *agentT) Do() httpx.Exchange     { return a.exchange }
+
 func (a *agentT) configure(m *messaging.Message) {
 	var ok bool
 
@@ -79,30 +89,60 @@ func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
 		)
 
 		if a.enabled(r) {
-			url = uri.BuildURL(a.hostName, "", r.URL.Path, r.URL.Query())
-			h := httpx.CloneHeader(r.Header)
-			h.Add(iox.AcceptEncoding, "gzip")
-			resp, err = a.do(url, h, http.MethodGet, nil)
+			resp, err = a.cacheGet(r)
 			if resp.StatusCode == http.StatusOK {
-				resp.Header.Add(access.XCached, "true")
-				return resp, nil
+				return
 			}
 		}
 		if next != nil {
 			resp, err = next(r)
 			if a.enabled(r) && resp.StatusCode == http.StatusOK {
-				buf := &bytes.Buffer{}
-				reader := io.TeeReader(resp.Body, buf)
-				resp.Body = io.NopCloser(reader)
+				var buf []byte
+				buf, err = io.ReadAll(resp.Body)
+				if err != nil {
+					status := messaging.NewStatusError(messaging.StatusIOError, err, a.Uri())
+					a.handler.Message(eventing.NewNotifyMessage(status))
+					return serverErrorResponse, err
+				}
+				resp.ContentLength = int64(len(buf))
+				resp.Body = io.NopCloser(bytes.NewReader(buf))
 				go func() {
-					h := httpx.CloneHeader(r.Header)
-					go a.do(url, h, http.MethodPut, io.NopCloser(bufio.NewReader(buf)))
+					a.do(url, httpx.CloneHeader(r.Header), http.MethodPut, io.NopCloser(bytes.NewReader(buf)))
 				}()
 			}
 		} else {
-			resp = common.OkResponse
+			resp = okResponse
 			err = nil
 		}
 		return
 	}
 }
+
+func (a *agentT) cacheGet(r *http.Request) (resp *http.Response, err error) {
+	url := uri.BuildURL(a.hostName, r.URL.Path, r.URL.Query())
+	h := httpx.CloneHeader(r.Header)
+	if h.Get(iox.AcceptEncoding) == "" {
+		h.Add(iox.AcceptEncoding, iox.GzipEncoding)
+	}
+	resp, err = a.do(url, h, http.MethodGet, nil)
+	if resp.StatusCode == http.StatusOK {
+		resp.Header.Add(access.XCached, "true")
+		resp.ContentLength, err = httpx.TransformBody(resp)
+		if err != nil {
+			status := messaging.NewStatusError(messaging.StatusIOError, err, a.Uri())
+			a.handler.Message(eventing.NewNotifyMessage(status))
+			return serverErrorResponse, err
+		}
+	}
+	return
+}
+
+/*
+
+buf := &bytes.Buffer{}
+reader := io.TeeReader(resp.Body, buf)
+resp.Body = io.NopCloser(reader)
+go func() {
+
+
+*/

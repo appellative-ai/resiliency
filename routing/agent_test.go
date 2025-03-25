@@ -27,16 +27,6 @@ func ExampleNew() {
 
 }
 
-func testExchange(r *http.Request) (resp *http.Response, err error) {
-	resp = common.OkResponse
-
-	switch r.Method {
-	case http.MethodGet:
-	case http.MethodPut:
-	}
-	return
-}
-
 func ExampleExchange() {
 	url := "http://localhost:8080/search?q=golang"
 	a := newAgent(eventtest.New(nil))
@@ -54,6 +44,8 @@ func ExampleExchange() {
 	fmt.Printf("test: Exchange() -> [resp:%v] [err:%v]\n", resp.StatusCode, err)
 
 	//Output:
+	//notify-> 2025-03-25T14:44:49.521Z [resiliency:agent/behavioral-ai/resiliency/routing] [core:messaging.status] [] [Invalid Argument] [host configuration is empty]
 	//test: Exchange() -> [resp:500] [err:host configuration is empty]
-	
+	//test: Exchange() -> [resp:200] [err:<nil>]
+
 }
