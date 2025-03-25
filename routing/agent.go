@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/behavioral-ai/collective/eventing"
 	"github.com/behavioral-ai/core/httpx"
+	"github.com/behavioral-ai/core/iox"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/uri"
 	"github.com/behavioral-ai/resiliency/common"
@@ -77,15 +78,20 @@ func (a *agentT) configure(m *messaging.Message) {
 func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
 	return func(r *http.Request) (resp *http.Response, err error) {
 		if a.hostName == "" {
-			err = errors.New("host configuration is empty")
-			status := messaging.NewStatusError(messaging.StatusInvalidArgument, err, a.Uri())
+			status := messaging.NewStatusError(messaging.StatusInvalidArgument, errors.New("host configuration is empty"), a.Uri())
 			a.handler.Message(eventing.NewNotifyMessage(status))
-			return serverErrorResponse, err
+			return serverErrorResponse, status.Err
 		}
-		resp, err = a.do(r, uri.BuildURL(a.hostName, r.URL.Path, r.URL.Query()))
-		if next != nil && resp.StatusCode == http.StatusOK {
-			resp, err = next(r)
+		var status *messaging.Status
+
+		h := httpx.CloneHeader(r.Header)
+		if r.Method == http.MethodGet && h.Get(iox.AcceptEncoding) == "" {
+			h.Add(iox.AcceptEncoding, iox.GzipEncoding)
 		}
-		return
+		resp, status = request.Do(a, r.Method, uri.BuildURL(a.hostName, r.URL.Path, r.URL.Query()), h, r.Body)
+		if status.Err != nil {
+			a.handler.Message(eventing.NewNotifyMessage(status))
+		}
+		return resp, status.Err
 	}
 }

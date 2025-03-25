@@ -32,14 +32,14 @@ func Do(agent Agent, method string, url string, h http.Header, r io.ReadCloser) 
 	resp, err = agent.Do()(req)
 	if err != nil {
 		status = messaging.NewStatusError(http.StatusBadRequest, err, agent.Uri())
-	} else {
-		// transform the body as a cancel will close the connection and not allow reads
-		err = httpx.TransformBody(resp)
-		if err != nil {
-			status = messaging.NewStatusError(messaging.StatusIOError, err, agent.Uri())
-		} else {
-			status = messaging.StatusOK()
-		}
+		return
+	}
+	status = messaging.StatusOK()
+	// transform the body as a cancel will close the connection and not allow reads
+	err = httpx.TransformBody(resp)
+	if err != nil {
+		resp.StatusCode = http.StatusInternalServerError
+		status = messaging.NewStatusError(messaging.StatusIOError, err, agent.Uri())
 	}
 	access.Log(access.EgressTraffic, start, time.Since(start), req, resp, access.Controller{Timeout: agent.Timeout()})
 	return

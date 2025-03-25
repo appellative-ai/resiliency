@@ -32,7 +32,7 @@ func (a *agentT) do(r *http.Request, url string) (*http.Response, error) {
 	} else {
 		//var cnt int
 		// Read the body into a new reader, as the connection is still active and can timeout later
-		resp.ContentLength, err = httpx.TransformBody(resp)
+		err = httpx.TransformBody(resp)
 		//resp.ContentLength = int64(cnt)
 		if err != nil {
 			status := messaging.NewStatusError(messaging.StatusIOError, err, a.Uri())
