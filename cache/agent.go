@@ -115,42 +115,9 @@ func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
 			resp.ContentLength = int64(len(buf))
 			resp.Body = io.NopCloser(bytes.NewReader(buf))
 			go func() {
-				a.do(url, httpx.CloneHeader(r.Header), http.MethodPut, io.NopCloser(bytes.NewReader(buf)))
+				request.Do(a, http.MethodPut, url, httpx.CloneHeader(r.Header), io.NopCloser(bytes.NewReader(buf)))
 			}()
 		}
 		return
 	}
 }
-
-/*
-func (a *agentT) cacheGet(r *http.Request) (resp *http.Response, err error) {
-	url := uri.BuildURL(a.hostName, r.URL.Path, r.URL.Query())
-	h := httpx.CloneHeader(r.Header)
-	if h.Get(iox.AcceptEncoding) == "" {
-		h.Add(iox.AcceptEncoding, iox.GzipEncoding)
-	}
-	resp, err = a.do(url, h, http.MethodGet, nil)
-	if resp.StatusCode == http.StatusOK {
-		resp.Header.Add(access.XCached, "true")
-		err = httpx.TransformBody(resp)
-		if err != nil {
-			status := messaging.NewStatusError(messaging.StatusIOError, err, a.Uri())
-			a.handler.Message(eventing.NewNotifyMessage(status))
-			return serverErrorResponse, err
-		}
-	}
-	return
-}
-
-
-*/
-
-/*
-
-buf := &bytes.Buffer{}
-reader := io.TeeReader(resp.Body, buf)
-resp.Body = io.NopCloser(reader)
-go func() {
-
-
-*/
