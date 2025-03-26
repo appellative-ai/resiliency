@@ -20,10 +20,10 @@ type Requester interface {
 }
 
 func Do(agent Requester, method string, url string, h http.Header, r io.ReadCloser) (resp *http.Response, status *messaging.Status) {
-	ctx, cancel := httpx.NewContext(agent.Timeout())
-	defer cancel()
+	//ctx, cancel := httpx.NewContext(agent.Timeout())
+	//defer cancel()
 	start := time.Now().UTC()
-	req, err := http.NewRequestWithContext(ctx, method, url, r)
+	req, err := http.NewRequest(method, url, r)
 	if err != nil {
 		return serverErrorResponse, messaging.NewStatusError(messaging.StatusInvalidArgument, err, "")
 	}
