@@ -30,7 +30,7 @@ type agentT struct {
 }
 
 // New - create a new cache agent
-func New(handler messaging.Agent) request.Agent {
+func New(handler messaging.Agent) messaging.Agent {
 	return newAgent(handler)
 }
 
@@ -59,6 +59,7 @@ func (a *agentT) Message(m *messaging.Message) {
 	}
 }
 
+// Timeout - implementation for Requester interface
 func (a *agentT) Timeout() time.Duration { return a.timeout }
 func (a *agentT) Do() httpx.Exchange     { return a.exchange }
 
@@ -74,8 +75,8 @@ func (a *agentT) configure(m *messaging.Message) {
 	messaging.Reply(m, messaging.StatusOK(), a.Uri())
 }
 
-// Exchange - chainable exchange
-func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
+// Link - implementation for httpx.Chainable interface
+func (a *agentT) Link(next httpx.Exchange) httpx.Exchange {
 	return func(r *http.Request) (resp *http.Response, err error) {
 		if a.hostName == "" {
 			status := messaging.NewStatusError(messaging.StatusInvalidArgument, errors.New("host configuration is empty"), a.Uri())
@@ -90,6 +91,7 @@ func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
 		}
 		resp, status = request.Do(a, r.Method, uri.BuildURL(a.hostName, r.URL.Path, r.URL.Query()), h, r.Body)
 		if status.Err != nil {
+			status.WithAgent(a.Uri())
 			a.handler.Message(eventing.NewNotifyMessage(status))
 		}
 		return resp, status.Err

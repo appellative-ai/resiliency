@@ -31,7 +31,7 @@ type agentT struct {
 }
 
 // New - create a new cache agent
-func New(handler messaging.Agent) request.Agent {
+func New(handler messaging.Agent) messaging.Agent {
 	return newAgent(handler)
 }
 
@@ -79,8 +79,8 @@ func (a *agentT) enabled(r *http.Request) bool {
 	return a.hostName != "" && r.Method == http.MethodGet
 }
 
-// Exchange - chainable exchange
-func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
+// Link - chainable exchange
+func (a *agentT) Link(next httpx.Exchange) httpx.Exchange {
 	return func(r *http.Request) (resp *http.Response, err error) {
 		var (
 			url    string
@@ -97,6 +97,7 @@ func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
 				return resp, nil
 			}
 			if status.Err != nil {
+				status.WithAgent(a.Uri())
 				a.handler.Message(eventing.NewNotifyMessage(status))
 			}
 		}

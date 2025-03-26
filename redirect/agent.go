@@ -20,6 +20,10 @@ const (
 	version       = 1
 )
 
+var (
+	okResponse = httpx.NewResponse(http.StatusOK, nil, nil)
+)
+
 type agentT struct {
 	running  bool
 	traffic  string
@@ -34,7 +38,7 @@ type agentT struct {
 }
 
 // New - create a new agent
-func New(handler messaging.Agent) httpx.Agent {
+func New(handler messaging.Agent) messaging.Agent {
 	return newAgent(handler)
 }
 
@@ -98,12 +102,12 @@ func (a *agentT) enabled() bool {
 	return false
 }
 
-// Exchange - chainable exchange
-func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
+// Link - chainable exchange
+func (a *agentT) Link(next httpx.Exchange) httpx.Exchange {
 	return func(req *http.Request) (resp *http.Response, err error) {
 		// TODO: if a redirect is configured, then process and ignore rest of pipeline
 		if a.enabled() {
-			return common.OkResponse, nil
+			return okResponse, nil
 		}
 		if next != nil {
 			resp, err = next(req)

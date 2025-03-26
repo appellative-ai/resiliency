@@ -36,7 +36,7 @@ type agentT struct {
 }
 
 // New - create a new agent1 agent
-func New(handler messaging.Agent) httpx.Agent {
+func New(handler messaging.Agent) messaging.Agent {
 	return newAgent(handler)
 }
 
@@ -97,8 +97,8 @@ func (a *agentT) run() {
 	a.running = true
 }
 
-// Exchange - chainable exchange
-func (a *agentT) Exchange(next httpx.Exchange) httpx.Exchange {
+// Link - chainable exchange
+func (a *agentT) Link(next httpx.Exchange) httpx.Exchange {
 	return func(req *http.Request) (resp *http.Response, err error) {
 		if !a.limiter.Allow() {
 			h := make(http.Header)

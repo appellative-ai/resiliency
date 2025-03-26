@@ -1,6 +1,8 @@
 package routing
 
-import "github.com/behavioral-ai/core/messaging"
+import (
+	"github.com/behavioral-ai/core/messaging"
+)
 
 var (
 	Agent messaging.Agent

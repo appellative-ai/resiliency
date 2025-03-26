@@ -30,7 +30,7 @@ func ExampleNew() {
 func ExampleExchange() {
 	url := "http://localhost:8080/search?q=golang"
 	a := newAgent(eventtest.New(nil))
-	ex := a.Exchange(nil)
+	ex := a.Link(nil)
 
 	req, _ := http.NewRequest(http.MethodGet, url, nil)
 	req.Header.Add(httpx.XRequestId, "1234-request-id")

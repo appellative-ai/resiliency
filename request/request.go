@@ -14,24 +14,23 @@ var (
 	serverErrorResponse = httpx.NewResponse(http.StatusInternalServerError, nil, nil)
 )
 
-type Agent interface {
-	messaging.Agent
+type Requester interface {
 	Timeout() time.Duration
 	Do() httpx.Exchange
 }
 
-func Do(agent Agent, method string, url string, h http.Header, r io.ReadCloser) (resp *http.Response, status *messaging.Status) {
+func Do(agent Requester, method string, url string, h http.Header, r io.ReadCloser) (resp *http.Response, status *messaging.Status) {
 	ctx, cancel := httpx.NewContext(agent.Timeout())
 	defer cancel()
 	start := time.Now().UTC()
 	req, err := http.NewRequestWithContext(ctx, method, url, r)
 	if err != nil {
-		return serverErrorResponse, messaging.NewStatusError(messaging.StatusInvalidArgument, err, agent.Uri())
+		return serverErrorResponse, messaging.NewStatusError(messaging.StatusInvalidArgument, err, "")
 	}
 	req.Header = h
 	resp, err = agent.Do()(req)
 	if err != nil {
-		status = messaging.NewStatusError(http.StatusBadRequest, err, agent.Uri())
+		status = messaging.NewStatusError(http.StatusBadRequest, err, "")
 		return
 	}
 	status = messaging.StatusOK()
@@ -39,7 +38,7 @@ func Do(agent Agent, method string, url string, h http.Header, r io.ReadCloser) 
 	err = httpx.TransformBody(resp)
 	if err != nil {
 		resp.StatusCode = http.StatusInternalServerError
-		status = messaging.NewStatusError(messaging.StatusIOError, err, agent.Uri())
+		status = messaging.NewStatusError(messaging.StatusIOError, err, "")
 	}
 	access.Log(access.EgressTraffic, start, time.Since(start), req, resp, access.Controller{Timeout: agent.Timeout()})
 	return
