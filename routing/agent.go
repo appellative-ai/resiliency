@@ -59,10 +59,6 @@ func (a *agentT) Message(m *messaging.Message) {
 	}
 }
 
-// Timeout - implementation for Requester interface
-func (a *agentT) Timeout() time.Duration { return a.timeout }
-func (a *agentT) Do() httpx.Exchange     { return a.exchange }
-
 func (a *agentT) configure(m *messaging.Message) {
 	var ok bool
 
@@ -74,6 +70,10 @@ func (a *agentT) configure(m *messaging.Message) {
 	}
 	messaging.Reply(m, messaging.StatusOK(), a.Uri())
 }
+
+// Timeout - implementation for Requester interface
+func (a *agentT) Timeout() time.Duration   { return a.timeout }
+func (a *agentT) Exchange() httpx.Exchange { return a.exchange }
 
 // Link - implementation for httpx.Chainable interface
 func (a *agentT) Link(next httpx.Exchange) httpx.Exchange {
