@@ -6,8 +6,8 @@ import (
 	"github.com/behavioral-ai/core/iox"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/common"
-	"io"
 	"net/http"
+	"time"
 )
 
 func _ExampleNew() {
@@ -26,115 +26,47 @@ func _ExampleNew() {
 
 }
 
-var cache = make(map[string]*http.Response)
-
-func cachingExchange(r *http.Request) (*http.Response, error) {
-	key := r.URL.String()
-	switch r.Method {
-	case http.MethodGet:
-		if resp, ok := cache[key]; ok {
-			return resp, nil
-		}
-		return httpx.NewResponse(http.StatusNotFound, nil, nil), nil
-	case http.MethodPut:
-		cache[key] = &http.Response{StatusCode: http.StatusOK, Header: httpx.CloneHeader(r.Header), Body: r.Body} //io.NopCloser(bytes.NewReader(buf))}
-	}
-	return httpx.NewResponse(http.StatusOK, nil, nil), nil
+type requesterT struct {
+	hostName string
+	timeout  time.Duration
+	exchange httpx.Exchange
 }
+
+func newRequesterTest() *requesterT {
+	a := new(requesterT)
+	a.hostName = "www.google.com"
+	a.timeout = 0
+	a.exchange = httpx.Do
+	return a
+}
+func (a *requesterT) Timeout() time.Duration   { return a.timeout }
+func (a *requesterT) Exchange() httpx.Exchange { return a.exchange }
+func (a *requesterT) Uri() string              { return NamespaceName }
 
 func routingExchange(next httpx.Exchange) httpx.Exchange {
 	return func(r *http.Request) (resp *http.Response, err error) {
-		if r.Header.Get(iox.AcceptEncoding) == "" {
-			r.Header.Add(iox.AcceptEncoding, iox.GzipEncoding)
+		//agent := eventtest.New(nil)
+		//rt := newRequesterTest()
+		//if r.Header.Get(iox.AcceptEncoding) == "" {
+		//	r.Header.Add(iox.AcceptEncoding, iox.GzipEncoding)
+		//}
+		//url
+		//var status *messaging.Status
+		h := make(http.Header)
+		h.Add(iox.AcceptEncoding, iox.GzipEncoding)
+		req, _ := http.NewRequest(http.MethodGet, "https://www.google.com/search?q=golang", nil)
+		req.Header = h
+		resp, err = httpx.Do(req)
+		if err != nil {
+			fmt.Printf("test: httx.Do() -> [err:%v]\n", err)
 		}
-		resp, err = httpx.Do(r)
+
+		//url := uri.BuildURL("www.google.com", r.URL.Path, r.URL.Query())
+		//resp, status = request.Do(rt, r.Method, url, httpx.CloneHeaderWithEncoding(r), r.Body)
+		//if status.Err != nil {
+		//status := messaging.NewStatusError(resp.StatusCode, err, NamespaceName)
+		//	agent.Message(eventing.NewNotifyMessage(status))
+		//	}
 		return
 	}
 }
-
-func ExampleCache() {
-	url := "https://www.google.com/search?q=golang"
-	resp, err := putCache(url, 0)
-	fmt.Printf("test: cachingExchange.Put() [status:%v] [err:%v]\n", resp.StatusCode, err)
-
-	// Get cached response
-	req, _ := http.NewRequest(http.MethodGet, url, nil)
-	req.Header = make(http.Header)
-	req.Header.Add(iox.AcceptEncoding, iox.GzipEncoding)
-	resp, err = cachingExchange(req)
-	fmt.Printf("test: cachingExchange.Get() [status:%v] [header:%v] [err:%v]\n", resp.StatusCode, resp.Header != nil, err)
-
-	// verify that the response body can be read
-	if err == nil {
-		buf, err1 := io.ReadAll(resp.Body)
-		fmt.Printf("test: io.ReadAll() [err:%v] [buf:%v]\n", err1, len(buf))
-	}
-
-	//Output:
-	//fail
-
-}
-
-/*
-	if err == nil {
-		buf, err1 := io.ReadAll(resp.Body)
-		fmt.Printf("test: io.ReadAll() [err:%v] [buf:%v]\n", err1, len(buf))
-	}
-	fmt.Printf("test: httpx.Do() [err:%v] [encoding:%v]\n", err, resp.Header.Get(iox.ContentEncoding))
-*/
-
-/*
-func pathKey(r *http.Request) string {
-	newUrl := strings.Builder{}
-	//newUrl.WriteString(http.r.Header.Get("method")
-	path := r.URL.Path
-	if len(path) > 0 {
-		if path[:1] != "/" {
-			path += "/"
-		}
-	}
-	newUrl.WriteString(path)
-	query := r.URL.Query()
-	q := uri.BuildQuery(query)
-	if q != "" {
-		newUrl.WriteString("?")
-		newUrl.WriteString(q)
-	}
-	return newUrl.String()
-}
-
-
-*/
-/*
-	// create request and exchange
-	req, _ := http.NewRequest(http.MethodGet, url, nil)
-	req.Header = make(http.Header)
-	req.Header.Add(iox.AcceptEncoding, iox.GzipEncoding)
-	resp, err := httpx.Do(req)
-
-	// Read response body and send to caching exchange
-	httpx.TransformBody(resp)
-	cr, _ := http.NewRequest(http.MethodPut, url, resp.Body)
-	cr.Header = httpx.CloneHeader(resp.Header)
-	resp, err = cachingExchange(cr)
-	fmt.Printf("test: cachingExchange() [err:%v]\n", err)
-
-
-
-	httpx.TransformBody(resp)
-	cr, _ := http.NewRequestWithContext(context.Background(), http.MethodPut, url, resp.Body)
-	cr.Header = httpx.CloneHeader(resp.Header)
-	resp, err = cachingExchange(cr)
-	fmt.Printf("test: cachingExchange() [err:%v]\n", err)
-
-	cr, _ = http.NewRequestWithContext(context.Background(), http.MethodGet, url, nil)
-	//cr.Header = httpx.CloneHeader(resp.Header)
-	resp, err = cachingExchange(cr)
-	fmt.Printf("test: cachingExchange() [err:%v] [encoding:%v]\n", err, resp.Header.Get(iox.ContentEncoding))
-
-	if err == nil {
-		buf, err1 := io.ReadAll(resp.Body)
-		fmt.Printf("test: io.ReadAll() [err:%v] [buf:%v]\n", err1, len(buf))
-	}
-
-*/

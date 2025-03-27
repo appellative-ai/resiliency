@@ -9,6 +9,22 @@ import (
 	"time"
 )
 
+var cache = make(map[string]*http.Response)
+
+func cachingExchange(r *http.Request) (*http.Response, error) {
+	key := r.URL.String()
+	switch r.Method {
+	case http.MethodGet:
+		if resp, ok := cache[key]; ok {
+			return resp, nil
+		}
+		return httpx.NewResponse(http.StatusNotFound, nil, nil), nil
+	case http.MethodPut:
+		cache[key] = &http.Response{StatusCode: http.StatusOK, Header: httpx.CloneHeader(r.Header), Body: r.Body} //io.NopCloser(bytes.NewReader(buf))}
+	}
+	return httpx.NewResponse(http.StatusOK, nil, nil), nil
+}
+
 func putCache(url string, timeout time.Duration) (*http.Response, error) {
 	// create request and process exchange
 	ctx, cancel := httpx.NewContext(nil, timeout)

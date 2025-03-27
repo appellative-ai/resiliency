@@ -88,7 +88,9 @@ func (a *agentT) Link(next httpx.Exchange) httpx.Exchange {
 		if a.enabled(r) {
 			url = uri.BuildURL(a.hostName, r.URL.Path, r.URL.Query())
 			resp, status = request.Do(a, http.MethodGet, url, httpx.CloneHeaderWithEncoding(r), nil)
+			resp.Header.Add("cached", "false")
 			if resp.StatusCode == http.StatusOK {
+				resp.Header.Set("cached", "true")
 				return resp, nil
 			}
 			if status.Err != nil {
