@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/behavioral-ai/collective/eventing"
 	"github.com/behavioral-ai/core/httpx"
-	"github.com/behavioral-ai/core/iox"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/uri"
 	"github.com/behavioral-ai/resiliency/common"
@@ -85,13 +84,9 @@ func (a *agentT) Link(next httpx.Exchange) httpx.Exchange {
 		}
 		var status *messaging.Status
 
-		h := httpx.CloneHeader(r.Header)
-		if r.Method == http.MethodGet && h.Get(iox.AcceptEncoding) == "" {
-			h.Add(iox.AcceptEncoding, iox.GzipEncoding)
-		}
-		resp, status = request.Do(a, r.Method, uri.BuildURL(a.hostName, r.URL.Path, r.URL.Query()), h, r.Body)
+		url := uri.BuildURL(a.hostName, r.URL.Path, r.URL.Query())
+		resp, status = request.Do(a, r.Method, url, httpx.CloneHeaderWithEncoding(r), r.Body)
 		if status.Err != nil {
-			status.WithAgent(a.Uri())
 			a.handler.Message(eventing.NewNotifyMessage(status))
 		}
 		return resp, status.Err

@@ -66,7 +66,7 @@ func cachingExchange(r *http.Request) (*http.Response, error) {
 
 func ExampleCache() {
 	url := "https://www.google.com/search?q=golang"
-	ctx, cancel := httpx.NewContext(0)
+	ctx, cancel := httpx.NewContext(nil, 0)
 	defer cancel()
 
 	// create request and process

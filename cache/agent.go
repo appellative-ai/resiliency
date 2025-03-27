@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"github.com/behavioral-ai/collective/eventing"
 	"github.com/behavioral-ai/core/httpx"
-	"github.com/behavioral-ai/core/iox"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/uri"
 	"github.com/behavioral-ai/resiliency/common"
@@ -60,8 +59,8 @@ func (a *agentT) Message(m *messaging.Message) {
 	}
 }
 
-func (a *agentT) Timeout() time.Duration { return a.timeout }
-func (a *agentT) Do() httpx.Exchange     { return a.exchange }
+func (a *agentT) Timeout() time.Duration   { return a.timeout }
+func (a *agentT) Exchange() httpx.Exchange { return a.exchange }
 
 func (a *agentT) configure(m *messaging.Message) {
 	var ok bool
@@ -88,16 +87,11 @@ func (a *agentT) Link(next httpx.Exchange) httpx.Exchange {
 		)
 		if a.enabled(r) {
 			url = uri.BuildURL(a.hostName, r.URL.Path, r.URL.Query())
-			h := httpx.CloneHeader(r.Header)
-			if h.Get(iox.AcceptEncoding) == "" {
-				h.Add(iox.AcceptEncoding, iox.GzipEncoding)
-			}
-			resp, status = request.Do(a, http.MethodGet, url, h, nil)
+			resp, status = request.Do(a, http.MethodGet, url, httpx.CloneHeaderWithEncoding(r), nil)
 			if resp.StatusCode == http.StatusOK {
 				return resp, nil
 			}
 			if status.Err != nil {
-				status.WithAgent(a.Uri())
 				a.handler.Message(eventing.NewNotifyMessage(status))
 			}
 		}
@@ -116,7 +110,10 @@ func (a *agentT) Link(next httpx.Exchange) httpx.Exchange {
 			resp.ContentLength = int64(len(buf))
 			resp.Body = io.NopCloser(bytes.NewReader(buf))
 			go func() {
-				request.Do(a, http.MethodPut, url, httpx.CloneHeader(r.Header), io.NopCloser(bytes.NewReader(buf)))
+				_, status = request.Do(a, http.MethodPut, url, httpx.CloneHeader(r.Header), io.NopCloser(bytes.NewReader(buf)))
+				if status.Err != nil {
+					a.handler.Message(eventing.NewNotifyMessage(status))
+				}
 			}()
 		}
 		return
