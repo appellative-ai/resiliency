@@ -96,7 +96,7 @@ func (a *agentT) Link(next httpx.Exchange) httpx.Exchange {
 			}
 		}
 		if next == nil {
-			return okResponse, nil
+			return httpx.NewResponse(http.StatusNotFound, nil, nil), nil
 		}
 		resp, err = next(r)
 		if a.enabled(r) && resp.StatusCode == http.StatusOK {
