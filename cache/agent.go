@@ -2,6 +2,7 @@ package cache
 
 import (
 	"bytes"
+	"github.com/behavioral-ai/collective/content"
 	"github.com/behavioral-ai/collective/eventing"
 	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/messaging"
@@ -20,12 +21,17 @@ const (
 var (
 	okResponse          = httpx.NewResponse(http.StatusOK, nil, nil)
 	serverErrorResponse = httpx.NewResponse(http.StatusInternalServerError, nil, nil)
+	maxDuration         = time.Second * 15
 )
 
 type agentT struct {
+	running  bool
 	hostName string
 	timeout  time.Duration
+
 	exchange httpx.Exchange
+	ticker   *messaging.Ticker
+	emissary *messaging.Channel
 	handler  messaging.Agent
 }
 
@@ -38,6 +44,8 @@ func newAgent(handler messaging.Agent) *agentT {
 	a := new(agentT)
 
 	a.exchange = httpx.Do
+	a.ticker = messaging.NewTicker(messaging.Emissary, maxDuration)
+	a.emissary = messaging.NewEmissaryChannel()
 	a.handler = handler
 	return a
 }
@@ -57,28 +65,29 @@ func (a *agentT) Message(m *messaging.Message) {
 		a.configure(m)
 		return
 	}
+	if m.Event() == messaging.StartupEvent {
+		a.run()
+		return
+	}
+	if !a.running {
+		return
+	}
+	a.emissary.C <- m
+}
+
+// Run - run the agent
+func (a *agentT) run() {
+	if a.running {
+		return
+	}
+	go emissaryAttend(a, content.Resolver, nil)
+	a.running = true
 }
 
 // Log - implementation for Requester interface
 func (a *agentT) Log() bool                { return true }
 func (a *agentT) Timeout() time.Duration   { return a.timeout }
 func (a *agentT) Exchange() httpx.Exchange { return a.exchange }
-
-func (a *agentT) configure(m *messaging.Message) {
-	var ok bool
-
-	if a.hostName, ok = common.CacheHostName(a, m); !ok {
-		return
-	}
-	if a.timeout, ok = common.Timeout(a, m); !ok {
-		return
-	}
-	messaging.Reply(m, messaging.StatusOK(), a.Uri())
-}
-
-func (a *agentT) enabled(r *http.Request) bool {
-	return a.hostName != "" && r.Method == http.MethodGet
-}
 
 // Link - chainable exchange
 func (a *agentT) Link(next httpx.Exchange) httpx.Exchange {
@@ -124,4 +133,29 @@ func (a *agentT) Link(next httpx.Exchange) httpx.Exchange {
 		}
 		return
 	}
+}
+
+func (a *agentT) configure(m *messaging.Message) {
+	var ok bool
+
+	if a.hostName, ok = common.CacheHostName(a, m); !ok {
+		return
+	}
+	if a.timeout, ok = common.Timeout(a, m); !ok {
+		return
+	}
+	messaging.Reply(m, messaging.StatusOK(), a.Uri())
+}
+
+func (a *agentT) enabled(r *http.Request) bool {
+	return a.hostName != "" && r.Method == http.MethodGet
+}
+
+func (a *agentT) dispatch(channel any, event1 string) {
+	a.handler.Message(eventing.NewDispatchMessage(a, channel, event1))
+}
+
+func (a *agentT) emissaryShutdown() {
+	a.emissary.Close()
+	a.ticker.Stop()
 }
