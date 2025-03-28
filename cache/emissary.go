@@ -2,21 +2,27 @@ package cache
 
 import (
 	"github.com/behavioral-ai/collective/content"
+	"github.com/behavioral-ai/collective/eventing"
 	"github.com/behavioral-ai/core/messaging"
+	"github.com/behavioral-ai/resiliency/metrics"
 )
 
 // emissary attention
-func emissaryAttend(agent *agentT, resolver *content.Resolution, s messaging.Spanner) {
+func emissaryAttend(agent *agentT, resolver *content.Resolution) {
 	agent.dispatch(agent.emissary, messaging.StartupEvent)
 	paused := false
-	//agent.reviseTicker(resolver, s)
 
 	for {
 		select {
 		case <-agent.ticker.C():
 			agent.dispatch(agent.ticker, messaging.ObservationEvent)
 			if !paused {
-				//agent.reviseTicker(resolver, s)
+				p, status := content.Resolve[metrics.TrafficProfile](metrics.ProfileName, 1, resolver)
+				if !status.OK() {
+					agent.handler.Message(eventing.NewNotifyMessage(status))
+				} else {
+					agent.setEnabled(p)
+				}
 			}
 		default:
 		}

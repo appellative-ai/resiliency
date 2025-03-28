@@ -8,9 +8,11 @@ import (
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/uri"
 	"github.com/behavioral-ai/resiliency/common"
+	"github.com/behavioral-ai/resiliency/metrics"
 	"github.com/behavioral-ai/resiliency/request"
 	"io"
 	"net/http"
+	"sync/atomic"
 	"time"
 )
 
@@ -26,6 +28,7 @@ var (
 
 type agentT struct {
 	running  bool
+	enabled  *atomic.Bool
 	hostName string
 	timeout  time.Duration
 
@@ -42,7 +45,8 @@ func New(handler messaging.Agent) messaging.Agent {
 
 func newAgent(handler messaging.Agent) *agentT {
 	a := new(agentT)
-
+	a.enabled = new(atomic.Bool)
+	a.enabled.Store(true)
 	a.exchange = httpx.Do
 	a.ticker = messaging.NewTicker(messaging.Emissary, maxDuration)
 	a.emissary = messaging.NewEmissaryChannel()
@@ -80,7 +84,7 @@ func (a *agentT) run() {
 	if a.running {
 		return
 	}
-	go emissaryAttend(a, content.Resolver, nil)
+	go emissaryAttend(a, content.Resolver)
 	a.running = true
 }
 
@@ -96,7 +100,7 @@ func (a *agentT) Link(next httpx.Exchange) httpx.Exchange {
 			url    string
 			status *messaging.Status
 		)
-		if a.enabled(r) {
+		if a.cacheable(r) {
 			url = uri.BuildURL(a.hostName, r.URL.Path, r.URL.Query())
 			h := make(http.Header)
 			h.Add(httpx.XRequestId, r.Header.Get(httpx.XRequestId))
@@ -112,7 +116,7 @@ func (a *agentT) Link(next httpx.Exchange) httpx.Exchange {
 			return httpx.NewResponse(http.StatusNotFound, nil, nil), nil
 		}
 		resp, err = next(r)
-		if a.enabled(r) && resp.StatusCode == http.StatusOK {
+		if a.cacheable(r) && resp.StatusCode == http.StatusOK {
 			var buf []byte
 			buf, err = io.ReadAll(resp.Body)
 			if err != nil {
@@ -147,8 +151,22 @@ func (a *agentT) configure(m *messaging.Message) {
 	messaging.Reply(m, messaging.StatusOK(), a.Uri())
 }
 
-func (a *agentT) enabled(r *http.Request) bool {
-	return a.hostName != "" && r.Method == http.MethodGet
+func (a *agentT) cacheable(r *http.Request) bool {
+	if a.hostName == "" || r.Method != http.MethodGet {
+		return false
+	}
+	return a.enabled.Load()
+}
+
+func (a *agentT) setEnabled(p metrics.TrafficProfile) {
+	tp := p.Now()
+	if p.IsLow(tp) {
+		a.enabled.Store(false)
+	} else {
+		if p.IsHigh(tp) {
+			a.enabled.Store(true)
+		}
+	}
 }
 
 func (a *agentT) dispatch(channel any, event1 string) {
