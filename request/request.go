@@ -14,7 +14,7 @@ var (
 )
 
 type Requester interface {
-	Uri() string
+	Log() bool
 	Timeout() time.Duration
 	Exchange() httpx.Exchange
 }
@@ -23,15 +23,17 @@ func Do(agent Requester, method string, url string, h http.Header, r io.ReadClos
 	start := time.Now().UTC()
 	req, err := http.NewRequest(method, url, r)
 	if err != nil {
-		return serverErrorResponse, messaging.NewStatusError(messaging.StatusInvalidArgument, err, agent.Uri())
+		return serverErrorResponse, messaging.NewStatusError(messaging.StatusInvalidArgument, err, "")
 	}
 	req.Header = h
 	resp, err = httpx.ExchangeWithTimeout(agent.Timeout(), agent.Exchange())(req)
 	if err != nil {
-		status = messaging.NewStatusError(resp.StatusCode, err, agent.Uri())
+		status = messaging.NewStatusError(resp.StatusCode, err, "")
 		return
 	}
 	status = messaging.StatusOK()
-	access.Log(access.EgressTraffic, start, time.Since(start), req, resp, access.Controller{Timeout: agent.Timeout()})
+	if agent.Log() {
+		access.Log(access.EgressTraffic, start, time.Since(start), "", req, resp, access.Threshold{Timeout: agent.Timeout()})
+	}
 	return
 }

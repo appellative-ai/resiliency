@@ -21,6 +21,7 @@ var (
 )
 
 type agentT struct {
+	log      bool
 	hostName string
 	timeout  time.Duration
 
@@ -35,7 +36,7 @@ func New(handler messaging.Agent) messaging.Agent {
 
 func newAgent(handler messaging.Agent) *agentT {
 	a := new(agentT)
-
+	a.log = true
 	a.exchange = httpx.Do
 	a.handler = handler
 	return a
@@ -70,7 +71,8 @@ func (a *agentT) configure(m *messaging.Message) {
 	messaging.Reply(m, messaging.StatusOK(), a.Uri())
 }
 
-// Timeout - implementation for Requester interface
+// Log - implementation for Requester interface
+func (a *agentT) Log() bool                { return a.log }
 func (a *agentT) Timeout() time.Duration   { return a.timeout }
 func (a *agentT) Exchange() httpx.Exchange { return a.exchange }
 
@@ -87,7 +89,7 @@ func (a *agentT) Link(next httpx.Exchange) httpx.Exchange {
 		url := uri.BuildURL(a.hostName, r.URL.Path, r.URL.Query())
 		resp, status = request.Do(a, r.Method, url, httpx.CloneHeaderWithEncoding(r), r.Body)
 		if status.Err != nil {
-			a.handler.Message(eventing.NewNotifyMessage(status))
+			a.handler.Message(eventing.NewNotifyMessage(status.WithAgent(a.Uri())))
 		}
 		return resp, status.Err
 	}

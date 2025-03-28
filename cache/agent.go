@@ -59,6 +59,8 @@ func (a *agentT) Message(m *messaging.Message) {
 	}
 }
 
+// Log - implementation for Requester interface
+func (a *agentT) Log() bool                { return true }
 func (a *agentT) Timeout() time.Duration   { return a.timeout }
 func (a *agentT) Exchange() httpx.Exchange { return a.exchange }
 
@@ -87,14 +89,14 @@ func (a *agentT) Link(next httpx.Exchange) httpx.Exchange {
 		)
 		if a.enabled(r) {
 			url = uri.BuildURL(a.hostName, r.URL.Path, r.URL.Query())
-			resp, status = request.Do(a, http.MethodGet, url, httpx.CloneHeaderWithEncoding(r), nil)
-			resp.Header.Add("cached", "false")
+			h := make(http.Header)
+			h.Add(httpx.XRequestId, r.Header.Get(httpx.XRequestId))
+			resp, status = request.Do(a, http.MethodGet, url, h, nil)
 			if resp.StatusCode == http.StatusOK {
-				resp.Header.Set("cached", "true")
 				return resp, nil
 			}
 			if status.Err != nil {
-				a.handler.Message(eventing.NewNotifyMessage(status))
+				a.handler.Message(eventing.NewNotifyMessage(status.WithAgent(a.Uri())))
 			}
 		}
 		if next == nil {
@@ -112,9 +114,11 @@ func (a *agentT) Link(next httpx.Exchange) httpx.Exchange {
 			resp.ContentLength = int64(len(buf))
 			resp.Body = io.NopCloser(bytes.NewReader(buf))
 			go func() {
-				_, status = request.Do(a, http.MethodPut, url, httpx.CloneHeader(r.Header), io.NopCloser(bytes.NewReader(buf)))
+				h := httpx.CloneHeader(resp.Header)
+				h.Add(httpx.XRequestId, r.Header.Get(httpx.XRequestId))
+				_, status = request.Do(a, http.MethodPut, url, h, io.NopCloser(bytes.NewReader(buf)))
 				if status.Err != nil {
-					a.handler.Message(eventing.NewNotifyMessage(status))
+					a.handler.Message(eventing.NewNotifyMessage(status.WithAgent(a.Uri())))
 				}
 			}()
 		}
