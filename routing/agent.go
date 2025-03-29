@@ -2,7 +2,9 @@ package routing
 
 import (
 	"errors"
+	"fmt"
 	"github.com/behavioral-ai/collective/eventing"
+	"github.com/behavioral-ai/core/access"
 	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/uri"
@@ -90,6 +92,9 @@ func (a *agentT) Link(next httpx.Exchange) httpx.Exchange {
 		resp, status = request.Do(a, r.Method, url, httpx.CloneHeaderWithEncoding(r), r.Body)
 		if status.Err != nil {
 			a.handler.Message(eventing.NewNotifyMessage(status.WithAgent(a.Uri())))
+		}
+		if resp.StatusCode == http.StatusGatewayTimeout {
+			resp.Header.Add(access.XTimeout, fmt.Sprintf("%v", a.timeout))
 		}
 		return resp, status.Err
 	}
