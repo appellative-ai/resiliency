@@ -4,10 +4,11 @@ import (
 	"github.com/behavioral-ai/core/host"
 	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/resiliency/cache"
-	"github.com/behavioral-ai/resiliency/limit"
 	"github.com/behavioral-ai/resiliency/operations"
-	"github.com/behavioral-ai/resiliency/redirect"
 	"github.com/behavioral-ai/resiliency/routing"
+	"github.com/behavioral-ai/traffic/analytics"
+	"github.com/behavioral-ai/traffic/limiter"
+	"github.com/behavioral-ai/traffic/redirect"
 	"net/http"
 	"strings"
 )
@@ -21,7 +22,7 @@ const (
 
 var (
 	chain = httpx.BuildChain(host.AccessLogLink, host.AuthorizationLink, redirect.Agent,
-		cache.Agent, limit.Agent, routing.Agent)
+		analytics.Agent, cache.Agent, limiter.Agent, routing.Agent)
 )
 
 // Exchange - HTTP exchange function

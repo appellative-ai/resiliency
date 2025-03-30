@@ -20,6 +20,7 @@ github.com/behavioral-ai/collective v0.0.0-20250324163944-38cd510b9f02 h1:+mqoad
 github.com/behavioral-ai/collective v0.0.0-20250324163944-38cd510b9f02/go.mod h1:OEKr5KNmvvSq4NKLJ5wo0vC5TGzI+ISgR28xGImV5c4=
 github.com/behavioral-ai/collective v0.0.0-20250324190241-d28d1ef89428 h1:TyPyz1dQo9U+mWnb/ZhL0LhsrM0UBwefj/7zIrQfzHI=
 github.com/behavioral-ai/collective v0.0.0-20250324190241-d28d1ef89428/go.mod h1:0XkA/kL0tkj9+IV0HD+iBdEy4/h3eFjNJuPx6g0WLUU=
+github.com/behavioral-ai/collective v0.0.0-20250329120032-a4b664f92d63/go.mod h1:0XkA/kL0tkj9+IV0HD+iBdEy4/h3eFjNJuPx6g0WLUU=
 github.com/behavioral-ai/core v0.0.0-20250319152803-b9329988445e h1:7D+wKsfqxKIp4RWtCa35u8DSgX0PYain9zEttL1iqUc=
 github.com/behavioral-ai/core v0.0.0-20250319152803-b9329988445e/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
 github.com/behavioral-ai/core v0.0.0-20250319161339-4be0cacba215 h1:Cb7T4OXmxpGDPuOzm9zE7AwTXez643gWWO+7EgwEA8A=
@@ -102,6 +103,11 @@ github.com/behavioral-ai/core v0.0.0-20250328130904-24c6671f549c h1:ECjvc3YsmS4W
 github.com/behavioral-ai/core v0.0.0-20250328130904-24c6671f549c/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
 github.com/behavioral-ai/core v0.0.0-20250328155400-0d6816df227e h1:cP/GmMNx1Ou8s94RF0kc+V4+Sh5cUJrj3/pGMyfUHhg=
 github.com/behavioral-ai/core v0.0.0-20250328155400-0d6816df227e/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
+github.com/behavioral-ai/core v0.0.0-20250329124918-2930a274624b/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
+github.com/behavioral-ai/traffic v0.0.0-20250329135524-77b3ab8ee3ce h1:qNFPaMN4vUVpWuVT3R93gVu/6+g17uX+HQZRU9v+Rv0=
+github.com/behavioral-ai/traffic v0.0.0-20250329135524-77b3ab8ee3ce/go.mod h1:3WgmGVDjsHBWmmAhWLNWgwSdvl5AYn/kq7AjU/kA8RM=
+github.com/behavioral-ai/traffic v0.0.0-20250330221711-a1b68e957a2d h1:cIdMszAJmHPsoOujiFVI7CSVhZXilhBBYWaCaX7ogUU=
+github.com/behavioral-ai/traffic v0.0.0-20250330221711-a1b68e957a2d/go.mod h1:3WgmGVDjsHBWmmAhWLNWgwSdvl5AYn/kq7AjU/kA8RM=
 github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
 github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 golang.org/x/time v0.11.0 h1:/bpjEDfN9tkoN/ryeYHnv5hcMlc8ncjMcM4XBk5NWV0=
