@@ -8,9 +8,9 @@ import (
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/cache"
 	"github.com/behavioral-ai/resiliency/common"
-	"github.com/behavioral-ai/resiliency/limit"
-	"github.com/behavioral-ai/resiliency/redirect"
 	"github.com/behavioral-ai/resiliency/routing"
+	"github.com/behavioral-ai/traffic/limiter"
+	"github.com/behavioral-ai/traffic/redirect"
 )
 
 var (
@@ -31,11 +31,10 @@ func Configure(m *messaging.Message) {
 				Zone:       o.Zone,
 				SubZone:    o.SubZone,
 				Host:       o.Host,
-				Route:      "",
 				InstanceId: o.InstanceId,
 			})
 		}
-		limit.Agent.Message(m)
+		limiter.Agent.Message(m)
 		redirect.Agent.Message(m)
 		routing.Agent.Message(m)
 		cache.Agent.Message(m)

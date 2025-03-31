@@ -16,7 +16,7 @@ func _ExampleNew() {
 	fmt.Printf("test: newAgent() -> %v\n", a.Uri())
 	m := make(map[string]string)
 	m[common.CacheHostKey] = "google.com"
-	a.Message(messaging.NewConfigMessage(m))
+	a.Message(messaging.NewConfigMapMessage(m))
 	fmt.Printf("test: Message() -> %v\n", a.hostName)
 
 	//Output:

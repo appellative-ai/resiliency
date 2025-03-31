@@ -9,8 +9,8 @@ import (
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/uri"
 	"github.com/behavioral-ai/resiliency/common"
-	"github.com/behavioral-ai/resiliency/metrics"
 	"github.com/behavioral-ai/resiliency/request"
+	"github.com/behavioral-ai/traffic/metrics"
 	"io"
 	"net/http"
 	"sync/atomic"
@@ -115,7 +115,7 @@ func (a *agentT) Link(next httpx.Exchange) httpx.Exchange {
 			}
 		}
 		if next == nil {
-			return httpx.NewResponse(http.StatusNotFound, nil, nil), nil
+			return httpx.NewResponse(http.StatusNoContent, nil, nil), nil
 		}
 		resp, err = next(r)
 		if a.cacheable(r) && resp.StatusCode == http.StatusOK {
@@ -142,8 +142,14 @@ func (a *agentT) Link(next httpx.Exchange) httpx.Exchange {
 }
 
 func (a *agentT) configure(m *messaging.Message) {
-	var ok bool
+	var (
+		ok bool
+		ex httpx.Exchange
+	)
 
+	if ex, ok = httpx.ConfigExchangeContent(m); ok {
+		a.exchange = ex
+	}
 	if a.hostName, ok = common.CacheHostName(a, m); !ok {
 		return
 	}
@@ -162,10 +168,10 @@ func (a *agentT) cacheable(r *http.Request) bool {
 
 func (a *agentT) setEnabled(p metrics.TrafficProfile) {
 	tp := p.Now()
-	if p.IsLow(tp) {
+	if tp == metrics.TrafficOffPeak {
 		a.enabled.Store(false)
 	} else {
-		if p.IsHigh(tp) {
+		if tp == metrics.TrafficPeak {
 			a.enabled.Store(true)
 		}
 	}

@@ -4,7 +4,7 @@ import (
 	"github.com/behavioral-ai/collective/content"
 	"github.com/behavioral-ai/collective/eventing"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/resiliency/metrics"
+	"github.com/behavioral-ai/traffic/metrics"
 )
 
 // emissary attention
@@ -17,7 +17,7 @@ func emissaryAttend(agent *agentT, resolver *content.Resolution) {
 		case <-agent.ticker.C():
 			agent.dispatch(agent.ticker, messaging.ObservationEvent)
 			if !paused {
-				p, status := content.Resolve[metrics.TrafficProfile](metrics.ProfileName, 1, resolver)
+				p, status := content.Resolve[metrics.TrafficProfile](metrics.TrafficProfileName, 1, resolver)
 				if !status.OK() {
 					agent.handler.Message(eventing.NewNotifyMessage(status))
 				} else {

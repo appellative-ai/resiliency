@@ -62,8 +62,14 @@ func (a *agentT) Message(m *messaging.Message) {
 }
 
 func (a *agentT) configure(m *messaging.Message) {
-	var ok bool
+	var (
+		ok bool
+		ex httpx.Exchange
+	)
 
+	if ex, ok = httpx.ConfigExchangeContent(m); ok {
+		a.exchange = ex
+	}
 	if a.hostName, ok = common.AppHostName(a, m); !ok {
 		return
 	}
