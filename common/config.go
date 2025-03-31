@@ -47,6 +47,7 @@ func hostName(agent messaging.Agent, m *messaging.Message, key string) (string, 
 	return host, true
 }
 
+/*
 func SetOrigin(agent messaging.Agent, m *messaging.Message) (o Origin, ok bool) {
 	a := agent
 	cfg := messaging.ConfigMapContent(m)
@@ -84,3 +85,6 @@ func SetOrigin(agent messaging.Agent, m *messaging.Message) (o Origin, ok bool) 
 	messaging.Reply(m, messaging.StatusOK(), a.Uri())
 	return o, true
 }
+
+
+*/

@@ -2,6 +2,7 @@ package cache
 
 import (
 	"fmt"
+	"github.com/behavioral-ai/collective/eventing/eventtest"
 	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/iox"
 	"github.com/behavioral-ai/core/messaging"
@@ -11,7 +12,7 @@ import (
 
 func _ExampleNew() {
 	//url := "https://www.google.com/search"
-	a := newAgent(nil)
+	a := newAgent(eventtest.New())
 
 	fmt.Printf("test: newAgent() -> %v\n", a.Uri())
 	m := make(map[string]string)

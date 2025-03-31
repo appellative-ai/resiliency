@@ -11,13 +11,13 @@ import (
 )
 
 func ExampleNew() {
-	a := newAgent(nil)
+	a := newAgent(eventtest.New())
 
 	fmt.Printf("test: newAgent() -> %v\n", a.Uri())
 
 	m := make(map[string]string)
 	m[common.AppHostKey] = "google.com"
-	a.Message(messaging.NewConfigMessage(m))
+	a.Message(messaging.NewConfigMapMessage(m))
 	time.Sleep(time.Second * 2)
 	fmt.Printf("test: Message() -> %v\n", a.hostName)
 
@@ -29,7 +29,7 @@ func ExampleNew() {
 
 func ExampleExchange() {
 	url := "http://localhost:8080/search?q=golang"
-	a := newAgent(eventtest.New(nil))
+	a := newAgent(eventtest.New())
 	ex := a.Link(nil)
 
 	req, _ := http.NewRequest(http.MethodGet, url, nil)

@@ -14,7 +14,7 @@ import (
 )
 
 func ExampleExchange() {
-	agent := routing.New(eventtest.New(nil))
+	agent := routing.New(eventtest.New())
 
 	// configure exchange and host name
 	agent.Message(httpx.NewConfigExchangeMessage(Exchange))

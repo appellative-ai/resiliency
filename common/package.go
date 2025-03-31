@@ -1,7 +1,5 @@
 package common
 
-import "github.com/behavioral-ai/core/messaging"
-
 const (
 	AppHostKey    = "app-host"
 	CacheHostKey  = "cache-host"
@@ -29,9 +27,11 @@ const (
 	*/
 )
 
+/*
 var (
 	origin Origin
 	set    bool
 )
 
 type NewAgentFunc func(origin Origin, handler messaging.Agent)
+*/

@@ -14,7 +14,7 @@ import (
 )
 
 func ExampleExchange() {
-	agent := cache.New(eventtest.New(nil))
+	agent := cache.New(eventtest.New())
 
 	// configure exchange and host name
 	agent.Message(httpx.NewConfigExchangeMessage(Exchange))
