@@ -8,7 +8,7 @@ import (
 	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/uri"
-	"github.com/behavioral-ai/resiliency/common"
+	"github.com/behavioral-ai/resiliency/config"
 	"github.com/behavioral-ai/resiliency/request"
 	"github.com/behavioral-ai/traffic/metrics"
 	"io"
@@ -150,10 +150,10 @@ func (a *agentT) configure(m *messaging.Message) {
 	if ex, ok = httpx.ConfigExchangeContent(m); ok {
 		a.exchange = ex
 	}
-	if a.hostName, ok = common.CacheHostName(a, m); !ok {
+	if a.hostName, ok = config.CacheHostName(a, m); !ok {
 		return
 	}
-	if a.timeout, ok = common.Timeout(a, m); !ok {
+	if a.timeout, ok = config.Timeout(a, m); !ok {
 		return
 	}
 	messaging.Reply(m, messaging.StatusOK(), a.Uri())

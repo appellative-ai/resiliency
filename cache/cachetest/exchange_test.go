@@ -8,7 +8,6 @@ import (
 	"github.com/behavioral-ai/core/iox"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/cache"
-	"github.com/behavioral-ai/resiliency/common"
 	"net/http"
 	"net/http/httptest"
 )
@@ -19,7 +18,7 @@ func ExampleExchange() {
 	// configure exchange and host name
 	agent.Message(httpx.NewConfigExchangeMessage(Exchange))
 	cfg := make(map[string]string)
-	cfg[common.CacheHostKey] = "localhost:8082"
+	cfg[config.CacheHostKey] = "localhost:8082"
 	agent.Message(messaging.NewConfigMapMessage(cfg))
 
 	url := "https://localhost:8081/search?q=golang"

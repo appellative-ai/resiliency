@@ -1,9 +1,15 @@
-package common
+package config
 
 import (
 	"github.com/behavioral-ai/core/fmtx"
 	"github.com/behavioral-ai/core/messaging"
 	"time"
+)
+
+const (
+	AppHostKey   = "app-host"
+	CacheHostKey = "cache-host"
+	TimeoutKey   = "timeout"
 )
 
 func Timeout(agent messaging.Agent, m *messaging.Message) (time.Duration, bool) {
@@ -46,45 +52,3 @@ func hostName(agent messaging.Agent, m *messaging.Message, key string) (string, 
 	}
 	return host, true
 }
-
-/*
-func SetOrigin(agent messaging.Agent, m *messaging.Message) (o Origin, ok bool) {
-	a := agent
-	cfg := messaging.ConfigMapContent(m)
-	if cfg == nil {
-		messaging.Reply(m, messaging.ConfigEmptyStatusError(a), a.Uri())
-		return
-	}
-	region := cfg[regionKey]
-	if region == "" {
-		return
-	}
-	o.Region = region
-	o.Zone = cfg[zoneKey]
-	if o.Zone == "" {
-		messaging.Reply(m, messaging.ConfigContentStatusError(a, zoneKey), a.Uri())
-		return
-	}
-	o.SubZone = cfg[subZoneKey]
-	if o.SubZone == "" {
-		messaging.Reply(m, messaging.ConfigContentStatusError(a, subZoneKey), a.Uri())
-		return
-	}
-	o.Host = cfg[hostKey]
-	if o.Host == "" {
-		messaging.Reply(m, messaging.ConfigContentStatusError(a, hostKey), a.Uri())
-		return
-	}
-	o.InstanceId = cfg[instanceIdKey]
-	if o.Host == "" {
-		messaging.Reply(m, messaging.ConfigContentStatusError(a, instanceIdKey), a.Uri())
-		return
-	}
-	origin = o
-	set = true
-	messaging.Reply(m, messaging.StatusOK(), a.Uri())
-	return o, true
-}
-
-
-*/

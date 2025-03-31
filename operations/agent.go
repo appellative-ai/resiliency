@@ -5,6 +5,7 @@ import (
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/cache"
 	"github.com/behavioral-ai/resiliency/routing"
+	"github.com/behavioral-ai/traffic/analytics"
 	"github.com/behavioral-ai/traffic/limiter"
 	"github.com/behavioral-ai/traffic/redirect"
 )
@@ -33,6 +34,7 @@ func newAgent(notifier eventing.NotifyFunc, dispatcher eventing.Dispatcher) *age
 	a.agents = messaging.NewExchange()
 	a.agents.RegisterMailbox(cache.Agent)
 	a.agents.RegisterMailbox(limiter.Agent)
+	a.agents.RegisterMailbox(analytics.Agent)
 	a.agents.RegisterMailbox(redirect.Agent)
 	a.agents.RegisterMailbox(routing.Agent)
 

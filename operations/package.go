@@ -7,8 +7,8 @@ import (
 	"github.com/behavioral-ai/core/access"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/cache"
-	"github.com/behavioral-ai/resiliency/common"
 	"github.com/behavioral-ai/resiliency/routing"
+	"github.com/behavioral-ai/traffic/analytics"
 	"github.com/behavioral-ai/traffic/limiter"
 	"github.com/behavioral-ai/traffic/redirect"
 )
@@ -24,18 +24,13 @@ func Initialize(notifier eventing.NotifyFunc) {
 // Configure - configure all agents
 func Configure(m *messaging.Message) {
 	if m.Event() == messaging.ConfigEvent && m.ContentType() == messaging.ContentTypeMap {
-		o, ok := common.SetOrigin(Agent, m)
+		o, ok := newOriginFromMessage(Agent, m)
 		if ok {
-			access.SetOrigin(access.Origin{
-				Region:     o.Region,
-				Zone:       o.Zone,
-				SubZone:    o.SubZone,
-				Host:       o.Host,
-				InstanceId: o.InstanceId,
-			})
+			access.SetOrigin(o)
 		}
 		limiter.Agent.Message(m)
 		redirect.Agent.Message(m)
+		analytics.Agent.Message(m)
 		routing.Agent.Message(m)
 		cache.Agent.Message(m)
 	}

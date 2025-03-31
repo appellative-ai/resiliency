@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/core/fmtx"
 	"github.com/behavioral-ai/core/iox"
-	"github.com/behavioral-ai/resiliency/common"
 )
 
 const (
@@ -15,7 +14,7 @@ func ExampleConfig() {
 	m, err := iox.ReadMap(serviceConfigTxt)
 	fmt.Printf("test: ReadMap() -> [err:%v]\n", err)
 
-	timeout := m[common.TimeoutKey]
+	timeout := m[config.TimeoutKey]
 	if timeout != "" {
 		dur, err1 := fmtx.ParseDuration(timeout)
 		fmt.Printf("test: fmtx.ParseDuration(\"%v\") -> [dur:%v] [err:%v]\n", timeout, dur, err1)

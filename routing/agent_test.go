@@ -5,7 +5,7 @@ import (
 	"github.com/behavioral-ai/collective/eventing/eventtest"
 	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/resiliency/common"
+	"github.com/behavioral-ai/resiliency/config"
 	"net/http"
 	"time"
 )
@@ -16,7 +16,7 @@ func ExampleNew() {
 	fmt.Printf("test: newAgent() -> %v\n", a.Uri())
 
 	m := make(map[string]string)
-	m[common.AppHostKey] = "google.com"
+	m[config.AppHostKey] = "google.com"
 	a.Message(messaging.NewConfigMapMessage(m))
 	time.Sleep(time.Second * 2)
 	fmt.Printf("test: Message() -> %v\n", a.hostName)
