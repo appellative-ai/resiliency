@@ -4,8 +4,16 @@ github.com/behavioral-ai/core v0.0.0-20250401100236-9f78002e1d6b h1:WO8aPaswAIiB
 github.com/behavioral-ai/core v0.0.0-20250401100236-9f78002e1d6b/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
 github.com/behavioral-ai/core v0.0.0-20250401135116-c2b06322247b h1:jaOaBpJtMxmAUwa0MbvdFKFHVaeqtoTYp5ne9p5f/6k=
 github.com/behavioral-ai/core v0.0.0-20250401135116-c2b06322247b/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
+github.com/behavioral-ai/core v0.0.0-20250401184525-bb52736da8e4 h1:U96d+uHqiBl+hHFjnIfXT1tdfk7m7U7QSRdQji3y99Q=
+github.com/behavioral-ai/core v0.0.0-20250401184525-bb52736da8e4/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
 github.com/behavioral-ai/intermediary v0.0.0-20250401105046-39b94b228663 h1:R6+77Uvk4kU62wemix0wf6U0AQzDCUCXWAjyc9wQXlA=
 github.com/behavioral-ai/intermediary v0.0.0-20250401105046-39b94b228663/go.mod h1:KiL/uBijkgpQBjw4IvrnNLZ0wT2n9KejihJ3xpHxyvA=
+github.com/behavioral-ai/intermediary v0.0.0-20250401175616-3552dc628a9a h1:iQ1v4nixvlDaCXsYv7zQ4o2K1Kuu5Nl7BtmemK4ucFc=
+github.com/behavioral-ai/intermediary v0.0.0-20250401175616-3552dc628a9a/go.mod h1:KiL/uBijkgpQBjw4IvrnNLZ0wT2n9KejihJ3xpHxyvA=
+github.com/behavioral-ai/intermediary v0.0.0-20250401184332-cdef96ee3c5f h1:Ap/PJQFdrdrCnTdF+gUqAUpyh6C680RPzNwBivyGnTk=
+github.com/behavioral-ai/intermediary v0.0.0-20250401184332-cdef96ee3c5f/go.mod h1:KiL/uBijkgpQBjw4IvrnNLZ0wT2n9KejihJ3xpHxyvA=
+github.com/behavioral-ai/intermediary v0.0.0-20250401191431-4f7a31d38b01 h1:AZbOQc+wrs5ax/75MNrBC35j071grT7LWNmR8ww5sno=
+github.com/behavioral-ai/intermediary v0.0.0-20250401191431-4f7a31d38b01/go.mod h1:bnSr5ZeTZAELeMAydtBIv8UqzGdSWRXZDsm33T6vqs4=
 github.com/behavioral-ai/traffic v0.0.0-20250331154538-809afd74acd7 h1:8jk3gWpmf2UWEGjfpCy6WDEXBsLLdRacjjOWLjsJP0A=
 github.com/behavioral-ai/traffic v0.0.0-20250331154538-809afd74acd7/go.mod h1:dS4j9cb+FWd90Wm/HluRnWJPKmd+7EcBLI/AgqFq3o0=
 github.com/behavioral-ai/traffic v0.0.0-20250401115814-f5a432b59b21 h1:Zm9zsPDqByoZtNOtvfLgF9RZmDENJV/fSsbOFNIvAqc=

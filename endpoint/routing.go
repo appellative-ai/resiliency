@@ -6,11 +6,13 @@ import (
 	"github.com/behavioral-ai/core/iox"
 	"net/http"
 	"strings"
+	"time"
 )
 
 const (
 	googlePath = "/google/search"
 	yahooPath  = "/yahoo/search"
+	timeout    = time.Second * 10
 )
 
 func routingLink(next httpx.Exchange) httpx.Exchange {
@@ -31,7 +33,7 @@ func routingLink(next httpx.Exchange) httpx.Exchange {
 		h.Add(iox.AcceptEncoding, iox.GzipEncoding)
 		req, _ := http.NewRequest(http.MethodGet, uri, nil)
 		req.Header = h
-		resp, err = httpx.Do(req)
+		resp, err = httpx.ExchangeWithTimeout(timeout, nil)(req)
 		if err != nil {
 			fmt.Printf("test: httx.Do() -> [err:%v]\n", err)
 		}
