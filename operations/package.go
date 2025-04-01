@@ -19,6 +19,15 @@ var (
 
 func Initialize(notifier eventing.NotifyFunc) {
 	Agent = New(notifier)
+
+	// intermediary agents
+	cache.Initialize(Agent)
+	routing.Initialize(Agent)
+
+	// traffic agents
+	analytics.Initialize(Agent)
+	limiter.Initialize(Agent)
+	redirect.Initialize(Agent)
 }
 
 // Configure - configure all agents

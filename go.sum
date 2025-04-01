@@ -6,6 +6,8 @@ github.com/behavioral-ai/intermediary v0.0.0-20250401105046-39b94b228663 h1:R6+7
 github.com/behavioral-ai/intermediary v0.0.0-20250401105046-39b94b228663/go.mod h1:KiL/uBijkgpQBjw4IvrnNLZ0wT2n9KejihJ3xpHxyvA=
 github.com/behavioral-ai/traffic v0.0.0-20250331154538-809afd74acd7 h1:8jk3gWpmf2UWEGjfpCy6WDEXBsLLdRacjjOWLjsJP0A=
 github.com/behavioral-ai/traffic v0.0.0-20250331154538-809afd74acd7/go.mod h1:dS4j9cb+FWd90Wm/HluRnWJPKmd+7EcBLI/AgqFq3o0=
+github.com/behavioral-ai/traffic v0.0.0-20250401115814-f5a432b59b21 h1:Zm9zsPDqByoZtNOtvfLgF9RZmDENJV/fSsbOFNIvAqc=
+github.com/behavioral-ai/traffic v0.0.0-20250401115814-f5a432b59b21/go.mod h1:dS4j9cb+FWd90Wm/HluRnWJPKmd+7EcBLI/AgqFq3o0=
 github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
 github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 golang.org/x/time v0.11.0 h1:/bpjEDfN9tkoN/ryeYHnv5hcMlc8ncjMcM4XBk5NWV0=
