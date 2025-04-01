@@ -14,12 +14,10 @@ import (
 )
 
 var (
-	Agent messaging.Agent
+	Agent = New(nil)
 )
 
-func Initialize(notifier eventing.NotifyFunc) {
-	Agent = New(notifier)
-
+func init() {
 	// intermediary agents
 	cache.Initialize(Agent)
 	routing.Initialize(Agent)
@@ -28,6 +26,12 @@ func Initialize(notifier eventing.NotifyFunc) {
 	analytics.Initialize(Agent)
 	limiter.Initialize(Agent)
 	redirect.Initialize(Agent)
+}
+
+func Initialize(notifier eventing.NotifyFunc) {
+	if notifier != nil {
+		Agent.Message(newConfigNotifier(notifier))
+	}
 }
 
 // Configure - configure all agents

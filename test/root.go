@@ -13,11 +13,8 @@ import (
 	"github.com/behavioral-ai/traffic/redirect"
 )
 
-func init() {
-	operations.Initialize(nil)
-}
-
 func NewRootEndpoint() host.ExchangeHandler {
+	_ = operations.Agent
 	cache.Agent.Message(httpx.NewConfigExchangeMessage(cachetest.Exchange))
 	m := make(map[string]string)
 	m[config.CacheHostKey] = "localhost:8082"

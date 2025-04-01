@@ -62,6 +62,10 @@ func (a *agentT) Message(m *messaging.Message) {
 	if m == nil {
 		return
 	}
+	if m.Event() == messaging.ConfigEvent {
+		a.configure(m)
+		return
+	}
 	switch m.Event() {
 	case messaging.StartupEvent:
 		a.agents.Broadcast(m)
@@ -92,4 +96,11 @@ func (a *agentT) dispatch(channel any, event1 string) {
 
 func (a *agentT) shutdown() {
 	a.agents.Shutdown()
+}
+
+func (a *agentT) configure(m *messaging.Message) {
+	if n, ok := configNotifierContent(m); ok {
+		a.notifier = n
+	}
+	messaging.Reply(m, messaging.StatusOK(), a.Uri())
 }

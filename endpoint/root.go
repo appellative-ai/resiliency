@@ -13,7 +13,6 @@ import (
 )
 
 func NewRootEndpoint() host.ExchangeHandler {
-	//operations.Initialize(nil)
 	// configuring to not process upstream http requests for the cache and routing agents
 	cache.Agent.Message(httpx.NewConfigExchangeMessage(cachetest.Exchange))
 	m := make(map[string]string)
