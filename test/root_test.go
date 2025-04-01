@@ -11,7 +11,7 @@ import (
 func ExampleSearch_Google() {
 	h := make(http.Header)
 	h.Add(host.Authorization, "authorization")
-	req, _ := http.NewRequest(http.MethodGet, "https://localhost:8080/google/search?q=golang", nil)
+	req, _ := http.NewRequest(http.MethodGet, "https://localhost:8080/google/search?q=pascal", nil)
 	req.Header = h
 
 	rec := httptest.NewRecorder()

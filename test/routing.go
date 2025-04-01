@@ -19,10 +19,12 @@ func RoutingLink(next httpx.Exchange) httpx.Exchange {
 		if strings.HasPrefix(r.URL.Path, googlePath) {
 			values := r.URL.Query()
 			s := values.Encode()
-			uri = "https://www.google.com/search?" + s //r.URL.Query().Encode()
+			uri = "https://www.google.com/search?" + s
 		} else {
 			if strings.HasPrefix(r.URL.Path, yahooPath) {
-				uri = "https://search.yahoo.com/search?q=golang"
+				values := r.URL.Query()
+				s := values.Encode()
+				uri = "https://search.yahoo.com/search?" + s
 			} else {
 				return httpx.NewResponse(http.StatusBadRequest, nil, nil), err
 			}
