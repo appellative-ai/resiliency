@@ -20,7 +20,7 @@ func NewRootEndpoint() host.ExchangeHandler {
 	cache.Agent.Message(messaging.NewConfigMapMessage(m))
 
 	chain := httpx.BuildChain(host.AccessLogLink, host.AuthorizationLink, redirect.Agent,
-		analytics.Agent, cache.Agent, limiter.Agent, RoutingLink)
+		analytics.Agent, cache.Agent, limiter.Agent, routingLink)
 
 	return host.NewEndpoint(chain)
 }

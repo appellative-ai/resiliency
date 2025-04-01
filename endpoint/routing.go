@@ -13,7 +13,7 @@ const (
 	yahooPath  = "/yahoo/search"
 )
 
-func RoutingLink(next httpx.Exchange) httpx.Exchange {
+func routingLink(next httpx.Exchange) httpx.Exchange {
 	return func(r *http.Request) (resp *http.Response, err error) {
 		uri := ""
 		values := r.URL.Query()
