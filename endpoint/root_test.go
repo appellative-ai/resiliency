@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 )
 
-func ExampleSearch_Google() {
+func ExampleNewRootEndpoint() {
 	h := make(http.Header)
 	h.Add(host.Authorization, "authorization")
 	req, _ := http.NewRequest(http.MethodGet, "https://localhost:8080/google/search?q=pascal", nil)
@@ -20,14 +20,14 @@ func ExampleSearch_Google() {
 	fmt.Printf("test: RootEndpoint() -> [status:%v] [header:%v]\n", rec.Result().StatusCode, rec.Result().Header.Get(iox.ContentEncoding))
 
 	buf, err := iox.ReadAll(rec.Result().Body, nil)
-	fmt.Printf("test: iox.ReadAll() -> [buf:%v] [err:%v]\n", len(buf), err)
+	fmt.Printf("test: iox.ReadAll() -> [buf:%v] [content-type:%v] [err:%v]\n", len(buf), http.DetectContentType(buf), err)
 
 	rec = httptest.NewRecorder()
 	handler.Exchange(rec, req)
 	fmt.Printf("test: RootEndpoint() -> [status:%v] [header:%v]\n", rec.Result().StatusCode, rec.Result().Header.Get(iox.ContentEncoding))
 
 	buf, err = iox.ReadAll(rec.Result().Body, rec.Result().Header)
-	fmt.Printf("test: iox.ReadAll() -> [buf:%v] [err:%v]\n", len(buf), err)
+	fmt.Printf("test: iox.ReadAll() -> [buf:%v] [content-type:%v] [err:%v]\n", len(buf), http.DetectContentType(buf), err)
 
 	//Output:
 	//fail

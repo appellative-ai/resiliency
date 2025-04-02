@@ -22,8 +22,7 @@ func NewRootEndpoint() host.ExchangeHandler {
 	cache.Agent.Message(messaging.NewConfigMapMessage(m))
 
 	// overriding routing agent http exchange
-	routing.Agent.Message(httpx.NewConfigExchangeMessage(routingtest.Exchange))
-	m = make(map[string]string)
+	routing.Agent.Message(httpx.NewConfigExchangeMessage(routingtest.EchoExchange))
 	m[config.AppHostKey] = "localhost:8080"
 	//m[config.TimeoutKey] = "10ms"
 	routing.Agent.Message(messaging.NewConfigMapMessage(m))
