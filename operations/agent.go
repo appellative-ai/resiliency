@@ -1,13 +1,8 @@
 package operations
 
 import (
-	"github.com/behavioral-ai/collective/eventing"
+	"github.com/behavioral-ai/collective/exchange"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/intermediary/cache"
-	"github.com/behavioral-ai/intermediary/routing"
-	"github.com/behavioral-ai/traffic/analytics"
-	"github.com/behavioral-ai/traffic/limiter"
-	"github.com/behavioral-ai/traffic/redirect"
 )
 
 const (
@@ -16,38 +11,21 @@ const (
 
 // TODO : need host name
 type agentT struct {
-	running bool
-
-	agents     *messaging.Exchange
-	notifier   eventing.NotifyFunc
-	dispatcher eventing.Dispatcher
+	//running bool
+	//notifier   eventing.NotifyFunc
+	//activity   eventing.ActivityFunc
+	//dispatcher messaging.Dispatcher
 }
 
 // New - create a new operations agent
-func New(notifier eventing.NotifyFunc) messaging.Agent {
-	return newAgent(notifier, nil)
+func New() messaging.Agent {
+	return newAgent()
 }
 
-func newAgent(notifier eventing.NotifyFunc, dispatcher eventing.Dispatcher) *agentT {
+func newAgent() *agentT {
 	a := new(agentT)
-
-	a.agents = messaging.NewExchange()
-	a.agents.RegisterMailbox(cache.Agent)
-	a.agents.RegisterMailbox(limiter.Agent)
-	a.agents.RegisterMailbox(analytics.Agent)
-	a.agents.RegisterMailbox(redirect.Agent)
-	a.agents.RegisterMailbox(routing.Agent)
-
-	if notifier == nil {
-		a.notifier = eventing.OutputNotify
-	} else {
-		a.notifier = notifier
-	}
-	if dispatcher == nil {
-		a.dispatcher = eventing.NewTraceDispatcher()
-	} else {
-		a.dispatcher = dispatcher
-	}
+	//a.notifier = eventing.OutputNotify
+	//a.activity = eventing.OutputActivity
 	return a
 }
 
@@ -68,39 +46,19 @@ func (a *agentT) Message(m *messaging.Message) {
 	}
 	switch m.Event() {
 	case messaging.StartupEvent:
-		a.agents.Broadcast(m)
+		exchange.Broadcast(m)
 	case messaging.ShutdownEvent:
-		a.agents.Broadcast(m)
+		exchange.Broadcast(m)
 	case messaging.PauseEvent:
-		a.agents.Broadcast(m)
+		exchange.Broadcast(m)
 	case messaging.ResumeEvent:
-		a.agents.Broadcast(m)
-	case eventing.NotifyEvent:
-		a.notifier(eventing.NotifyContent(m))
-	case eventing.DispatchEvent:
-		i := eventing.DispatchContent(m)
-		a.dispatcher.Dispatch(a, i.Channel, i.Event)
-	case eventing.ActivityEvent:
-		/*
-			if m.ContentType() == ContentTypeActivity {
-				a.addActivity(ActivityContent(m))
-				return
-			}
-		*/
+		exchange.Broadcast(m)
 	}
-}
-
-func (a *agentT) dispatch(channel any, event1 string) {
-	//a.handler.Message(event.NewDispatchMessage(a, channel, event1))
-}
-
-func (a *agentT) shutdown() {
-	a.agents.Shutdown()
 }
 
 func (a *agentT) configure(m *messaging.Message) {
-	if n, ok := configNotifierContent(m); ok {
-		a.notifier = n
-	}
+	//if n, ok := configNotifierContent(m); ok {
+	//	a.notifier = n
+	//}
 	messaging.Reply(m, messaging.StatusOK(), a.Uri())
 }

@@ -10,7 +10,7 @@ const (
 )
 
 func newConfigNotifier(notifier eventing.NotifyFunc) *messaging.Message {
-	m := messaging.NewMessage(messaging.Control, messaging.ConfigEvent)
+	m := messaging.NewMessage(messaging.ChannelControl, messaging.ConfigEvent)
 	m.SetContent(contentTypeNotifier, notifier)
 	return m
 }

@@ -3,13 +3,10 @@ module github.com/behavioral-ai/resiliency
 go 1.23.0
 
 require (
-	github.com/behavioral-ai/collective v0.0.0-20250331150814-70e3e13b6a45
-	github.com/behavioral-ai/core v0.0.0-20250402155822-d033c4d2f9bd
-	github.com/behavioral-ai/intermediary v0.0.0-20250402162217-804bc9a90bf8
-	github.com/behavioral-ai/traffic v0.0.0-20250401115814-f5a432b59b21
+	github.com/behavioral-ai/collective v0.0.0-20250410180850-b4b03eece233
+	github.com/behavioral-ai/core v0.0.0-20250410133412-246780ea9b8b
+	github.com/behavioral-ai/intermediary v0.0.0-20250410183938-9ed2fe8767be
+	github.com/behavioral-ai/traffic v0.0.0-20250410181031-b38a9f6d1c64
 )
 
-require (
-	github.com/google/uuid v1.6.0 // indirect
-	golang.org/x/time v0.11.0 // indirect
-)
+require github.com/google/uuid v1.6.0 // indirect

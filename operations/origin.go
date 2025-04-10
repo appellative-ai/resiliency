@@ -6,15 +6,11 @@ import (
 )
 
 const (
-	RegionKey                 = "region"
-	ZoneKey                   = "zone"
-	SubZoneKey                = "sub-zone"
-	HostKey                   = "host"
-	InstanceIdKey             = "id"
-	RegionZoneHostFmt         = "%v:%v.%v.%v"
-	RegionZoneSubZoneHostFmt  = "%v:%v.%v.%v.%v"
-	uriFmt                    = "%v:%v"
-	RegionZoneSubZoneHostFmt2 = "%v.%v.%v.%v"
+	RegionKey     = "region"
+	ZoneKey       = "zone"
+	SubZoneKey    = "sub-zone"
+	HostKey       = "host"
+	InstanceIdKey = "id"
 )
 
 func newOriginFromMessage(agent messaging.Agent, m *messaging.Message) (o access.Origin, ok bool) {

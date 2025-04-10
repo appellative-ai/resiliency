@@ -4,33 +4,21 @@ import (
 	"errors"
 	"fmt"
 	"github.com/behavioral-ai/collective/eventing"
+	"github.com/behavioral-ai/collective/exchange"
 	"github.com/behavioral-ai/core/access"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/intermediary/cache"
-	"github.com/behavioral-ai/intermediary/routing"
-	"github.com/behavioral-ai/traffic/analytics"
-	"github.com/behavioral-ai/traffic/limiter"
-	"github.com/behavioral-ai/traffic/redirect"
 )
 
 var (
-	Agent = New(nil)
+	Agent = New()
 )
 
-func init() {
-	// intermediary agents
-	cache.Initialize(Agent)
-	routing.Initialize(Agent)
-
-	// traffic agents
-	analytics.Initialize(Agent)
-	limiter.Initialize(Agent)
-	redirect.Initialize(Agent)
-}
-
-func Initialize(notifier eventing.NotifyFunc) {
+func Initialize(notifier eventing.NotifyFunc, activity eventing.ActivityFunc) {
 	if notifier != nil {
-		Agent.Message(newConfigNotifier(notifier))
+		eventing.Handler.Message(newConfigNotifier(notifier))
+	}
+	if activity != nil {
+		//eventing.Handler.Message(newConfigActivity(activity))
 	}
 }
 
@@ -41,11 +29,7 @@ func Configure(m *messaging.Message) {
 		if ok {
 			access.SetOrigin(o)
 		}
-		limiter.Agent.Message(m)
-		redirect.Agent.Message(m)
-		analytics.Agent.Message(m)
-		routing.Agent.Message(m)
-		cache.Agent.Message(m)
+		exchange.Broadcast(m)
 	}
 }
 
