@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/iox"
+	"github.com/behavioral-ai/core/rest"
 	"net/http"
 	"strings"
 	"time"
@@ -15,7 +16,7 @@ const (
 	timeout    = time.Second * 10
 )
 
-func routingLink(next httpx.Exchange) httpx.Exchange {
+func routingLink(next rest.Exchange) rest.Exchange {
 	return func(r *http.Request) (resp *http.Response, err error) {
 		uri := ""
 		values := r.URL.Query()

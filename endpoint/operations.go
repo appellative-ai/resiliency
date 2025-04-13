@@ -1,7 +1,6 @@
 package endpoint
 
 import (
-	"github.com/behavioral-ai/core/host"
 	"github.com/behavioral-ai/resiliency/operations"
 	"net/http"
 	"strings"
@@ -13,11 +12,11 @@ const (
 
 type ops struct{}
 
-func NewOperationsEndpoint() host.ExchangeHandler {
+func NewOperationsEndpoint() *ops {
 	return new(ops)
 }
 
-func (o *ops) Exchange(w http.ResponseWriter, r *http.Request) {
+func (o *ops) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if !strings.HasPrefix(r.URL.Path, OperationsPattern) {
 		w.WriteHeader(http.StatusBadRequest)
 		return

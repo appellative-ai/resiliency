@@ -16,14 +16,14 @@ func ExampleNewRootEndpoint() {
 
 	rec := httptest.NewRecorder()
 	handler := NewRootEndpoint()
-	handler.Exchange(rec, req)
+	handler.ServeHTTP(rec, req)
 	fmt.Printf("test: RootEndpoint() -> [status:%v] [header:%v]\n", rec.Result().StatusCode, rec.Result().Header.Get(iox.ContentEncoding))
 
 	buf, err := iox.ReadAll(rec.Result().Body, nil)
 	fmt.Printf("test: iox.ReadAll() -> [buf:%v] [content-type:%v] [err:%v]\n", len(buf), http.DetectContentType(buf), err)
 
 	rec = httptest.NewRecorder()
-	handler.Exchange(rec, req)
+	handler.ServeHTTP(rec, req)
 	fmt.Printf("test: RootEndpoint() -> [status:%v] [header:%v]\n", rec.Result().StatusCode, rec.Result().Header.Get(iox.ContentEncoding))
 
 	buf, err = iox.ReadAll(rec.Result().Body, rec.Result().Header)
@@ -42,14 +42,14 @@ func _ExampleSearch_Yahoo() {
 
 	rec := httptest.NewRecorder()
 	handler := NewRootEndpoint()
-	handler.Exchange(rec, req)
+	handler.ServeHTTP(rec, req)
 	fmt.Printf("test: RootEndpoint() -> [status:%v] [header:%v]\n", rec.Result().StatusCode, rec.Result().Header.Get(iox.ContentEncoding))
 
 	buf, err := iox.ReadAll(rec.Result().Body, nil)
 	fmt.Printf("test: iox.ReadAll() -> [buf:%v] [err:%v]\n", len(buf), err)
 
 	rec = httptest.NewRecorder()
-	handler.Exchange(rec, req)
+	handler.ServeHTTP(rec, req)
 	fmt.Printf("test: RootEndpoint() -> [status:%v] [header:%v]\n", rec.Result().StatusCode, rec.Result().Header.Get(iox.ContentEncoding))
 
 	buf, err = iox.ReadAll(rec.Result().Body, rec.Result().Header)
