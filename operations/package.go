@@ -15,14 +15,15 @@ var (
 
 func Initialize(notifier eventing.NotifyFunc, activity eventing.ActivityFunc) {
 	if notifier != nil {
-		eventing.Handler.Message(newConfigNotifier(notifier))
+		eventing.Handler.Message(eventing.NewNotifyConfigMessage(notifier))
 	}
 	if activity != nil {
-		//eventing.Handler.Message(newConfigActivity(activity))
+		eventing.Handler.Message(eventing.NewActivityConfigMessage(activity))
 	}
 }
 
 // Configure - configure all agents
+// TODO : add configuration for caching profile, and redirect thresholds
 func Configure(m *messaging.Message) {
 	if m.Event() == messaging.ConfigEvent && m.ContentType() == messaging.ContentTypeMap {
 		o, ok := newOriginFromMessage(Agent, m)
@@ -37,22 +38,13 @@ func Configure(m *messaging.Message) {
 func Message(event string) error {
 	switch event {
 	case messaging.StartupEvent:
-		if Agent != nil {
-			Agent.Message(messaging.StartupMessage)
-		}
+		Agent.Message(messaging.StartupMessage)
 	case messaging.ShutdownEvent:
-		if Agent != nil {
-			Agent.Message(messaging.ShutdownMessage)
-			Agent = nil
-		}
+		Agent.Message(messaging.ShutdownMessage)
 	case messaging.PauseEvent:
-		if Agent != nil {
-			Agent.Message(messaging.PauseMessage)
-		}
+		Agent.Message(messaging.PauseMessage)
 	case messaging.ResumeEvent:
-		if Agent != nil {
-			Agent.Message(messaging.ResumeMessage)
-		}
+		Agent.Message(messaging.ResumeMessage)
 	default:
 		return errors.New(fmt.Sprintf("operations.Message() -> [%v] [%v]", "error: invalid event", event))
 	}

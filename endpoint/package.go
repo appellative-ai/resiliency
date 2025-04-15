@@ -7,7 +7,7 @@ const (
 )
 
 var (
-	Operations     = NewOperationsEndpoint()
-	Root           = NewRootEndpoint()
-	HealthEndpoint = NewHealthEndpoint()
+	Operations = NewOperationsEndpoint()
+	Root       = NewRootEndpoint()
+	Health     = NewHealthEndpoint()
 )

@@ -1,16 +1,9 @@
 package operations
 
 import (
+	"github.com/behavioral-ai/collective/timeseries"
 	"github.com/behavioral-ai/core/access"
 	"github.com/behavioral-ai/core/messaging"
-)
-
-const (
-	RegionKey     = "region"
-	ZoneKey       = "zone"
-	SubZoneKey    = "sub-zone"
-	HostKey       = "host"
-	InstanceIdKey = "id"
 )
 
 func newOriginFromMessage(agent messaging.Agent, m *messaging.Message) (o access.Origin, ok bool) {
@@ -20,29 +13,29 @@ func newOriginFromMessage(agent messaging.Agent, m *messaging.Message) (o access
 		messaging.Reply(m, messaging.ConfigEmptyStatusError(a), a.Uri())
 		return
 	}
-	region := cfg[RegionKey]
+	region := cfg[timeseries.RegionKey]
 	if region == "" {
 		return
 	}
 	o.Region = region
-	o.Zone = cfg[ZoneKey]
+	o.Zone = cfg[timeseries.ZoneKey]
 	if o.Zone == "" {
-		messaging.Reply(m, messaging.ConfigContentStatusError(a, ZoneKey), a.Uri())
+		messaging.Reply(m, messaging.ConfigContentStatusError(a, timeseries.ZoneKey), a.Uri())
 		return
 	}
-	o.SubZone = cfg[SubZoneKey]
+	o.SubZone = cfg[timeseries.SubZoneKey]
 	if o.SubZone == "" {
-		messaging.Reply(m, messaging.ConfigContentStatusError(a, SubZoneKey), a.Uri())
+		messaging.Reply(m, messaging.ConfigContentStatusError(a, timeseries.SubZoneKey), a.Uri())
 		return
 	}
-	o.Host = cfg[HostKey]
+	o.Host = cfg[timeseries.HostKey]
 	if o.Host == "" {
-		messaging.Reply(m, messaging.ConfigContentStatusError(a, HostKey), a.Uri())
+		messaging.Reply(m, messaging.ConfigContentStatusError(a, timeseries.HostKey), a.Uri())
 		return
 	}
-	o.InstanceId = cfg[InstanceIdKey]
+	o.InstanceId = cfg[timeseries.InstanceIdKey]
 	if o.Host == "" {
-		messaging.Reply(m, messaging.ConfigContentStatusError(a, InstanceIdKey), a.Uri())
+		messaging.Reply(m, messaging.ConfigContentStatusError(a, timeseries.InstanceIdKey), a.Uri())
 		return
 	}
 	messaging.Reply(m, messaging.StatusOK(), a.Uri())

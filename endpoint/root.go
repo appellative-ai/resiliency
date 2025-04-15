@@ -28,16 +28,6 @@ func NewRootEndpoint() *rest.Endpoint {
 	//m[config.TimeoutKey] = "10ms"
 	routing.Message(messaging.NewConfigMapMessage(m))
 
-	/*
-		chain := rest.BuildChain(host.AccessLogLink, host.AuthorizationLink,
-			exchange.Agent(urn.RedirectAgent),
-			exchange.Agent(urn2.CacheAgent),
-			exchange.Agent(urn.LimiterAgent),
-			exchange.Agent(urn2.RoutingAgent))
-
-
-	*/
-
 	return host.NewEndpoint(exchange.Agent(urn.RedirectAgent),
 		exchange.Agent(urn2.CacheAgent),
 		exchange.Agent(urn.LimiterAgent),

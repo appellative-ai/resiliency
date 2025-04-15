@@ -57,8 +57,5 @@ func (a *agentT) Message(m *messaging.Message) {
 }
 
 func (a *agentT) configure(m *messaging.Message) {
-	//if n, ok := configNotifierContent(m); ok {
-	//	a.notifier = n
-	//}
 	messaging.Reply(m, messaging.StatusOK(), a.Uri())
 }
