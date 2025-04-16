@@ -12,6 +12,7 @@ import (
 	"github.com/behavioral-ai/intermediary/routing"
 	"github.com/behavioral-ai/intermediary/routing/routingtest"
 	urn2 "github.com/behavioral-ai/intermediary/urn"
+	acc2 "github.com/behavioral-ai/resiliency/access"
 	"github.com/behavioral-ai/traffic/limiter"
 	"github.com/behavioral-ai/traffic/redirect"
 	"github.com/behavioral-ai/traffic/urn"
@@ -37,7 +38,8 @@ func NewRootEndpoint() *rest.Endpoint {
 	_ = limiter.NamespaceName
 	_ = redirect.NamespaceName
 
-	return host.NewEndpoint(exchange.Agent(urn.RedirectAgent),
+	return host.NewEndpoint(acc2.Agent,
+		exchange.Agent(urn.RedirectAgent),
 		exchange.Agent(urn2.CacheAgent),
 		exchange.Agent(urn.LimiterAgent),
 		exchange.Agent(urn2.RoutingAgent))

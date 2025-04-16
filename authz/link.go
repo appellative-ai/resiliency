@@ -5,19 +5,16 @@ import (
 	"net/http"
 )
 
+const (
+	Authorization = "Authorization"
+)
+
 func Link(next rest.Exchange) rest.Exchange {
 	return func(r *http.Request) (resp *http.Response, err error) {
-		/*auth := r.Header.Get(Authorization)
+		auth := r.Header.Get(Authorization)
 		if auth == "" {
 			return &http.Response{StatusCode: http.StatusUnauthorized}, nil
 		}
-
-		*/
-		if next != nil {
-			resp, err = next(r)
-		} else {
-			return &http.Response{StatusCode: http.StatusOK}, nil
-		}
-		return
+		return next(r)
 	}
 }

@@ -2,7 +2,6 @@ package endpoint
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/core/host"
 	"github.com/behavioral-ai/core/iox"
 	"net/http"
 	"net/http/httptest"
@@ -10,7 +9,7 @@ import (
 
 func ExampleNewRootEndpoint() {
 	h := make(http.Header)
-	h.Add(host.Authorization, "authorization")
+	//h.Add(host.Authorization, "authorization")
 	req, _ := http.NewRequest(http.MethodGet, "https://localhost:8080/google/search?q=pascal", nil)
 	req.Header = h
 
@@ -36,7 +35,7 @@ func ExampleNewRootEndpoint() {
 
 func _ExampleSearch_Yahoo() {
 	h := make(http.Header)
-	h.Add(host.Authorization, "authorization")
+	//h.Add(host.Authorization, "authorization")
 	req, _ := http.NewRequest(http.MethodGet, "https://localhost:8080/yahoo/search?q=golang", nil)
 	req.Header = h
 

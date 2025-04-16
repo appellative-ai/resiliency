@@ -13,6 +13,10 @@ const (
 	Route         = "host"
 )
 
+var (
+	Agent = New()
+)
+
 type agentT struct {
 	operators []access.Operator
 }
