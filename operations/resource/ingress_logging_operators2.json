@@ -12,9 +12,6 @@
     "Value": "%ROUTE_NAME%"
   },
   {
-    "Value": "%STATUS_CODE%"
-  },
-  {
     "Value": "%METHOD%"
   },
   {
@@ -24,12 +21,21 @@
     "Value": "%PATH%"
   },
   {
+    "Value": "%STATUS_CODE%"
+  },
+  {
+    "Value": "%CACHED%"
+  },
+  {
+    "Value": "%ENCODING%"
+  },
+  {
     "Value": "%TIMEOUT_DURATION%"
   },
   {
     "Value": "%RATE_LIMIT%"
   },
   {
-    "Value": "%RATE_BURST%"
+    "Value": "%REDIRECT%"
   }
 ]

@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/collective/eventing"
 	"github.com/behavioral-ai/collective/exchange"
-	"github.com/behavioral-ai/core/access"
+	access "github.com/behavioral-ai/core/access2"
+	"github.com/behavioral-ai/core/iox"
 	"github.com/behavioral-ai/core/messaging"
 )
 
@@ -13,7 +14,7 @@ var (
 	Agent = New()
 )
 
-func Initialize(notifier eventing.NotifyFunc, activity eventing.ActivityFunc) {
+func InitializeEventing(notifier eventing.NotifyFunc, activity eventing.ActivityFunc) {
 	if notifier != nil {
 		eventing.Handler.Message(eventing.NewNotifyConfigMessage(notifier))
 	}
@@ -22,16 +23,48 @@ func Initialize(notifier eventing.NotifyFunc, activity eventing.ActivityFunc) {
 	}
 }
 
-// Configure - configure all agents
-// TODO : add configuration for caching profile, and redirect thresholds
-func Configure(m *messaging.Message) {
-	if m.Event() == messaging.ConfigEvent && m.ContentType() == messaging.ContentTypeMap {
-		o, ok := newOriginFromMessage(Agent, m)
-		if ok {
-			access.SetOrigin(o)
+func InitializeLogging(originPath, operatorsPath string) error {
+	if originPath != "" {
+		m, err := iox.ReadMap(originPath)
+		if err != nil {
+			return err //fmt.Printf("invalid argument : origin path [err:%v]\n", err)
 		}
-		exchange.Broadcast(m)
+		o, err1 := originFromMap(m)
+		if err1 != nil {
+			return err1
+		}
+		access.SetOrigin(o)
 	}
+	if operatorsPath != "" {
+		err := access.LoadOperators(func() ([]byte, error) {
+			return iox.ReadFile(operatorsPath)
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// ConfigureAgents - configure all agents
+// TODO : add configuration for caching profile, and redirect thresholds
+func ConfigureAgents(mapPath, redirectPath, profilePath string) error {
+	if mapPath != "" {
+		m, err := iox.ReadMap(mapPath)
+		if err != nil {
+			return err
+		}
+		msg := messaging.NewConfigMapMessage(m)
+		exchange.Broadcast(msg)
+	}
+	if redirectPath != "" {
+
+	}
+	if profilePath != "" {
+
+	}
+	return nil
+
 }
 
 // Message - operations agent messaging

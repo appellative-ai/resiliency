@@ -1,43 +1,30 @@
 package operations
 
 import (
+	"errors"
 	"github.com/behavioral-ai/collective/timeseries"
-	"github.com/behavioral-ai/core/access"
-	"github.com/behavioral-ai/core/messaging"
+	access "github.com/behavioral-ai/core/access2"
 )
 
-func newOriginFromMessage(agent messaging.Agent, m *messaging.Message) (o access.Origin, ok bool) {
-	a := agent
-	cfg := messaging.ConfigMapContent(m)
-	if cfg == nil {
-		messaging.Reply(m, messaging.ConfigEmptyStatusError(a), a.Uri())
-		return
+func originFromMap(m map[string]string) (o access.Origin, err error) {
+	o.Region = m[timeseries.RegionKey]
+	if o.Region == "" {
+		return o, errors.New("invalid argument: origin region is empty")
 	}
-	region := cfg[timeseries.RegionKey]
-	if region == "" {
-		return
-	}
-	o.Region = region
-	o.Zone = cfg[timeseries.ZoneKey]
+	o.Zone = m[timeseries.ZoneKey]
 	if o.Zone == "" {
-		messaging.Reply(m, messaging.ConfigContentStatusError(a, timeseries.ZoneKey), a.Uri())
-		return
+		return o, errors.New("invalid argument: origin zone is empty")
 	}
-	o.SubZone = cfg[timeseries.SubZoneKey]
-	if o.SubZone == "" {
-		messaging.Reply(m, messaging.ConfigContentStatusError(a, timeseries.SubZoneKey), a.Uri())
-		return
-	}
-	o.Host = cfg[timeseries.HostKey]
+
+	// SubZone is optional
+	o.SubZone = m[timeseries.SubZoneKey]
+
+	o.Host = m[timeseries.HostKey]
 	if o.Host == "" {
-		messaging.Reply(m, messaging.ConfigContentStatusError(a, timeseries.HostKey), a.Uri())
-		return
+		return o, errors.New("invalid argument: origin host is empty")
 	}
-	o.InstanceId = cfg[timeseries.InstanceIdKey]
-	if o.Host == "" {
-		messaging.Reply(m, messaging.ConfigContentStatusError(a, timeseries.InstanceIdKey), a.Uri())
-		return
-	}
-	messaging.Reply(m, messaging.StatusOK(), a.Uri())
-	return o, true
+
+	// InstanceId is optional
+	o.InstanceId = m[timeseries.InstanceIdKey]
+	return o, nil
 }

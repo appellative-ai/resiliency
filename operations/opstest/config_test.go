@@ -14,7 +14,7 @@ func ExampleConfig() {
 	m, err := iox.ReadMap(serviceConfigTxt)
 	fmt.Printf("test: ReadMap() -> [err:%v]\n", err)
 
-	timeout := m[config.TimeoutKey]
+	timeout := m["timeout"]
 	if timeout != "" {
 		dur, err1 := fmtx.ParseDuration(timeout)
 		fmt.Printf("test: fmtx.ParseDuration(\"%v\") -> [dur:%v] [err:%v]\n", timeout, dur, err1)
