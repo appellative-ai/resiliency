@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	NamespaceName = "resiliency:agent/behavioral-ai/resiliency/access"
+	NamespaceName = "resiliency:agent/behavioral-ai/resiliency/logger"
 	Route         = "host"
 )
 
