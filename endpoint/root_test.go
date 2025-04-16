@@ -5,6 +5,7 @@ import (
 	"github.com/behavioral-ai/core/iox"
 	"net/http"
 	"net/http/httptest"
+	"time"
 )
 
 func ExampleNewRootEndpoint() {
@@ -21,6 +22,7 @@ func ExampleNewRootEndpoint() {
 	buf, err := iox.ReadAll(rec.Result().Body, nil)
 	fmt.Printf("test: iox.ReadAll() -> [buf:%v] [content-type:%v] [err:%v]\n", len(buf), http.DetectContentType(buf), err)
 
+	time.Sleep(time.Second * 2)
 	rec = httptest.NewRecorder()
 	handler.ServeHTTP(rec, req)
 	fmt.Printf("test: RootEndpoint() -> [status:%v] [header:%v]\n", rec.Result().StatusCode, rec.Result().Header.Get(iox.ContentEncoding))

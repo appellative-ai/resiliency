@@ -18,7 +18,6 @@ var (
 )
 
 type agentT struct {
-	operators []access.Operator
 }
 
 // New - create a new operations agent
@@ -53,7 +52,7 @@ func (a *agentT) Link(next rest.Exchange) rest.Exchange {
 	return func(r *http.Request) (resp *http.Response, err error) {
 		start := time.Now().UTC()
 		resp, err = next(r)
-		access.Log(a.operators, access.IngressTraffic, start, time.Since(start), Route, r, resp, newThreshold(resp))
+		access.Log(access.IngressTraffic, start, time.Since(start), Route, r, resp, newThreshold(resp))
 		return
 	}
 }
@@ -68,7 +67,7 @@ func newThreshold(resp *http.Response) access.Threshold {
 	return access.Threshold{Timeout: timeout, RateLimit: limit, Redirect: redirect}
 }
 
-// TODO : need configuration for operators
+// TODO : need configuration for operators, and set operators for access package
 func (a *agentT) configure(m *messaging.Message) {
 	messaging.Reply(m, messaging.StatusOK(), a.Uri())
 }
