@@ -12,7 +12,7 @@ const (
 
 type ops struct{}
 
-func NewOperationsEndpoint() *ops {
+func newOperationsEndpoint() *ops {
 	return new(ops)
 }
 

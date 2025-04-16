@@ -18,7 +18,7 @@ import (
 	"github.com/behavioral-ai/traffic/urn"
 )
 
-func NewRootEndpoint() *rest.Endpoint {
+func newRootEndpoint() *rest.Endpoint {
 	// Overriding cache agent http exchange
 	_ = cache.Route
 	cacheAgent := exchange.Agent(urn2.CacheAgent)

@@ -8,7 +8,7 @@ var ()
 
 type health struct{}
 
-func NewHealthEndpoint() *health {
+func newHealthEndpoint() *health {
 	return new(health)
 }
 
