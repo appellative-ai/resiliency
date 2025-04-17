@@ -17,24 +17,26 @@ import (
 )
 
 func newRootEndpoint() *rest.Endpoint {
-	// Overriding cache agent http exchange
 	_ = cache.NamespaceName
-	cacheAgent := exchange.Agent(urn2.CacheAgent)
-	cacheAgent.Message(httpx.NewConfigExchangeMessage(cachetest.Exchange))
+	_ = routing.NamespaceName
+	_ = limiter.NamespaceName
+	_ = redirect.NamespaceName
+
+	// Overriding cache agent http exchange
+	exchange.Agent(urn2.CacheAgent).Message(httpx.NewConfigExchangeMessage(cachetest.Exchange))
+	//cacheAgent := exchange.Agent(urn2.CacheAgent)
+	//cacheAgent.Message(httpx.NewConfigExchangeMessage(cachetest.Exchange))
 	//m := make(map[string]string)
 	//m[config.CacheHostKey] = "localhost:8082"
 	//cacheAgent.Message(messaging.NewConfigMapMessage(m))
 
 	// Overriding routing agent http exchange
-	_ = routing.NamespaceName
-	routingAgent := exchange.Agent(urn2.RoutingAgent)
-	routingAgent.Message(httpx.NewConfigExchangeMessage(routingtest.Exchange))
+	exchange.Agent(urn2.RoutingAgent).Message(httpx.NewConfigExchangeMessage(routingtest.Exchange))
+	//routingAgent := exchange.Agent(urn2.RoutingAgent)
+	//routingAgent.Message(httpx.NewConfigExchangeMessage(routingtest.Exchange))
 	//m[config.AppHostKey] = "localhost:8080"
 	//m[config.TimeoutKey] = "10ms"
 	//routingAgent.Message(messaging.NewConfigMapMessage(m))
-
-	_ = limiter.NamespaceName
-	_ = redirect.NamespaceName
 
 	return host.NewEndpoint(logger.Link,
 		exchange.Agent(urn.RedirectAgent),
