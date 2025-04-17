@@ -9,7 +9,8 @@
     "Value": "%TRAFFIC%"
   },
   {
-    "Value": "%ROUTE_NAME%"
+    "Name": "route-name",
+    "Value": "%ROUTE%"
   },
   {
     "Value": "%METHOD%"
@@ -22,12 +23,6 @@
   },
   {
     "Value": "%STATUS_CODE%"
-  },
-  {
-    "Value": "%CACHED%"
-  },
-  {
-    "Value": "%ENCODING%"
   },
   {
     "Value": "%TIMEOUT_DURATION%"
