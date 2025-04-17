@@ -10,7 +10,6 @@ import (
 
 const (
 	NamespaceName = "resiliency:agent/behavioral-ai/resiliency/logger"
-	Route         = "host"
 )
 
 var (
@@ -55,16 +54,6 @@ func (a *agentT) Link(next rest.Exchange) rest.Exchange {
 		access.Log(access.IngressTraffic, start, time.Since(start), Route, r, resp, newThreshold(resp))
 		return
 	}
-}
-
-func newThreshold(resp *http.Response) access.Threshold {
-	limit := resp.Header.Get(access.XRateLimit)
-	resp.Header.Del(access.XRateLimit)
-	timeout := resp.Header.Get(access.XTimeout)
-	resp.Header.Del(access.XTimeout)
-	redirect := resp.Header.Get(access.XRedirect)
-	resp.Header.Del(access.XRedirect)
-	return access.Threshold{Timeout: timeout, RateLimit: limit, Redirect: redirect}
 }
 
 // TODO : need configuration for operators, and set operators for access package

@@ -27,7 +27,7 @@ func ConfigureLogging(operatorsPath, originPath string) error {
 	if originPath != "" {
 		m, err := iox.ReadMap(originPath)
 		if err != nil {
-			return err //fmt.Printf("invalid argument : origin path [err:%v]\n", err)
+			return err
 		}
 		o, err1 := originFromMap(m)
 		if err1 != nil {

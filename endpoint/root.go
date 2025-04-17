@@ -37,9 +37,8 @@ func newRootEndpoint() *rest.Endpoint {
 
 	_ = limiter.NamespaceName
 	_ = redirect.NamespaceName
-	_ = logger.Agent
 
-	return host.NewEndpoint(logger.Agent,
+	return host.NewEndpoint(logger.Link,
 		exchange.Agent(urn.RedirectAgent),
 		exchange.Agent(urn2.CacheAgent),
 		exchange.Agent(urn.LimiterAgent),
