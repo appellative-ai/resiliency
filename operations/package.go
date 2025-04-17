@@ -14,7 +14,7 @@ var (
 	Agent = New()
 )
 
-func InitializeEventing(notifier eventing.NotifyFunc, activity eventing.ActivityFunc) {
+func ConfigureEventing(notifier eventing.NotifyFunc, activity eventing.ActivityFunc) {
 	if notifier != nil {
 		eventing.Handler.Message(eventing.NewNotifyConfigMessage(notifier))
 	}
@@ -23,7 +23,7 @@ func InitializeEventing(notifier eventing.NotifyFunc, activity eventing.Activity
 	}
 }
 
-func InitializeLogging(originPath, operatorsPath string) error {
+func ConfigureLogging(operatorsPath, originPath string) error {
 	if originPath != "" {
 		m, err := iox.ReadMap(originPath)
 		if err != nil {
@@ -47,8 +47,8 @@ func InitializeLogging(originPath, operatorsPath string) error {
 }
 
 // ConfigureAgents - configure all agents
-// TODO : add configuration for caching profile, and redirect thresholds
-func ConfigureAgents(mapPath, redirectPath, profilePath string) error {
+// TODO : add configuration for caching profile
+func ConfigureAgents(mapPath, profilePath string) error {
 	if mapPath != "" {
 		m, err := iox.ReadMap(mapPath)
 		if err != nil {
@@ -57,11 +57,7 @@ func ConfigureAgents(mapPath, redirectPath, profilePath string) error {
 		msg := messaging.NewConfigMapMessage(m)
 		exchange.Broadcast(msg)
 	}
-	if redirectPath != "" {
-
-	}
 	if profilePath != "" {
-
 	}
 	return nil
 
