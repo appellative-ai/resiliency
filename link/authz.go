@@ -1,4 +1,4 @@
-package authz
+package operations
 
 import (
 	"github.com/behavioral-ai/core/rest"
@@ -6,12 +6,12 @@ import (
 )
 
 const (
-	Authorization = "Authorization"
+	AuthorizationName = "Authorization"
 )
 
-func Link(next rest.Exchange) rest.Exchange {
+func Authorization(next rest.Exchange) rest.Exchange {
 	return func(r *http.Request) (resp *http.Response, err error) {
-		auth := r.Header.Get(Authorization)
+		auth := r.Header.Get(AuthorizationName)
 		if auth == "" {
 			return &http.Response{StatusCode: http.StatusUnauthorized}, nil
 		}

@@ -2,20 +2,29 @@ package endpoint
 
 import (
 	"fmt"
+	"github.com/behavioral-ai/collective/exchange"
+	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/iox"
+	"github.com/behavioral-ai/core/messaging"
+	"github.com/behavioral-ai/intermediary/cache/cachetest"
+	"github.com/behavioral-ai/intermediary/config"
+	"github.com/behavioral-ai/intermediary/routing/routingtest"
+	urn2 "github.com/behavioral-ai/intermediary/urn"
 	"net/http"
 	"net/http/httptest"
 	"time"
 )
 
 func ExampleNewRootEndpoint() {
+	configCacheAgent()
+	configRoutingAgent()
+
 	h := make(http.Header)
-	//h.Add(host.Authorization, "authorization")
 	req, _ := http.NewRequest(http.MethodGet, "https://localhost:8080/google/search?q=pascal", nil)
 	req.Header = h
 
 	rec := httptest.NewRecorder()
-	handler := NewRootEndpoint()
+	handler := newRootEndpoint()
 	handler.ServeHTTP(rec, req)
 	fmt.Printf("test: RootEndpoint() -> [status:%v] [header:%v]\n", rec.Result().StatusCode, rec.Result().Header.Get(iox.ContentEncoding))
 
@@ -35,6 +44,24 @@ func ExampleNewRootEndpoint() {
 
 }
 
+func configCacheAgent() {
+	cacheAgent := exchange.Agent(urn2.CacheAgent)
+	cacheAgent.Message(httpx.NewConfigExchangeMessage(cachetest.Exchange))
+	m := make(map[string]string)
+	m[config.CacheHostKey] = "localhost:8082"
+	cacheAgent.Message(messaging.NewConfigMapMessage(m))
+}
+
+func configRoutingAgent() {
+	routingAgent := exchange.Agent(urn2.RoutingAgent)
+	routingAgent.Message(httpx.NewConfigExchangeMessage(routingtest.Exchange))
+	m := make(map[string]string)
+	m[config.AppHostKey] = "localhost:8080"
+	//m[config.TimeoutKey] = "10ms"
+	routingAgent.Message(messaging.NewConfigMapMessage(m))
+
+}
+
 func _ExampleSearch_Yahoo() {
 	h := make(http.Header)
 	//h.Add(host.Authorization, "authorization")
@@ -42,7 +69,7 @@ func _ExampleSearch_Yahoo() {
 	req.Header = h
 
 	rec := httptest.NewRecorder()
-	handler := NewRootEndpoint()
+	handler := newRootEndpoint()
 	handler.ServeHTTP(rec, req)
 	fmt.Printf("test: RootEndpoint() -> [status:%v] [header:%v]\n", rec.Result().StatusCode, rec.Result().Header.Get(iox.ContentEncoding))
 

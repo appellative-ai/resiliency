@@ -11,8 +11,8 @@ const (
 	Route = "host"
 )
 
-// Link - chainable exchange
-func Link(next rest.Exchange) rest.Exchange {
+// Logger - chainable exchange
+func Logger(next rest.Exchange) rest.Exchange {
 	return func(r *http.Request) (resp *http.Response, err error) {
 		start := time.Now().UTC()
 		resp, err = next(r)
