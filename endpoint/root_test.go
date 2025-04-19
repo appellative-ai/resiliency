@@ -3,12 +3,9 @@ package endpoint
 import (
 	"fmt"
 	"github.com/behavioral-ai/collective/exchange"
-	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/iox"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/intermediary/cache/cachetest"
 	"github.com/behavioral-ai/intermediary/config"
-	"github.com/behavioral-ai/intermediary/routing/routingtest"
 	urn2 "github.com/behavioral-ai/intermediary/urn"
 	"net/http"
 	"net/http/httptest"
@@ -24,9 +21,9 @@ func ExampleNewRootEndpoint() {
 	req.Header = h
 
 	rec := httptest.NewRecorder()
-	handler := newRootEndpoint()
+	handler := Root
 	handler.ServeHTTP(rec, req)
-	fmt.Printf("test: RootEndpoint() -> [status:%v] [header:%v]\n", rec.Result().StatusCode, rec.Result().Header.Get(iox.ContentEncoding))
+	fmt.Printf("test: RootEndpoint() -> [status:%v] [header:%v]\n", rec.Result().StatusCode, rec.Result().Header)
 
 	buf, err := iox.ReadAll(rec.Result().Body, nil)
 	fmt.Printf("test: iox.ReadAll() -> [buf:%v] [content-type:%v] [err:%v]\n", len(buf), http.DetectContentType(buf), err)
@@ -34,7 +31,7 @@ func ExampleNewRootEndpoint() {
 	time.Sleep(time.Second * 2)
 	rec = httptest.NewRecorder()
 	handler.ServeHTTP(rec, req)
-	fmt.Printf("test: RootEndpoint() -> [status:%v] [header:%v]\n", rec.Result().StatusCode, rec.Result().Header.Get(iox.ContentEncoding))
+	fmt.Printf("test: RootEndpoint() -> [status:%v] [header:%v]\n", rec.Result().StatusCode, rec.Result().Header)
 
 	buf, err = iox.ReadAll(rec.Result().Body, rec.Result().Header)
 	fmt.Printf("test: iox.ReadAll() -> [buf:%v] [content-type:%v] [err:%v]\n", len(buf), http.DetectContentType(buf), err)
@@ -46,7 +43,7 @@ func ExampleNewRootEndpoint() {
 
 func configCacheAgent() {
 	cacheAgent := exchange.Agent(urn2.CacheAgent)
-	cacheAgent.Message(httpx.NewConfigExchangeMessage(cachetest.Exchange))
+	//cacheAgent.Message(httpx.NewConfigExchangeMessage(cachetest.Exchange))
 	m := make(map[string]string)
 	m[config.CacheHostKey] = "localhost:8082"
 	cacheAgent.Message(messaging.NewConfigMapMessage(m))
@@ -54,7 +51,7 @@ func configCacheAgent() {
 
 func configRoutingAgent() {
 	routingAgent := exchange.Agent(urn2.RoutingAgent)
-	routingAgent.Message(httpx.NewConfigExchangeMessage(routingtest.Exchange))
+	//routingAgent.Message(httpx.NewConfigExchangeMessage(routingtest.Exchange))
 	m := make(map[string]string)
 	m[config.AppHostKey] = "localhost:8080"
 	//m[config.TimeoutKey] = "10ms"
