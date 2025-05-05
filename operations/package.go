@@ -3,9 +3,9 @@ package operations
 import (
 	"errors"
 	"fmt"
-	"github.com/behavioral-ai/collective/eventing"
-	"github.com/behavioral-ai/collective/exchange"
 	access "github.com/behavioral-ai/core/access2"
+	"github.com/behavioral-ai/core/eventing"
+	"github.com/behavioral-ai/core/host"
 	"github.com/behavioral-ai/core/iox"
 	"github.com/behavioral-ai/core/messaging"
 )
@@ -55,7 +55,7 @@ func ConfigureAgents(mapPath, profilePath string) error {
 			return err
 		}
 		msg := messaging.NewConfigMapMessage(m)
-		exchange.Broadcast(msg)
+		host.Broadcast(msg)
 	}
 	if profilePath != "" {
 	}

@@ -12,6 +12,6 @@ func ExampleNewAgent() {
 	fmt.Printf("test: NewAgent() -> [%v]\n", agent)
 
 	//Output:
-	//test: NewAgent() -> [resiliency:agent/behavioral-ai/resiliency/operations]
-	
+	//test: NewAgent() -> [resiliency:agent/host/operations]
+
 }

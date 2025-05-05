@@ -2,8 +2,8 @@ package operations
 
 import (
 	"errors"
-	"github.com/behavioral-ai/collective/timeseries"
 	access "github.com/behavioral-ai/core/access2"
+	"github.com/behavioral-ai/traffic/timeseries"
 )
 
 func originFromMap(m map[string]string) (o access.Origin, err error) {

@@ -1,12 +1,12 @@
 package operations
 
 import (
-	"github.com/behavioral-ai/collective/exchange"
+	"github.com/behavioral-ai/core/host"
 	"github.com/behavioral-ai/core/messaging"
 )
 
 const (
-	NamespaceName = "resiliency:agent/behavioral-ai/resiliency/operations"
+	NamespaceName = "resiliency:agent/host/operations"
 )
 
 // TODO : need host name
@@ -46,13 +46,13 @@ func (a *agentT) Message(m *messaging.Message) {
 	}
 	switch m.Event() {
 	case messaging.StartupEvent:
-		exchange.Broadcast(m)
+		host.Broadcast(m)
 	case messaging.ShutdownEvent:
-		exchange.Broadcast(m)
+		host.Broadcast(m)
 	case messaging.PauseEvent:
-		exchange.Broadcast(m)
+		host.Broadcast(m)
 	case messaging.ResumeEvent:
-		exchange.Broadcast(m)
+		host.Broadcast(m)
 	}
 }
 

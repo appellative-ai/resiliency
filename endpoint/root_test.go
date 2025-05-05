@@ -2,7 +2,7 @@ package endpoint
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/collective/exchange"
+	"github.com/behavioral-ai/core/host"
 	"github.com/behavioral-ai/core/iox"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/intermediary/config"
@@ -42,7 +42,7 @@ func ExampleNewRootEndpoint() {
 }
 
 func configCacheAgent() {
-	cacheAgent := exchange.Agent(urn2.CacheAgent)
+	cacheAgent := host.Agent(urn2.CacheAgent)
 	//cacheAgent.Message(httpx.NewConfigExchangeMessage(cachetest.Exchange))
 	m := make(map[string]string)
 	m[config.CacheHostKey] = "localhost:8082"
@@ -50,7 +50,7 @@ func configCacheAgent() {
 }
 
 func configRoutingAgent() {
-	routingAgent := exchange.Agent(urn2.RoutingAgent)
+	routingAgent := host.Agent(urn2.RoutingAgent)
 	//routingAgent.Message(httpx.NewConfigExchangeMessage(routingtest.Exchange))
 	m := make(map[string]string)
 	m[config.AppHostKey] = "localhost:8080"
