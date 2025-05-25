@@ -5,8 +5,8 @@ go 1.23.0
 require (
 	github.com/behavioral-ai/collective v0.0.0-20250502142629-3a31c219083d
 	github.com/behavioral-ai/core v0.0.0-20250502122607-6a6b79298548
-	github.com/behavioral-ai/intermediary v0.0.0-20250505193449-7940a93a21ea
-	github.com/behavioral-ai/traffic v0.0.0-20250505193030-7589ac96cb41
+	github.com/behavioral-ai/intermediary v0.0.0-20250505195858-5b5e25d07656
+	github.com/behavioral-ai/traffic v0.0.0-20250505195946-c82a14dec128
 )
 
 require (
