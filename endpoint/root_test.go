@@ -2,11 +2,10 @@ package endpoint
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/core/host"
+	"github.com/behavioral-ai/collective/repository"
 	"github.com/behavioral-ai/core/iox"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/intermediary/config"
-	urn2 "github.com/behavioral-ai/intermediary/urn"
+	intermediary "github.com/behavioral-ai/intermediary/module"
 	"net/http"
 	"net/http/httptest"
 	"time"
@@ -42,18 +41,18 @@ func ExampleNewRootEndpoint() {
 }
 
 func configCacheAgent() {
-	cacheAgent := host.Agent(urn2.CacheAgent)
+	cacheAgent := repository.Agent(intermediary.CacheNamespaceName)
 	//cacheAgent.Message(httpx.NewConfigExchangeMessage(cachetest.Exchange))
 	m := make(map[string]string)
-	m[config.CacheHostKey] = "localhost:8082"
+	//m[config.CacheHostKey] = "localhost:8082"
 	cacheAgent.Message(messaging.NewConfigMapMessage(m))
 }
 
 func configRoutingAgent() {
-	routingAgent := host.Agent(urn2.RoutingAgent)
+	routingAgent := repository.Agent(intermediary.RoutingNamespaceName)
 	//routingAgent.Message(httpx.NewConfigExchangeMessage(routingtest.Exchange))
 	m := make(map[string]string)
-	m[config.AppHostKey] = "localhost:8080"
+	//m[config.AppHostKey] = "localhost:8080"
 	//m[config.TimeoutKey] = "10ms"
 	routingAgent.Message(messaging.NewConfigMapMessage(m))
 
