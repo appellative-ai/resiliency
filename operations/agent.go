@@ -1,12 +1,11 @@
 package operations
 
 import (
-	"github.com/behavioral-ai/core/host"
 	"github.com/behavioral-ai/core/messaging"
 )
 
 const (
-	NamespaceName = "resiliency:agent/host/operations"
+	NamespaceName = "test:resiliency:agent/operations/host"
 )
 
 // TODO : need host name
@@ -30,32 +29,35 @@ func newAgent() *agentT {
 }
 
 // String - identity
-func (a *agentT) String() string { return a.Uri() }
+func (a *agentT) String() string { return a.Name() }
 
-// Uri - agent identifier
-func (a *agentT) Uri() string { return NamespaceName }
+// Name - agent identifier
+func (a *agentT) Name() string { return NamespaceName }
 
 // Message - message the agent
 func (a *agentT) Message(m *messaging.Message) {
 	if m == nil {
 		return
 	}
-	if m.Event() == messaging.ConfigEvent {
+	if m.Name == messaging.ConfigEvent {
 		a.configure(m)
 		return
 	}
-	switch m.Event() {
-	case messaging.StartupEvent:
-		host.Broadcast(m)
-	case messaging.ShutdownEvent:
-		host.Broadcast(m)
-	case messaging.PauseEvent:
-		host.Broadcast(m)
-	case messaging.ResumeEvent:
-		host.Broadcast(m)
-	}
+	/*
+		switch m.Name {
+		case messaging.StartupEvent:
+			host.Broadcast(m)
+		case messaging.ShutdownEvent:
+			host.Broadcast(m)
+		case messaging.PauseEvent:
+			host.Broadcast(m)
+		case messaging.ResumeEvent:
+			host.Broadcast(m)
+		}
+
+	*/
 }
 
 func (a *agentT) configure(m *messaging.Message) {
-	messaging.Reply(m, messaging.StatusOK(), a.Uri())
+	messaging.Reply(m, messaging.StatusOK(), a.Name())
 }

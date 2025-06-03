@@ -3,9 +3,9 @@ package operations
 import (
 	"errors"
 	"fmt"
+	cops "github.com/behavioral-ai/collective/operations"
+	"github.com/behavioral-ai/collective/repository"
 	access "github.com/behavioral-ai/core/access2"
-	"github.com/behavioral-ai/core/eventing"
-	"github.com/behavioral-ai/core/host"
 	"github.com/behavioral-ai/core/iox"
 	"github.com/behavioral-ai/core/messaging"
 )
@@ -14,6 +14,7 @@ var (
 	Agent = New()
 )
 
+/*
 func ConfigureEventing(notifier eventing.NotifyFunc, activity eventing.ActivityFunc) {
 	if notifier != nil {
 		eventing.Handler.Message(eventing.NewNotifyConfigMessage(notifier))
@@ -23,17 +24,20 @@ func ConfigureEventing(notifier eventing.NotifyFunc, activity eventing.ActivityF
 	}
 }
 
+
+*/
+
 func ConfigureLogging(operatorsPath, originPath string) error {
 	if originPath != "" {
 		m, err := iox.ReadMap(originPath)
 		if err != nil {
 			return err
 		}
-		o, err1 := originFromMap(m)
-		if err1 != nil {
-			return err1
-		}
-		access.SetOrigin(o)
+		//o, err1 := originFromMap(m)
+		//if err1 != nil {
+		//	return err1
+		//}
+		access.SetOrigin(m[cops.RegionKey], m[cops.ZoneKey], m[cops.SubZoneKey], m[cops.HostKey], m[cops.InstanceIdKey])
 	}
 	if operatorsPath != "" {
 		err := access.LoadOperators(func() ([]byte, error) {
@@ -55,7 +59,7 @@ func ConfigureAgents(mapPath, profilePath string) error {
 			return err
 		}
 		msg := messaging.NewConfigMapMessage(m)
-		host.Broadcast(msg)
+		repository.Broadcast(msg)
 	}
 	if profilePath != "" {
 	}

@@ -1,10 +1,6 @@
 package operations
 
-import (
-	"errors"
-	access "github.com/behavioral-ai/core/access2"
-	"github.com/behavioral-ai/traffic/timeseries"
-)
+/*
 
 func originFromMap(m map[string]string) (o access.Origin, err error) {
 	o.Region = m[timeseries.RegionKey]
@@ -28,3 +24,6 @@ func originFromMap(m map[string]string) (o access.Origin, err error) {
 	o.InstanceId = m[timeseries.InstanceIdKey]
 	return o, nil
 }
+
+
+*/
