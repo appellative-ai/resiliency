@@ -1,10 +1,6 @@
 {
-  "collective":"collective",
-  "domain":"domain",
-  "host":"host",
-  "instance-id":"instance-id",
-  "region":"region",
-  "service-name":"service-name",
-  "sub-zone":"sbu-zone",
-  "zone":"zone"
+  "host":"www.google.com",
+  "service-name":"google-search",
+  "collective":"google-collective",
+  "domain":"search"
 }

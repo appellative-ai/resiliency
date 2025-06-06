@@ -7,6 +7,8 @@ import (
 )
 
 var (
+	originConfig = "file://[cwd]/operationstest/resource/origin-config.json"
+
 	o = messaging.OriginT{
 		Name:        "name",
 		Region:      "region",
@@ -20,7 +22,44 @@ var (
 	}
 )
 
-func ExampleConfigureOrigin() {
+func ExampleOrigin_Config() {
+	m := map[string]string{
+		messaging.RegionKey:     "us-west1",
+		messaging.ZoneKey:       "oregon",
+		messaging.SubZoneKey:    "portland",
+		messaging.InstanceIdKey: "123456789",
+	}
+
+	err := ConfigureOrigin(originConfig, m)
+	fmt.Printf("test: ConfigOrigin(\"%v\") -> [err:%v]\n", originConfig, err)
+	fmt.Printf("test: messaging.SetOrigin() -> %v [host:%v]\n", messaging.Origin, messaging.Origin.Host)
+
+	m2 := make(map[string]string)
+	err = ConfigureOrigin(originConfig, m2)
+	fmt.Printf("test: ConfigOrigin(\"%v\") -> [err:%v]\n", originConfig, err)
+	fmt.Printf("test: messaging.SetOrigin() -> %v [host:%v]\n", messaging.Origin, messaging.Origin.Host)
+
+	m2 = map[string]string{
+		messaging.RegionKey: "us-west1",
+		//messaging.ZoneKey:    "oregon",
+		messaging.SubZoneKey: "portland",
+		//messaging.InstanceIdKey: "123456789",
+	}
+	err = ConfigureOrigin(originConfig, m2)
+	fmt.Printf("test: ConfigOrigin(\"%v\") -> [err:%v]\n", originConfig, err)
+	fmt.Printf("test: messaging.SetOrigin() -> %v [host:%v]\n", messaging.Origin, messaging.Origin.Host)
+
+	//Output:
+	//test: ConfigOrigin("file://[cwd]/operationstest/resource/origin-config.json") -> [err:<nil>]
+	//test: messaging.SetOrigin() -> google-collective:search:service/us-west1/oregon/portland/google-search#123456789 [host:www.google.com]
+	//test: ConfigOrigin("file://[cwd]/operationstest/resource/origin-config.json") -> [err:config map does not contain key: region]
+	//test: messaging.SetOrigin() ->  [host:]
+	//test: ConfigOrigin("file://[cwd]/operationstest/resource/origin-config.json") -> [err:config map does not contain key: zone]
+	//test: messaging.SetOrigin() ->  [host:]
+
+}
+
+func _ExampleOrigin_Map() {
 	m := map[string]string{
 		messaging.RegionKey:      "region",
 		messaging.ZoneKey:        "zone",
@@ -46,3 +85,9 @@ func ExampleConfigureOrigin() {
 	//fail
 
 }
+
+//buf, err := iox.ReadFile(originConfig)
+//fmt.Printf("test: iox.ReadFile(\"%v\") -> [err:%v]\n", originConfig, err)
+//err = json.Unmarshal(buf, &m)
+//fmt.Printf("test: Unmarshal() -> [err:%v]\n", err)
+//fmt.Printf("test: Unmarshal() -> %v\n", m)
