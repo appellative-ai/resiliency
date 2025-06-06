@@ -1,4 +1,4 @@
-package opstest
+package operationstest
 
 import (
 	"encoding/json"

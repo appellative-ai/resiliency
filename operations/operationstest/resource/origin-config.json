@@ -1,0 +1,10 @@
+{
+  "collective":"collective",
+  "domain":"domain",
+  "host":"host",
+  "instance-id":"instance-id",
+  "region":"region",
+  "service-name":"service-name",
+  "sub-zone":"sbu-zone",
+  "zone":"zone"
+}

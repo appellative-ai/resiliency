@@ -45,7 +45,7 @@ func configCacheAgent() {
 	//cacheAgent.Message(httpx.NewConfigExchangeMessage(cachetest.Exchange))
 	m := make(map[string]string)
 	//m[config.CacheHostKey] = "localhost:8082"
-	cacheAgent.Message(messaging.NewConfigMapMessage(m))
+	cacheAgent.Message(messaging.NewMapMessage(m))
 }
 
 func configRoutingAgent() {
@@ -54,7 +54,7 @@ func configRoutingAgent() {
 	m := make(map[string]string)
 	//m[config.AppHostKey] = "localhost:8080"
 	//m[config.TimeoutKey] = "10ms"
-	routingAgent.Message(messaging.NewConfigMapMessage(m))
+	routingAgent.Message(messaging.NewMapMessage(m))
 
 }
 

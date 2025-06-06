@@ -1,9 +1,9 @@
 package operations
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
-	cops "github.com/behavioral-ai/collective/operations"
 	"github.com/behavioral-ai/collective/repository"
 	access "github.com/behavioral-ai/core/access2"
 	"github.com/behavioral-ai/core/iox"
@@ -14,34 +14,37 @@ var (
 	Agent = New()
 )
 
-/*
-func ConfigureEventing(notifier eventing.NotifyFunc, activity eventing.ActivityFunc) {
-	if notifier != nil {
-		eventing.Handler.Message(eventing.NewNotifyConfigMessage(notifier))
+func ConfigureOrigin(path string, m map[string]string) error {
+	var m2 = make(map[string]string)
+
+	if path == "" {
+		return errors.New("origin path is empty")
 	}
-	if activity != nil {
-		eventing.Handler.Message(eventing.NewActivityConfigMessage(activity))
+	// Read the origin JSON
+	buf, err := iox.ReadFile(path)
+	if err != nil {
+		return err
 	}
+	err = json.Unmarshal(buf, &m2)
+	if err != nil {
+		return err
+	}
+	// Add region, zone, sub-zone, domain, collective, service-name from map m
+	for k, v := range m {
+		m2[k] = v
+	}
+	status := messaging.SetOrigin(m2)
+	if !status.OK() {
+		return status.Err
+	}
+	access.SetOrigin(m2[messaging.RegionKey], m2[messaging.ZoneKey], m2[messaging.SubZoneKey], m2[messaging.HostKey], m2[messaging.InstanceIdKey])
+	return nil
 }
 
-
-*/
-
-func ConfigureLogging(operatorsPath, originPath string) error {
-	if originPath != "" {
-		m, err := iox.ReadMap(originPath)
-		if err != nil {
-			return err
-		}
-		//o, err1 := originFromMap(m)
-		//if err1 != nil {
-		//	return err1
-		//}
-		access.SetOrigin(m[cops.RegionKey], m[cops.ZoneKey], m[cops.SubZoneKey], m[cops.HostKey], m[cops.InstanceIdKey])
-	}
-	if operatorsPath != "" {
+func ConfigureLogging(path string) error {
+	if path != "" {
 		err := access.LoadOperators(func() ([]byte, error) {
-			return iox.ReadFile(operatorsPath)
+			return iox.ReadFile(path)
 		})
 		if err != nil {
 			return err
@@ -58,7 +61,7 @@ func ConfigureAgents(mapPath, profilePath string) error {
 		if err != nil {
 			return err
 		}
-		msg := messaging.NewConfigMapMessage(m)
+		msg := messaging.NewMapMessage(m)
 		repository.Broadcast(msg)
 	}
 	if profilePath != "" {
