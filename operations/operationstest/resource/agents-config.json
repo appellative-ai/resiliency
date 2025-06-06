@@ -1,0 +1,7 @@
+{
+  "test:resiliency:agent/rate-limiting/request/http":"rate-limit=1234,rate-burst=12,peak-duration=750ms,off-peak-duration=5m,load-size=567",
+  "test:resiliency:agent/redirect/request/http":"rate-limit=1234,rate-burst=12,original-path=/resource/v1,new-path=/resource/v2,interval=4m,status-code-threshold=10,percentile-threshold=99/1500ms",
+  "test:resiliency:agent/cache/request/http":"@path=cache-config.json",
+  "test:resiliency:agent/routing/request/http":"app-host=localhost:8082,log=true,route-name=test-route,timeout=2m"
+}
+

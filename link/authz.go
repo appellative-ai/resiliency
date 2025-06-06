@@ -6,6 +6,7 @@ import (
 )
 
 const (
+	NamespaceNameAuth = "test:resiliency:link/authorization/http"
 	AuthorizationName = "Authorization"
 )
 

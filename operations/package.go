@@ -42,15 +42,12 @@ func ConfigureOrigin(path string, m map[string]string) error {
 }
 
 func ConfigureLogging(path string) error {
-	if path != "" {
-		err := access.LoadOperators(func() ([]byte, error) {
-			return iox.ReadFile(path)
-		})
-		if err != nil {
-			return err
-		}
+	if path == "" {
+		return errors.New("logging operator path is empty")
 	}
-	return nil
+	return access.LoadOperators(func() ([]byte, error) {
+		return iox.ReadFile(path)
+	})
 }
 
 // ConfigureAgents - configure all agents

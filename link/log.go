@@ -8,7 +8,8 @@ import (
 )
 
 const (
-	Route = "host"
+	NamespaceNameLog = "test:resiliency:link/log/access"
+	Route            = "host"
 )
 
 // Logger - chainable exchange

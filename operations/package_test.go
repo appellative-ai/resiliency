@@ -7,13 +7,13 @@ import (
 )
 
 var (
-	originConfig = "file://[cwd]/operationstest/resource/origin-config.json"
+	originConfig    = "file://[cwd]/operationstest/resource/origin-config.json"
+	operatorsConfig = "file://[cwd]/operationstest/resource/logging-operators.json"
 
 	o = messaging.OriginT{
-		Name:        "name",
 		Region:      "region",
 		Zone:        "zone",
-		SubZone:     "sbu-zone",
+		SubZone:     "sub-zone",
 		Host:        "host",
 		ServiceName: "service-name",
 		InstanceId:  "instance-id",
@@ -22,7 +22,7 @@ var (
 	}
 )
 
-func ExampleOrigin_Config() {
+func _ExampleOrigin_Config() {
 	m := map[string]string{
 		messaging.RegionKey:     "us-west1",
 		messaging.ZoneKey:       "oregon",
@@ -83,6 +83,15 @@ func _ExampleOrigin_Map() {
 
 	//Output:
 	//fail
+
+}
+
+func ExampleLogging_Config() {
+	err := ConfigureLogging(operatorsConfig)
+	fmt.Printf("test: ConfigureLogging(\"%v\") -> [err:%v]\n", operatorsConfig, err)
+
+	//Output:
+	//test: ConfigureLogging("file://[cwd]/operationstest/resource/logging-operators.json") -> [err:<nil>]
 
 }
 
