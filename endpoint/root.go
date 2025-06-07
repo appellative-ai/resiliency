@@ -25,9 +25,9 @@ func newRootEndpoint() *rest.Endpoint {
 	//repository.Agent(intermediary.CacheNamespaceName).Message(httpx.NewConfigExchangeMessage(cachetest.Exchange))
 	//repository.Agent(intermediary.RoutingNamespaceName).Message(httpx.NewConfigExchangeMessage(routingtest.Exchange))
 
-	return host.NewEndpoint(link.Logger,
+	return host.NewEndpoint([]any{link.Logger,
 		repository.Agent(traffic.RedirectNamespaceName),
 		repository.Agent(intermediary.CacheNamespaceName),
 		repository.Agent(traffic.LimiterNamespaceName),
-		repository.Agent(intermediary.RoutingNamespaceName))
+		repository.Agent(intermediary.RoutingNamespaceName)})
 }
