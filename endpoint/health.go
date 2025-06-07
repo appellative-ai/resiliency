@@ -4,8 +4,6 @@ import (
 	"net/http"
 )
 
-var ()
-
 type health struct{}
 
 func newHealthEndpoint() *health {

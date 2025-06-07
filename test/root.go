@@ -1,18 +1,15 @@
 package test
 
 import (
+	"github.com/behavioral-ai/collective/repository"
 	"github.com/behavioral-ai/core/host"
-	"github.com/behavioral-ai/core/httpx"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/rest"
 	"github.com/behavioral-ai/intermediary/cache"
 	"github.com/behavioral-ai/intermediary/cache/cachetest"
-	"github.com/behavioral-ai/intermediary/config"
-	urn2 "github.com/behavioral-ai/intermediary/urn"
 	"github.com/behavioral-ai/resiliency/operations"
 	"github.com/behavioral-ai/traffic/limiter"
 	"github.com/behavioral-ai/traffic/redirect"
-	"github.com/behavioral-ai/traffic/urn"
 )
 
 func NewRootEndpoint() *rest.Endpoint {
@@ -20,11 +17,11 @@ func NewRootEndpoint() *rest.Endpoint {
 	_ = cache.NamespaceName
 	_ = limiter.NamespaceName
 	_ = redirect.NamespaceName
-	cache := host.Agent(urn2.CacheAgent)
-	cache.Message(httpx.NewConfigExchangeMessage(cachetest.Exchange))
+	cache := repository.Agent(cache.NamespaceName)
+	cache.Message(rest.NewExchangeMessage(cachetest.Exchange))
 	m := make(map[string]string)
-	m[config.CacheHostKey] = "localhost:8082"
-	cache.Message(messaging.NewConfigMapMessage(m))
+	m["host"] = "localhost:8082"
+	cache.Message(messaging.NewMapMessage(m))
 	/*
 		chain := httpx.BuildChain(host.AccessLogLink, host.AuthorizationLink,
 			exchange.Agent(urn.RedirectAgent),
@@ -33,7 +30,7 @@ func NewRootEndpoint() *rest.Endpoint {
 
 	*/
 
-	return host.NewEndpoint(host.Agent(urn.RedirectAgent),
-		host.Agent(urn2.CacheAgent),
-		host.Agent(urn.LimiterAgent), RoutingLink)
+	return host.NewEndpoint([]any{repository.Agent(redirect.NamespaceName),
+		cache, //repository.Agent(cache.Nurn2.CacheAgent),
+		repository.Agent(limiter.NamespaceName), RoutingLink})
 }
