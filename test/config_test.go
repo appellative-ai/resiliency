@@ -35,16 +35,17 @@ func ExampleAppConfig() {
 	s, ok = app.Path(key)
 	fmt.Printf("test: app.Path(\"%v\") -> [%v] [ok:%v]\n", key, s, ok)
 
-	/*
-		key = "secondary"
-		//app := NewAppConfig(cfg)
-		fmt.Printf("test: app.Name(\"%v\") -> [%v]\n", key, app.Name(key))
-		fmt.Printf("test: app.Path(\"%v\") -> [%v]\n", key, app.Path(key))
+	key = "secondary"
+	//app := NewAppConfig(cfg)
+	s, ok = app.Name(key)
+	fmt.Printf("test: app.Name(\"%v\") -> [%v] [ok:%v]\n", key, s, ok)
+	s, ok = app.Path(key)
+	fmt.Printf("test: app.Path(\"%v\") -> [%v] [ok:%v]\n", key, s, ok)
 
-
-	*/
 	//Output:
-	//test: ReadConfig("/resource/app-config.json") -> [map:2] [<nil>]
-	//test: readConfig("/resource/network-config-primary.json") -> [map:4] [<nil>]
+	//test: app.Name("primary") -> [test:resiliency:agent/caseOfficer/service/traffic/ingress/primary] [ok:true]
+	//test: app.Path("primary") -> [network-config-primary.json] [ok:true]
+	//test: app.Name("secondary") -> [test:resiliency:agent/caseOfficer/service/traffic/ingress/secondary] [ok:true]
+	//test: app.Path("secondary") -> [network-config-secondary.json] [ok:true]
 
 }
