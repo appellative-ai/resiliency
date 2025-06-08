@@ -7,6 +7,16 @@ import (
 	"github.com/behavioral-ai/core/messaging"
 )
 
+const (
+	LoggingRole       = "logging"
+	AuthorizationRole = "authorization"
+	CacheRole         = "role"
+	RateLimiterRole   = "rate-limiter"
+	RoutingRole       = "routing"
+	RedirectRole      = "redirect"
+	NameKey           = "name"
+)
+
 func buildAgent(handler messaging.Agent, cfg map[string]string, role string) (messaging.Agent, error) {
 	name, ok := cfg[NameKey]
 	if !ok || name == "" {
