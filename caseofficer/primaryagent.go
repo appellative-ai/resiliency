@@ -4,10 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/behavioral-ai/collective/operations"
-	"github.com/behavioral-ai/collective/repository"
-	"github.com/behavioral-ai/core/host"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/core/rest"
 	link "github.com/behavioral-ai/resiliency/link"
 )
 
@@ -78,61 +75,40 @@ func (a *primaryAgentT) Message(m *messaging.Message) {
 	}
 }
 
-func (a *primaryAgentT) Startup(net map[string]map[string]string) (e *rest.Endpoint, errs []error) {
+func (a *primaryAgentT) BuildNetwork(net map[string]map[string]string) (links []any, errs []error) {
 	if net == nil {
 		return nil, []error{errors.New("error: configuration nil")}
 	}
-	var links []any
 	var router bool
+	var roles = []string{LoggingRole, AuthorizationRole, RedirectRole, CacheRole, RateLimiterRole, RoutingRole}
 
-	if cfg, ok := net[LoggingRole]; ok {
-		if _, ok1 := cfg[NameKey]; ok1 {
-			links = append(links, link.Logger)
+	for _, role := range roles {
+		cfg, ok := net[role]
+		if !ok {
+			continue
 		}
-	}
-	if cfg, ok := net[AuthorizationRole]; ok {
-		if _, ok1 := cfg[NameKey]; ok1 {
-			links = append(links, link.Authorization)
-		}
-	}
-	if cfg, ok := net[RedirectRole]; ok {
-		if name, ok1 := cfg[NameKey]; ok1 {
-			agent := repository.Agent(name)
-			if agent == nil {
-				errs = append(errs, errors.New(fmt.Sprintf("invalid agent name %v for role %v", name, RedirectRole)))
+		switch role {
+		case LoggingRole, AuthorizationRole:
+			name, ok1 := cfg[NameKey]
+			if !ok1 || name == "" {
+				errs = append(errs, errors.New(fmt.Sprintf("agent name not found or is empty for role %v", role)))
 			} else {
-				links = append(links, agent)
+				// TODO: use name to find link. Create a repository for links??
+				if role == LoggingRole {
+					links = append(links, link.Logger)
+				} else {
+					links = append(links, link.Authorization)
+				}
 			}
-		}
-	}
-	if cfg, ok := net[CacheRole]; ok {
-		if name, ok1 := cfg[NameKey]; ok1 {
-			agent := repository.Agent(name)
-			if agent == nil {
-				errs = append(errs, errors.New(fmt.Sprintf("invalid agent name %v for role %v", name, CacheRole)))
+		default:
+			agent, err := buildAgent(a, cfg, role)
+			if err != nil {
+				errs = append(errs, err)
 			} else {
 				links = append(links, agent)
-			}
-		}
-	}
-	if cfg, ok := net[RateLimiterRole]; ok {
-		if name, ok1 := cfg[NameKey]; ok1 {
-			agent := repository.Agent(name)
-			if agent == nil {
-				errs = append(errs, errors.New(fmt.Sprintf("invalid agent name %v for role %v", name, RateLimiterRole)))
-			} else {
-				links = append(links, agent)
-			}
-		}
-	}
-	if cfg, ok := net[RoutingRole]; ok {
-		if name, ok1 := cfg[NameKey]; ok1 {
-			agent := repository.Agent(name)
-			if agent == nil {
-				errs = append(errs, errors.New(fmt.Sprintf("invalid agent name %v for role %v", name, RoutingRole)))
-			} else {
-				router = true
-				links = append(links, agent)
+				if role == RoutingRole {
+					router = true
+				}
 			}
 		}
 	}
@@ -142,7 +118,7 @@ func (a *primaryAgentT) Startup(net map[string]map[string]string) (e *rest.Endpo
 	if !router {
 		return nil, []error{errors.New("error: no routing agent was configured")}
 	}
-	return host.NewEndpoint(links), nil
+	return links, nil
 }
 
 // Run - run the agent

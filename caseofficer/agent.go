@@ -2,7 +2,6 @@ package caseofficer
 
 import (
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/core/rest"
 )
 
 const (
@@ -17,5 +16,5 @@ const (
 
 type Agent interface {
 	messaging.Agent
-	Startup(m map[string]map[string]string) (*rest.Endpoint, []error)
+	BuildNetwork(m map[string]map[string]string) ([]any, []error)
 }
