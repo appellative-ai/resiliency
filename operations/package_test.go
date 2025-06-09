@@ -14,6 +14,7 @@ var (
 	originFileName    = "origin-config.json"
 	operatorsFileName = "logging-operators.json"
 	appFileName       = "app-config.json"
+	networkFileName   = "network-config-primary.json"
 
 	o = messaging.OriginT{
 		Region:      "region",
@@ -127,8 +128,17 @@ func ExampleApp_Config() {
 
 }
 
-//buf, err := iox.ReadFile(originConfig)
-//fmt.Printf("test: iox.ReadFile(\"%v\") -> [err:%v]\n", originConfig, err)
-//err = json.Unmarshal(buf, &m)
-//fmt.Printf("test: Unmarshal() -> [err:%v]\n", err)
-//fmt.Printf("test: Unmarshal() -> %v\n", m)
+func ExampleNetwork_Config() {
+	var m []map[string]string
+
+	buf, err := readFile(networkFileName)
+	fmt.Printf("test: readFile(\"%v\") -> [bytes:%v] [err:%v]\n", subDir+networkFileName, len(buf), err)
+
+	err = json.Unmarshal(buf, &m)
+	fmt.Printf("test: json.Unmarshal() -> %v [err:%v]\n", m, err)
+
+	//Output:
+	//test: readFile("/operationstest/resource/network-config-primary.json") -> [bytes:1306] [err:<nil>]
+	//test: json.Unmarshal() -> [map[load-size:567 name:test:resiliency:agent/rate-limiting/request/http off-peak-duration:5m peak-duration:750ms rate-burst:12 rate-limit:1234 role:rate-limiting] map[agent:test:resiliency:agent/redirect/request/http interval:4m new-path:/resource/v2 original-path:resource/v1 percentile-threshold:99/1500ms rate-burst:12 rate-limit:1234 role:redirect status-code-threshold:10] map[cache-control:no-store, no-cache, max-age=0 fri:22-23 host:www.google.com interval:4m mon:8-16 name:test:resiliency:agent/cache/request/http role:cache sat:3-8 sun:13-15 thu:0-23 timeout:750ms tue:6-10 wed:12-12] map[app-host:localhost:8082 log:true name:test:resiliency:agent/routing/request/http role:routing route-name:test-route timeout:2m] map[name:test:resiliency:link/authorization/http role:authorization] map[name:test:resiliency:link/logging/access role:logging]] [err:<nil>]
+
+}
