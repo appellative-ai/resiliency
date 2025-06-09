@@ -68,6 +68,6 @@ func ExampleBuildLink() {
 
 	//Output:
 	//test: buildLink() -> [rest.ExchangeLink] [err:<nil>]
-	//test: buildLink() -> [*messagingtest.agentT] [err:<nil>]
+	//test: buildLink() -> [*messagingtest.AgentT] [err:<nil>]
 
 }

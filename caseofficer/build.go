@@ -39,10 +39,8 @@ func buildLink(handler messaging.Agent, cfg map[string]string, role string) (any
 			return nil, errors.New(fmt.Sprintf("agent is nil for name: %v and role: %v", name, role))
 		}
 		// TODO: wait for reply?
-		m := messaging.NewMapMessage(cfg)
-		agent.Message(m)
-		m = messaging.NewHandlerMessage(handler)
-		agent.Message(m)
+		agent.Message(messaging.NewMapMessage(cfg))
+		agent.Message(messaging.NewHandlerMessage(handler))
 		return agent, nil
 	default:
 	}
