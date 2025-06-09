@@ -10,9 +10,10 @@ import (
 var (
 	//originConfig    = "file://[cwd]/operationstest/resource/origin-config.json"
 	//operatorsConfig = "file://[cwd]/operationstest/resource/logging-operators.json"
-
-	originPath    = "/operationstest/resource/origin-config.json"
-	operatorsPath = "/operationstest/resource/logging-operators.json"
+	subDir            = "/operationstest/resource/"
+	originFileName    = "origin-config.json"
+	operatorsFileName = "logging-operators.json"
+	appFileName       = "app-config.json"
 
 	o = messaging.OriginT{
 		Region:      "region",
@@ -31,7 +32,7 @@ func readFile(fileName string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return os.ReadFile(dir + fileName)
+	return os.ReadFile(dir + subDir + fileName)
 }
 
 func ExampleOrigin_Config() {
@@ -42,15 +43,15 @@ func ExampleOrigin_Config() {
 		messaging.InstanceIdKey: "123456789",
 	}
 	read := func() ([]byte, error) {
-		return readFile(originPath)
+		return readFile(originFileName)
 	}
 	err := ConfigureOrigin(m, read)
-	fmt.Printf("test: ConfigOrigin(\"%v\") -> [err:%v]\n", originPath, err)
+	fmt.Printf("test: ConfigOrigin(\"%v\") -> [err:%v]\n", subDir+originFileName, err)
 	fmt.Printf("test: messaging.SetOrigin() -> %v [host:%v]\n", messaging.Origin, messaging.Origin.Host)
 
 	m2 := make(map[string]string)
 	err = ConfigureOrigin(m2, read)
-	fmt.Printf("test: ConfigOrigin(\"%v\") -> [err:%v]\n", originPath, err)
+	fmt.Printf("test: ConfigOrigin(\"%v\") -> [err:%v]\n", subDir+originFileName, err)
 	fmt.Printf("test: messaging.SetOrigin() -> %v [host:%v]\n", messaging.Origin, messaging.Origin.Host)
 
 	m2 = map[string]string{
@@ -60,7 +61,7 @@ func ExampleOrigin_Config() {
 		//messaging.InstanceIdKey: "123456789",
 	}
 	err = ConfigureOrigin(m2, read)
-	fmt.Printf("test: ConfigOrigin(\"%v\") -> [err:%v]\n", originPath, err)
+	fmt.Printf("test: ConfigOrigin(\"%v\") -> [err:%v]\n", subDir+originFileName, err)
 	fmt.Printf("test: messaging.SetOrigin() -> %v [host:%v]\n", messaging.Origin, messaging.Origin.Host)
 
 	//Output:
@@ -102,12 +103,27 @@ func _ExampleOrigin_Map() {
 
 func ExampleLogging_Config() {
 	err := ConfigureLogging(func() ([]byte, error) {
-		return readFile(operatorsPath)
+		return readFile(operatorsFileName)
 	})
-	fmt.Printf("test: ConfigureLogging(\"%v\") -> [err:%v]\n", operatorsPath, err)
+	fmt.Printf("test: ConfigureLogging(\"%v\") -> [err:%v]\n", subDir+operatorsFileName, err)
 
 	//Output:
 	//test: ConfigureLogging("/operationstest/resource/logging-operators.json") -> [err:<nil>]
+
+}
+
+func ExampleApp_Config() {
+	var m map[string]string
+
+	buf, err := readFile(appFileName)
+	fmt.Printf("test: readFile(\"%v\") -> [bytes:%v] [err:%v]\n", subDir+appFileName, len(buf), err)
+
+	err = json.Unmarshal(buf, &m)
+	fmt.Printf("test: json.Unmarshal() -> %v [err:%v]\n", m, err)
+
+	//Output:
+	//test: readFile("/operationstest/resource/app-config.json") -> [bytes:252] [err:<nil>]
+	//test: json.Unmarshal() -> map[primary:name=test:resiliency:agent/caseOfficer/service/traffic/ingress/primary,@path=network-config-primary.json secondary:name=test:resiliency:agent/caseOfficer/service/traffic/ingress/secondary,@path=network-config-secondary.json] [err:<nil>]
 
 }
 
