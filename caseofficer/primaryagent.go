@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/collective/operations"
 	"github.com/behavioral-ai/core/messaging"
-	link "github.com/behavioral-ai/resiliency/link"
 )
 
 const (
@@ -87,29 +86,11 @@ func (a *primaryAgentT) BuildNetwork(net map[string]map[string]string) (links []
 		if !ok {
 			continue
 		}
-		switch role {
-		case LoggingRole, AuthorizationRole:
-			name, ok1 := cfg[NameKey]
-			if !ok1 || name == "" {
-				errs = append(errs, errors.New(fmt.Sprintf("agent name not found or is empty for role %v", role)))
-			} else {
-				// TODO: use name to find link. Create a repository for links??
-				if role == LoggingRole {
-					links = append(links, link.Logger)
-				} else {
-					links = append(links, link.Authorization)
-				}
-			}
-		default:
-			agent, err := buildAgent(a, cfg, role)
-			if err != nil {
-				errs = append(errs, err)
-			} else {
-				links = append(links, agent)
-				if role == RoutingRole {
-					router = true
-				}
-			}
+		link, err := buildLink(a, cfg, role)
+		if err != nil {
+			errs = append(errs, err)
+		} else {
+			links = append(links, link)
 		}
 	}
 	if len(errs) > 0 {

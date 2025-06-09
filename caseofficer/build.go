@@ -3,6 +3,7 @@ package caseofficer
 import (
 	"errors"
 	"fmt"
+	"github.com/behavioral-ai/collective/namespace"
 	"github.com/behavioral-ai/collective/repository"
 	"github.com/behavioral-ai/core/messaging"
 )
@@ -17,19 +18,33 @@ const (
 	NameKey           = "name"
 )
 
-func buildAgent(handler messaging.Agent, cfg map[string]string, role string) (messaging.Agent, error) {
+func buildLink(handler messaging.Agent, cfg map[string]string, role string) (any, error) {
+	if handler == nil || cfg == nil {
+		return nil, errors.New(fmt.Sprintf("agent or configuration map is nil"))
+	}
 	name, ok := cfg[NameKey]
 	if !ok || name == "" {
-		return nil, errors.New(fmt.Sprintf("agent name not found or is empty for role %v", role))
+		return nil, errors.New(fmt.Sprintf("agent or exchange name not found or is empty for role: %v", role))
 	}
-	agent := repository.Constructor(name)
-	if agent == nil {
-		return nil, errors.New(fmt.Sprintf("invalid agent name %v for role %v", name, role))
+	switch namespace.Kind(name) {
+	case namespace.Link:
+		l := repository.ExchangeLink(name)
+		if l == nil {
+			return nil, errors.New(fmt.Sprintf("exchange link is nil for name: %v and role: %v", name, role))
+		}
+		return l, nil
+	case namespace.AgentKind:
+		agent := repository.NewAgent(name)
+		if agent == nil {
+			return nil, errors.New(fmt.Sprintf("agent is nil for name: %v and role: %v", name, role))
+		}
+		// TODO: wait for reply?
+		m := messaging.NewMapMessage(cfg)
+		agent.Message(m)
+		m = messaging.NewHandlerMessage(handler)
+		agent.Message(m)
+		return agent, nil
+	default:
 	}
-	// TODO: wait for reply?
-	m := messaging.NewMapMessage(cfg)
-	agent.Message(m)
-	m = messaging.NewHandlerMessage(handler)
-	agent.Message(m)
-	return agent, nil
+	return nil, errors.New(fmt.Sprintf("invalid Namespace kind: %v and role: %v", namespace.Kind(name), role))
 }
