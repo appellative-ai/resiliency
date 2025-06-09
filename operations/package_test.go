@@ -4,11 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/behavioral-ai/core/messaging"
+	"os"
 )
 
 var (
-	originConfig    = "file://[cwd]/operationstest/resource/origin-config.json"
-	operatorsConfig = "file://[cwd]/operationstest/resource/logging-operators.json"
+	//originConfig    = "file://[cwd]/operationstest/resource/origin-config.json"
+	//operatorsConfig = "file://[cwd]/operationstest/resource/logging-operators.json"
+
+	originPath    = "/operationstest/resource/origin-config.json"
+	operatorsPath = "/operationstest/resource/logging-operators.json"
 
 	o = messaging.OriginT{
 		Region:      "region",
@@ -22,21 +26,31 @@ var (
 	}
 )
 
-func _ExampleOrigin_Config() {
+func readFile(fileName string) ([]byte, error) {
+	dir, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
+	return os.ReadFile(dir + fileName)
+}
+
+func ExampleOrigin_Config() {
 	m := map[string]string{
 		messaging.RegionKey:     "us-west1",
 		messaging.ZoneKey:       "oregon",
 		messaging.SubZoneKey:    "portland",
 		messaging.InstanceIdKey: "123456789",
 	}
-
-	err := ConfigureOrigin(originConfig, m)
-	fmt.Printf("test: ConfigOrigin(\"%v\") -> [err:%v]\n", originConfig, err)
+	read := func() ([]byte, error) {
+		return readFile(originPath)
+	}
+	err := ConfigureOrigin(m, read)
+	fmt.Printf("test: ConfigOrigin(\"%v\") -> [err:%v]\n", originPath, err)
 	fmt.Printf("test: messaging.SetOrigin() -> %v [host:%v]\n", messaging.Origin, messaging.Origin.Host)
 
 	m2 := make(map[string]string)
-	err = ConfigureOrigin(originConfig, m2)
-	fmt.Printf("test: ConfigOrigin(\"%v\") -> [err:%v]\n", originConfig, err)
+	err = ConfigureOrigin(m2, read)
+	fmt.Printf("test: ConfigOrigin(\"%v\") -> [err:%v]\n", originPath, err)
 	fmt.Printf("test: messaging.SetOrigin() -> %v [host:%v]\n", messaging.Origin, messaging.Origin.Host)
 
 	m2 = map[string]string{
@@ -45,16 +59,16 @@ func _ExampleOrigin_Config() {
 		messaging.SubZoneKey: "portland",
 		//messaging.InstanceIdKey: "123456789",
 	}
-	err = ConfigureOrigin(originConfig, m2)
-	fmt.Printf("test: ConfigOrigin(\"%v\") -> [err:%v]\n", originConfig, err)
+	err = ConfigureOrigin(m2, read)
+	fmt.Printf("test: ConfigOrigin(\"%v\") -> [err:%v]\n", originPath, err)
 	fmt.Printf("test: messaging.SetOrigin() -> %v [host:%v]\n", messaging.Origin, messaging.Origin.Host)
 
 	//Output:
-	//test: ConfigOrigin("file://[cwd]/operationstest/resource/origin-config.json") -> [err:<nil>]
+	//test: ConfigOrigin("/operationstest/resource/origin-config.json") -> [err:<nil>]
 	//test: messaging.SetOrigin() -> google-collective:search:service/us-west1/oregon/portland/google-search#123456789 [host:www.google.com]
-	//test: ConfigOrigin("file://[cwd]/operationstest/resource/origin-config.json") -> [err:config map does not contain key: region]
+	//test: ConfigOrigin("/operationstest/resource/origin-config.json") -> [err:config map does not contain key: region]
 	//test: messaging.SetOrigin() ->  [host:]
-	//test: ConfigOrigin("file://[cwd]/operationstest/resource/origin-config.json") -> [err:config map does not contain key: zone]
+	//test: ConfigOrigin("/operationstest/resource/origin-config.json") -> [err:config map does not contain key: zone]
 	//test: messaging.SetOrigin() ->  [host:]
 
 }
@@ -87,11 +101,13 @@ func _ExampleOrigin_Map() {
 }
 
 func ExampleLogging_Config() {
-	err := ConfigureLogging(operatorsConfig)
-	fmt.Printf("test: ConfigureLogging(\"%v\") -> [err:%v]\n", operatorsConfig, err)
+	err := ConfigureLogging(func() ([]byte, error) {
+		return readFile(operatorsPath)
+	})
+	fmt.Printf("test: ConfigureLogging(\"%v\") -> [err:%v]\n", operatorsPath, err)
 
 	//Output:
-	//test: ConfigureLogging("file://[cwd]/operationstest/resource/logging-operators.json") -> [err:<nil>]
+	//test: ConfigureLogging("/operationstest/resource/logging-operators.json") -> [err:<nil>]
 
 }
 
