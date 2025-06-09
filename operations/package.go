@@ -14,14 +14,15 @@ var (
 	Agent = New()
 )
 
-func ConfigureOrigin(path string, m map[string]string) error {
+// ConfigureOrigin - map must provide region, zone, sub-zone, domain, collective, and service-name
+func ConfigureOrigin(path string, m map[string]string, read func(string) ([]byte, error)) error {
 	var m2 = make(map[string]string)
 
-	if path == "" {
-		return errors.New("origin path is empty")
+	if path == "" || read == nil {
+		return errors.New("origin path is empty or read function is nil")
 	}
 	// Read the origin JSON
-	buf, err := iox.ReadFile(path)
+	buf, err := read(path)
 	if err != nil {
 		return err
 	}
@@ -29,7 +30,7 @@ func ConfigureOrigin(path string, m map[string]string) error {
 	if err != nil {
 		return err
 	}
-	// Add region, zone, sub-zone, domain, collective, service-name from map m
+	// Add host created items
 	for k, v := range m {
 		m2[k] = v
 	}
@@ -41,12 +42,12 @@ func ConfigureOrigin(path string, m map[string]string) error {
 	return nil
 }
 
-func ConfigureLogging(path string) error {
-	if path == "" {
-		return errors.New("logging operator path is empty")
+func ConfigureLogging(path string, read func(string) ([]byte, error)) error {
+	if path == "" || read == nil {
+		return errors.New("logging path is empty or read function is nil")
 	}
 	return access.LoadOperators(func() ([]byte, error) {
-		return iox.ReadFile(path)
+		return read(path)
 	})
 }
 
