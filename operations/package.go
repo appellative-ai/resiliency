@@ -15,14 +15,14 @@ var (
 )
 
 // ConfigureOrigin - map must provide region, zone, sub-zone, domain, collective, and service-name
-func ConfigureOrigin(path string, m map[string]string, read func(string) ([]byte, error)) error {
+func ConfigureOrigin(m map[string]string, read func() ([]byte, error)) error {
 	var m2 = make(map[string]string)
 
-	if path == "" || read == nil {
-		return errors.New("origin path is empty or read function is nil")
+	if read == nil {
+		return errors.New("origin read function is nil")
 	}
 	// Read the origin JSON
-	buf, err := read(path)
+	buf, err := read()
 	if err != nil {
 		return err
 	}
@@ -42,18 +42,17 @@ func ConfigureOrigin(path string, m map[string]string, read func(string) ([]byte
 	return nil
 }
 
-func ConfigureLogging(path string, read func(string) ([]byte, error)) error {
-	if path == "" || read == nil {
-		return errors.New("logging path is empty or read function is nil")
+func ConfigureLogging(read func() ([]byte, error)) error {
+	if read == nil {
+		return errors.New("logging read function is nil")
 	}
 	return access.LoadOperators(func() ([]byte, error) {
-		return read(path)
+		return read()
 	})
 }
 
-// ConfigureAgents - configure all agents
-// TODO : add configuration for caching profile
-func ConfigureAgents(mapPath, profilePath string) error {
+// ConfigureNetworks - configure application networks
+func ConfigureNetworks(mapPath, profilePath string) error {
 	if mapPath != "" {
 		m, err := iox.ReadMap(mapPath)
 		if err != nil {

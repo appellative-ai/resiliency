@@ -26,14 +26,14 @@ type primaryAgentT struct {
 	//dispatcher messaging.Dispatcher
 }
 
-// NewPrimary - create a new agent
-func NewPrimary(cfg map[string]map[string]string, service *operations.Service) Agent {
-	return newAgent(cfg, service)
+// NewPrimaryAgent - create a new agent
+func NewPrimaryAgent(service *operations.Service) Agent {
+	return newAgent(service)
 }
 
-func newAgent(cfg map[string]map[string]string, service *operations.Service) *primaryAgentT {
+func newAgent(service *operations.Service) *primaryAgentT {
 	a := new(primaryAgentT)
-	a.cfg = cfg
+	//a.cfg = cfg
 
 	a.service = service
 	a.ex = messaging.NewExchange()
