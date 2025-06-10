@@ -12,6 +12,6 @@ func ExampleNewAgent() {
 	fmt.Printf("test: NewAgent() -> [%v]\n", agent)
 
 	//Output:
-	//test: NewAgent() -> [resiliency:agent/host/operations]
+	//test: NewAgent() -> [test:resiliency:agent/operations/host]
 
 }
