@@ -5,17 +5,13 @@ import (
 	"github.com/behavioral-ai/collective/repository"
 	"github.com/behavioral-ai/core/host"
 	"github.com/behavioral-ai/core/rest"
-	"github.com/behavioral-ai/intermediary/cache"
-	"github.com/behavioral-ai/intermediary/cache/cachetest"
-	"github.com/behavioral-ai/intermediary/routing"
-	"github.com/behavioral-ai/intermediary/routing/routingtest"
+	"github.com/behavioral-ai/traffic/cache"
+	"github.com/behavioral-ai/traffic/cache/cachetest"
+	"github.com/behavioral-ai/traffic/routing"
+	"github.com/behavioral-ai/traffic/routing/routingtest"
 
-	intermediary "github.com/behavioral-ai/intermediary/module"
 	link "github.com/behavioral-ai/resiliency/link"
 	traffic "github.com/behavioral-ai/traffic/module"
-	//_ "github.com/behavioral-ai/traffic/limiter"
-	//_ "github.com/behavioral-ai/intermediary/cache"
-	//_ "github.com/behavioral-ai/traffic/redirect"
 )
 
 func newRootEndpoint() *rest.Endpoint {
@@ -26,8 +22,7 @@ func newRootEndpoint() *rest.Endpoint {
 	//repository.Agent(intermediary.RoutingNamespaceName).Message(httpx.NewConfigExchangeMessage(routingtest.Exchange))
 
 	return host.NewEndpoint([]any{link.Logger,
-		repository.Agent(traffic.RedirectNamespaceName),
-		repository.Agent(intermediary.CacheNamespaceName),
+		repository.Agent(traffic.CacheNamespaceName),
 		repository.Agent(traffic.LimiterNamespaceName),
-		repository.Agent(intermediary.RoutingNamespaceName)})
+		repository.Agent(traffic.RoutingNamespaceName)})
 }

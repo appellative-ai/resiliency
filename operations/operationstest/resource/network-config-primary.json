@@ -1,5 +1,13 @@
 [
   {
+    "role": "authorization",
+    "name": "test:resiliency:link/authorization/http"
+  },
+  {
+    "role": "logging",
+    "name": "test:resiliency:link/logging/access"
+  },
+  {
     "role": "rate-limiting",
     "name":"test:resiliency:agent/rate-limiting/request/http",
     "rate-limit": "1234",
@@ -9,20 +17,9 @@
     "load-size": "567"
   },
   {
-    "role": "redirect",
-    "agent":"test:resiliency:agent/redirect/request/http",
-    "rate-limit": "1234",
-    "rate-burst": "12",
-    "original-path": "resource/v1",
-    "new-path": "/resource/v2",
-    "interval": "4m",
-    "status-code-threshold": "10",
-    "percentile-threshold": "99/1500ms"
-  },
-  {
     "role": "cache",
     "name":"test:resiliency:agent/cache/request/http",
-    "host":"www.google.com",
+    "host":"localhost:8081",
     "cache-control":"no-store, no-cache, max-age=0",
     "timeout":"750ms",
     "interval":"4m",
@@ -37,18 +34,10 @@
   {
     "role": "routing",
     "name":"test:resiliency:agent/routing/request/http",
-    "app-host": "localhost:8082",
-    "log": "true",
-    "route-name": "test-route",
-    "timeout": "2m"
-  },
-  {
-    "role": "authorization",
-    "name": "test:resiliency:link/authorization/http"
-  },
-  {
-    "role": "logging",
-    "name": "test:resiliency:link/logging/access"
+    "app-host": "localhost:8080",
+    "cache-host": "localhost:8081",
+    "timeout": "2m",
+    "interval": "4m"
   }
 ]
 

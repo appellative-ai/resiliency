@@ -5,7 +5,7 @@ import (
 	"github.com/behavioral-ai/collective/repository"
 	"github.com/behavioral-ai/core/iox"
 	"github.com/behavioral-ai/core/messaging"
-	intermediary "github.com/behavioral-ai/intermediary/module"
+	traffic "github.com/behavioral-ai/traffic/module"
 	"net/http"
 	"net/http/httptest"
 	"time"
@@ -41,7 +41,7 @@ func ExampleNewRootEndpoint() {
 }
 
 func configCacheAgent() {
-	cacheAgent := repository.Agent(intermediary.CacheNamespaceName)
+	cacheAgent := repository.Agent(traffic.CacheNamespaceName)
 	//cacheAgent.Message(httpx.NewConfigExchangeMessage(cachetest.Exchange))
 	m := make(map[string]string)
 	//m[config.CacheHostKey] = "localhost:8082"
@@ -49,7 +49,7 @@ func configCacheAgent() {
 }
 
 func configRoutingAgent() {
-	routingAgent := repository.Agent(intermediary.RoutingNamespaceName)
+	routingAgent := repository.Agent(traffic.RoutingNamespaceName)
 	//routingAgent.Message(httpx.NewConfigExchangeMessage(routingtest.Exchange))
 	m := make(map[string]string)
 	//m[config.AppHostKey] = "localhost:8080"

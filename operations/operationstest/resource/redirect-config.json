@@ -1,9 +1,0 @@
-{
-  "rate-limit": "1234",
-  "rate-burst": "12",
-  "original-path": "resource/v1",
-  "new-path": "/resource/v2",
-  "interval": "4m",
-  "status-code-threshold": "10",
-  "percentile-threshold": "99/1500ms"
-}
