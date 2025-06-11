@@ -74,32 +74,30 @@ func (a *primaryAgentT) Message(m *messaging.Message) {
 	}
 }
 
-func (a *primaryAgentT) BuildNetwork(net map[string]map[string]string) (links []any, errs []error) {
+func (a *primaryAgentT) BuildNetwork(net map[string]map[string]string) (errs []error) {
 	if net == nil {
-		return nil, []error{errors.New("error: configuration nil")}
+		return []error{errors.New("error: configuration nil")}
 	}
 	var router bool
-	var roles = []string{LoggingRole, AuthorizationRole, RedirectRole, CacheRole, RateLimiterRole, RoutingRole}
+	var roles = []string{LoggingRole, AuthorizationRole, CacheRole, RateLimiterRole, RoutingRole}
 
 	for _, role := range roles {
 		cfg, ok := net[role]
 		if !ok {
 			continue
 		}
-		link, err := buildLink(a, cfg, role)
+		err := configureOperative(a, cfg, role)
 		if err != nil {
 			errs = append(errs, err)
-		} else {
-			links = append(links, link)
 		}
 	}
 	if len(errs) > 0 {
 		return
 	}
 	if !router {
-		return nil, []error{errors.New("error: no routing agent was configured")}
+		return []error{errors.New("error: no routing agent was configured")}
 	}
-	return links, nil
+	return nil
 }
 
 // Run - run the agent

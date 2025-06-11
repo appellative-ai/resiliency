@@ -1,5 +1,5 @@
 {
-  "primary": "name=test:resiliency:agent/caseOfficer/service/traffic/ingress/primary,@path=network-config-primary.json",
-  "secondary": "name=test:resiliency:agent/caseOfficer/service/traffic/ingress/secondary,@path=network-config-secondary.json"
+  "test:resiliency:agent/caseOfficer/service/traffic/ingress/primary":  "network-config-primary.json",
+  "test:resiliency:agent/caseOfficer/service/traffic/ingress/secondary": "network-config-secondary.json"
 }
 

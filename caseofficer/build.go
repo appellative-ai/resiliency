@@ -14,35 +14,31 @@ const (
 	CacheRole         = "role"
 	RateLimiterRole   = "rate-limiter"
 	RoutingRole       = "routing"
-	RedirectRole      = "redirect"
 	NameKey           = "name"
 )
 
-func buildLink(handler messaging.Agent, cfg map[string]string, role string) (any, error) {
-	if handler == nil || cfg == nil {
-		return nil, errors.New(fmt.Sprintf("agent or configuration map is nil"))
-	}
+func configureOperative(officer messaging.Agent, cfg map[string]string, role string) error {
 	name, ok := cfg[NameKey]
 	if !ok || name == "" {
-		return nil, errors.New(fmt.Sprintf("agent or exchange name not found or is empty for role: %v", role))
+		return errors.New(fmt.Sprintf("agent or exchange name not found or is empty for role: %v", role))
 	}
 	switch namespace.Kind(name) {
 	case namespace.Link:
 		l := repository.ExchangeLink(name)
 		if l == nil {
-			return nil, errors.New(fmt.Sprintf("exchange link is nil for name: %v and role: %v", name, role))
+			return errors.New(fmt.Sprintf("exchange link is nil for name: %v and role: %v", name, role))
 		}
-		return l, nil
+		return nil
 	case namespace.AgentKind:
 		agent := repository.NewAgent(name)
 		if agent == nil {
-			return nil, errors.New(fmt.Sprintf("agent is nil for name: %v and role: %v", name, role))
+			return errors.New(fmt.Sprintf("agent is nil for name: %v and role: %v", name, role))
 		}
 		// TODO: wait for reply?
 		agent.Message(messaging.NewMapMessage(cfg))
-		agent.Message(messaging.NewHandlerMessage(handler))
-		return agent, nil
+		agent.Message(messaging.NewHandlerMessage(officer))
+		return nil
 	default:
 	}
-	return nil, errors.New(fmt.Sprintf("invalid Namespace kind: %v and role: %v", namespace.Kind(name), role))
+	return errors.New(fmt.Sprintf("invalid Namespace kind: %v and role: %v", namespace.Kind(name), role))
 }
