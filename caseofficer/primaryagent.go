@@ -73,14 +73,25 @@ func (a *primaryAgentT) Message(m *messaging.Message) {
 	if m.Name == messaging.ShutdownEvent {
 		a.running = false
 	}
-	switch m.Channel() {
-	case messaging.ChannelEmissary:
-		a.emissary.C <- m
-	case messaging.ChannelControl:
-		a.emissary.C <- m
-	default:
-		fmt.Printf("limiter - invalid channel %v\n", m)
+	list := m.To()
+	if len(list) == 0 {
+		// Need to create some sort of error
+		return
 	}
+	// If to is the current case officer, then send to channel
+	if list[0] == NetworkNamePrimary {
+		switch m.Channel() {
+		case messaging.ChannelEmissary:
+			a.emissary.C <- m
+		case messaging.ChannelControl:
+			a.emissary.C <- m
+		default:
+			fmt.Printf("limiter - invalid channel %v\n", m)
+		}
+		return
+	}
+	// Send to appropriate agent
+	a.ex.Message(m)
 }
 
 func (a *primaryAgentT) BuildNetwork(net map[string]map[string]string) (chain []any, errs []error) {
@@ -124,8 +135,8 @@ func (a *primaryAgentT) shutdown() {
 
 func (a *primaryAgentT) configure(m *messaging.Message) {
 	switch m.ContentType() {
-	case messaging.ContentTypeHandler:
-		h, status := messaging.HandlerContent(m)
+	case messaging.ContentTypeAgent:
+		h, status := messaging.AgentContent(m)
 		if !status.OK() {
 			messaging.Reply(m, status, a.Name())
 			return
@@ -142,19 +153,21 @@ func buildLink(role string, cfg map[string]string, officer messaging.Agent) (any
 	}
 	switch namespace.Kind(name) {
 	case namespace.Link:
+		// Since this is only code and no state, the same link can be used in all networks
 		link := repository.ExchangeLink(name)
 		if link == nil {
 			return nil, errors.New(fmt.Sprintf("exchange link is nil for name: %v and role: %v", name, role))
 		}
 		return link, nil
 	case namespace.AgentKind:
+		// Construct a new agent as each agent has state, and a new instance is required for each network
 		agent := repository.NewAgent(name)
 		if agent == nil {
 			return nil, errors.New(fmt.Sprintf("agent is nil for name: %v and role: %v", name, role))
 		}
 		// TODO: wait for reply?
 		agent.Message(messaging.NewMapMessage(cfg))
-		agent.Message(messaging.NewHandlerMessage(officer))
+		agent.Message(messaging.NewAgentMessage(officer))
 		return agent, nil
 	default:
 	}

@@ -13,7 +13,7 @@ func buildNetworkConfig(fileName string, read func(fileName string) ([]byte, err
 	var err error
 	var appCfg []map[string]string
 
-	readNetworkConfig(fileName, read, &buf, &err)
+	buf, err = read(fileName)
 	if err != nil {
 		return nil, err
 	}
@@ -22,10 +22,6 @@ func buildNetworkConfig(fileName string, read func(fileName string) ([]byte, err
 		return nil, err
 	}
 	return shapeNetworkConfig(appCfg), nil
-}
-
-func readNetworkConfig(fileName string, read func(fileName string) ([]byte, error), buf *[]byte, err *error) {
-	*buf, *err = read(fileName)
 }
 
 func shapeNetworkConfig(cfg []map[string]string) map[string]map[string]string {

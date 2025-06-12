@@ -6,11 +6,11 @@ import (
 	"fmt"
 	access "github.com/behavioral-ai/core/access2"
 	"github.com/behavioral-ai/core/messaging"
+	"github.com/behavioral-ai/resiliency/endpoint"
 )
 
 const (
 	NameKey = "name"
-	PathKey = "@path"
 	RoleKey = "role"
 )
 
@@ -62,8 +62,8 @@ func ConfigureNetworks(appCfg map[string]string, read func(fileName string) ([]b
 	}
 	//var result = make([]error, len(appCfg)*2)
 	//var wg sync.WaitGroup
+	//var i int
 
-	var i int
 	for k, v := range appCfg {
 		if v == "" {
 			errs = append(errs, errors.New(fmt.Sprintf("file name is empty for case officer: %v", k)))
@@ -74,11 +74,20 @@ func ConfigureNetworks(appCfg map[string]string, read func(fileName string) ([]b
 			errs = append(errs, err1)
 			continue
 		}
-		if officer == nil {
+		netCfg, err := buildNetworkConfig(v, read)
+		if err != nil {
+			errs = append(errs, err)
+			continue
 		}
-
-		if i != 0 {
-			i++
+		chain, errs1 := officer.BuildNetwork(netCfg)
+		if errs1 != nil {
+			errs = append(errs, errs1...)
+			continue
+		}
+		err = endpoint.Build(officer.Name(), chain)
+		if err != nil {
+			errs = append(errs, err)
+			continue
 		}
 		//wg.Add(1)
 		//buildEndpoint(officer, v, read, &result[i])
