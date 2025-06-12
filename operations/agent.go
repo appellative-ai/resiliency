@@ -4,6 +4,7 @@ import (
 	"github.com/behavioral-ai/collective/repository"
 	"github.com/behavioral-ai/core/access2"
 	"github.com/behavioral-ai/core/messaging"
+	"github.com/behavioral-ai/resiliency/endpoint"
 )
 
 const (
@@ -12,6 +13,7 @@ const (
 
 func init() {
 	repository.Register(access2.Agent)
+	endpoint.SetOperationsName(NamespaceName)
 }
 
 // TODO : need host name

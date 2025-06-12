@@ -1,9 +1,7 @@
 package operations
 
 import (
-	"encoding/json"
 	"fmt"
-	"github.com/behavioral-ai/core/messaging"
 )
 
 const (
@@ -19,6 +17,7 @@ func ExampleBuildNetworkConfig() {
 
 }
 
+/*
 func _ExampleCreateNetworkConfig() {
 	var buf []byte
 	var err error
@@ -46,29 +45,5 @@ func _ExampleCreateNetworkConfig() {
 
 }
 
-func _ExampleOrigin_Map() {
-	m := map[string]string{
-		messaging.RegionKey:      "region",
-		messaging.ZoneKey:        "zone",
-		messaging.SubZoneKey:     "sbu-zone",
-		messaging.HostKey:        "host",
-		messaging.ServiceNameKey: "service-name",
-		messaging.InstanceIdKey:  "instance-id",
-		messaging.CollectiveKey:  "collective",
-		messaging.DomainKey:      "domain",
-	}
 
-	buf, err := json.Marshal(&m)
-	fmt.Printf("test: Marshal() -> [err:%v]\n", err)
-	fmt.Printf("test: Marshal() -> %v\n", string(buf))
-
-	var m2 map[string]string
-
-	err = json.Unmarshal(buf, &m2)
-	fmt.Printf("test: Unmarshal() -> [err:%v]\n", err)
-	fmt.Printf("test: Unmarshal() -> %v\n", m2)
-
-	//Output:
-	//fail
-
-}
+*/

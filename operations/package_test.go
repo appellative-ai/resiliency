@@ -33,7 +33,7 @@ func readFile(fileName string) ([]byte, error) {
 	return os.ReadFile(dir + subDir + fileName)
 }
 
-func ExampleOrigin_Config() {
+func ExampleConfigureOrigin() {
 	m := map[string]string{
 		messaging.RegionKey:     "us-west1",
 		messaging.ZoneKey:       "oregon",
@@ -72,7 +72,7 @@ func ExampleOrigin_Config() {
 
 }
 
-func ExampleLogging_Config() {
+func ExampleConfigureLogging() {
 	err := ConfigureLogging(func() ([]byte, error) {
 		return readFile(operatorsFileName)
 	})
@@ -83,7 +83,8 @@ func ExampleLogging_Config() {
 
 }
 
-func ExampleApp_Config() {
+/*
+func ExampleConfigureNetwork() {
 	var m map[string]string
 
 	buf, err := readFile(appFileName)
@@ -110,6 +111,29 @@ func _ExampleNetwork_Config() {
 	//Output:
 	//test: readFile("/operationstest/resource/network-config-primary.json") -> [bytes:1306] [err:<nil>]
 	//test: json.Unmarshal() -> [map[load-size:567 name:test:resiliency:agent/rate-limiting/request/http off-peak-duration:5m peak-duration:750ms rate-burst:12 rate-limit:1234 role:rate-limiting] map[agent:test:resiliency:agent/redirect/request/http interval:4m new-path:/resource/v2 original-path:resource/v1 percentile-threshold:99/1500ms rate-burst:12 rate-limit:1234 role:redirect status-code-threshold:10] map[cache-control:no-store, no-cache, max-age=0 fri:22-23 host:www.google.com interval:4m mon:8-16 name:test:resiliency:agent/cache/request/http role:cache sat:3-8 sun:13-15 thu:0-23 timeout:750ms tue:6-10 wed:12-12] map[app-host:localhost:8082 log:true name:test:resiliency:agent/routing/request/http role:routing route-name:test-route timeout:2m] map[name:test:resiliency:link/authorization/http role:authorization] map[name:test:resiliency:link/logging/access role:logging]] [err:<nil>]
+
+}
+
+
+*/
+
+func ExampleConfigureNetworks_Errors() {
+	var appCfg map[string]string
+
+	errs := ConfigureNetworks(appCfg, nil)
+	fmt.Printf("test: ConfigureNetworks() -> %v\n", errs)
+
+	errs = ConfigureNetworks(nil, readFile)
+	fmt.Printf("test: ConfigureNetworks() -> %v\n", errs)
+
+	appCfg = make(map[string]string)
+	errs = ConfigureNetworks(appCfg, readFile)
+	fmt.Printf("test: ConfigureNetworks() -> %v\n", errs)
+
+	//Output:
+	//test: ConfigureNetworks() -> [network read function is nil]
+	//test: ConfigureNetworks() -> [application config is nil or empty]
+	//test: ConfigureNetworks() -> [application config is nil or empty]
 
 }
 

@@ -42,24 +42,28 @@ func ConfigureOrigin(m map[string]string, read func() ([]byte, error)) error {
 	if !status.OK() {
 		return status.Err
 	}
-	access.SetOrigin(m2[messaging.RegionKey], m2[messaging.ZoneKey], m2[messaging.SubZoneKey], m2[messaging.HostKey], m2[messaging.InstanceIdKey])
+	access.Agent.SetOrigin(m2[messaging.RegionKey], m2[messaging.ZoneKey], m2[messaging.SubZoneKey], m2[messaging.HostKey], m2[messaging.InstanceIdKey])
 	return nil
 }
 
 func ConfigureLogging(read func() ([]byte, error)) error {
 	if read == nil {
-		return errors.New("logging read function is nil")
+		return errors.New("logging operators read function is nil")
 	}
-	return access.LoadOperators(func() ([]byte, error) {
+	return access.Agent.ConfigureOperators(func() ([]byte, error) {
 		return read()
 	})
 }
 
 // ConfigureNetworks - configure application networks
 func ConfigureNetworks(appCfg map[string]string, read func(fileName string) ([]byte, error)) (errs []error) {
-	if appCfg == nil {
-		return []error{errors.New("application config is nil")}
+	if read == nil {
+		return []error{errors.New("network read function is nil")}
 	}
+	if len(appCfg) == 0 {
+		return []error{errors.New("application config is nil or empty")}
+	}
+
 	//var result = make([]error, len(appCfg)*2)
 	//var wg sync.WaitGroup
 	//var i int
@@ -95,21 +99,4 @@ func ConfigureNetworks(appCfg map[string]string, read func(fileName string) ([]b
 	//wg.Wait()
 	// Need to create
 	return packErrors(errs)
-}
-
-// Message - operations agent messaging
-func Message(event string) error {
-	switch event {
-	case messaging.StartupEvent:
-		Agent.Message(messaging.StartupMessage)
-	case messaging.ShutdownEvent:
-		Agent.Message(messaging.ShutdownMessage)
-	case messaging.PauseEvent:
-		Agent.Message(messaging.PauseMessage)
-	case messaging.ResumeEvent:
-		Agent.Message(messaging.ResumeMessage)
-	default:
-		return errors.New(fmt.Sprintf("operations.Message() -> [%v] [%v]", "error: invalid event", event))
-	}
-	return nil
 }

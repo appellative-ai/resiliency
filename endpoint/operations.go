@@ -1,13 +1,17 @@
 package endpoint
 
 import (
-	"github.com/behavioral-ai/resiliency/operations"
+	"errors"
+	"fmt"
+	"github.com/behavioral-ai/collective/repository"
+	"github.com/behavioral-ai/core/messaging"
 	"net/http"
 	"strings"
 )
 
 const (
 	eventKey = "event"
+	//operationsNamespaceName = "test:resiliency:agent/operations/host"
 )
 
 type ops struct {
@@ -37,11 +41,21 @@ func (o *ops) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("error: event query key not found"))
 		return
 	}
-	err := operations.Message("event:" + event)
-	if err != nil {
+	err := validateEvent(event)
+	if err == nil {
+		repository.Message(messaging.NewMessage(messaging.ChannelControl, event).AddTo(operationsName))
+		w.WriteHeader(http.StatusOK)
+	} else {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
-		return
 	}
-	w.WriteHeader(http.StatusOK)
+}
+
+func validateEvent(event string) error {
+	switch event {
+	case messaging.StartupEvent, messaging.ShutdownEvent, messaging.PauseEvent, messaging.ResumeEvent:
+		return nil
+	default:
+		return errors.New(fmt.Sprintf("error: invalid event: %v", event))
+	}
 }

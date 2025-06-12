@@ -24,6 +24,8 @@ var (
 	Health     = newHealthEndpoint(healthPattern)
 
 	Primary *rest.Endpoint
+
+	operationsName string
 )
 
 func Build(name string, chain []any) error {
@@ -43,4 +45,8 @@ func Build(name string, chain []any) error {
 		return errors.New(fmt.Sprintf("error: agent not found for name: %v", name))
 	}
 	return nil
+}
+
+func SetOperationsName(name string) {
+	operationsName = name
 }
