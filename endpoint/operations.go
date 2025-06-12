@@ -10,14 +10,18 @@ const (
 	eventKey = "event"
 )
 
-type ops struct{}
+type ops struct {
+	Pattern string
+}
 
-func newOperationsEndpoint() *ops {
-	return new(ops)
+func newOperationsEndpoint(pattern string) *ops {
+	o := new(ops)
+	o.Pattern = pattern
+	return o
 }
 
 func (o *ops) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if !strings.HasPrefix(r.URL.Path, OperationsPattern) {
+	if !strings.HasPrefix(r.URL.Path, o.Pattern) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

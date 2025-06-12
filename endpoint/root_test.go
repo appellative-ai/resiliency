@@ -1,16 +1,6 @@
 package endpoint
 
-import (
-	"fmt"
-	"github.com/behavioral-ai/collective/repository"
-	"github.com/behavioral-ai/core/iox"
-	"github.com/behavioral-ai/core/messaging"
-	traffic "github.com/behavioral-ai/traffic/module"
-	"net/http"
-	"net/http/httptest"
-	"time"
-)
-
+/*
 func ExampleNewRootEndpoint() {
 	configCacheAgent()
 	configRoutingAgent()
@@ -83,3 +73,6 @@ func _ExampleSearch_Yahoo() {
 	//fail
 
 }
+
+
+*/

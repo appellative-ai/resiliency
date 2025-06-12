@@ -1,12 +1,18 @@
 package operations
 
 import (
+	"github.com/behavioral-ai/collective/repository"
+	"github.com/behavioral-ai/core/access2"
 	"github.com/behavioral-ai/core/messaging"
 )
 
 const (
 	NamespaceName = "test:resiliency:agent/operations/host"
 )
+
+func init() {
+	repository.Register(access2.Agent)
+}
 
 // TODO : need host name
 type agentT struct {

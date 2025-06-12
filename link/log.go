@@ -1,17 +1,11 @@
 package operations
 
-import (
-	access "github.com/behavioral-ai/core/access2"
-	"github.com/behavioral-ai/core/rest"
-	"net/http"
-	"time"
-)
-
 const (
 	NamespaceNameLog = "test:resiliency:link/log/access"
 	Route            = "host"
 )
 
+/*
 // Logger - chainable exchange
 func Logger(next rest.Exchange) rest.Exchange {
 	return func(r *http.Request) (resp *http.Response, err error) {
@@ -31,3 +25,6 @@ func newThreshold(resp *http.Response) access.Threshold {
 	resp.Header.Del(access.XRedirect)
 	return access.Threshold{Timeout: timeout, RateLimit: limit, Redirect: redirect}
 }
+
+
+*/

@@ -4,10 +4,14 @@ import (
 	"net/http"
 )
 
-type health struct{}
+type health struct {
+	Pattern string
+}
 
-func newHealthEndpoint() *health {
-	return new(health)
+func newHealthEndpoint(pattern string) *health {
+	h := new(health)
+	h.Pattern = pattern
+	return h
 }
 
 func (h *health) ServeHTTP(w http.ResponseWriter, r *http.Request) {

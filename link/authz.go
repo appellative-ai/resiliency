@@ -13,7 +13,7 @@ const (
 
 func init() {
 	repository.RegisterExchangeLink(NamespaceNameAuth, Authorization)
-	repository.RegisterExchangeLink(NamespaceNameLog, Logger)
+	//repository.RegisterExchangeLink(NamespaceNameLog, Logger)
 
 }
 

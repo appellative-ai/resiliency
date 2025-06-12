@@ -12,16 +12,18 @@ import (
 )
 
 const (
-	OperationsPattern = "/operations"
-	RootPattern       = "/"
-	HealthPattern     = "/health"
+	operationsPattern = "/operations"
+	primaryPattern    = "/"
+	healthPattern     = "/health"
 )
 
+//Root       = newRootEndpoint(rootPattern)
+
 var (
-	Operations = newOperationsEndpoint()
-	Root       = newRootEndpoint()
-	Health     = newHealthEndpoint()
-	Primary    *rest.Endpoint
+	Operations = newOperationsEndpoint(operationsPattern)
+	Health     = newHealthEndpoint(healthPattern)
+
+	Primary *rest.Endpoint
 )
 
 func Build(name string, chain []any) error {
@@ -36,9 +38,7 @@ func Build(name string, chain []any) error {
 		m.AddTo(caseofficer.NamespaceNamePrimary)
 		repository.Message(m)
 
-		//cache.ConstructorOverride(nil, cachetest.Exchange, operations.Serve)
-		//routing.ConstructorOverride(nil, routingtest.Exchange, operations.Serve)
-		Primary = host.NewEndpoint(chain)
+		Primary = host.NewEndpoint(primaryPattern, chain)
 	default:
 		return errors.New(fmt.Sprintf("error: agent not found for name: %v", name))
 	}

@@ -1,11 +1,8 @@
 package caseofficer
 
 import (
-	"errors"
 	"fmt"
-	"github.com/behavioral-ai/collective/namespace"
 	"github.com/behavioral-ai/collective/operations"
-	"github.com/behavioral-ai/collective/repository"
 	"github.com/behavioral-ai/core/messaging"
 )
 
@@ -95,31 +92,35 @@ func (a *primaryAgentT) Message(m *messaging.Message) {
 }
 
 func (a *primaryAgentT) BuildNetwork(net map[string]map[string]string) (chain []any, errs []error) {
-	if net == nil {
-		return nil, []error{errors.New("error: configuration nil")}
-	}
-	var router bool
-	var roles = []string{LoggingRole, AuthorizationRole, CacheRole, RateLimiterRole, RoutingRole}
+	return buildNetwork(a, net)
+	/*
+		if net == nil {
+			return nil, []error{errors.New("error: configuration nil")}
+		}
+		var router bool
+		var roles = []string{LoggingRole, AuthorizationRole, CacheRole, RateLimiterRole, RoutingRole}
 
-	for _, role := range roles {
-		cfg, ok := net[role]
-		if !ok {
-			continue
+		for _, role := range roles {
+			cfg, ok := net[role]
+			if !ok {
+				continue
+			}
+			link, err := buildLink(role, cfg, a)
+			if err != nil {
+				errs = append(errs, err)
+				continue
+			}
+			chain = append(chain, link)
 		}
-		link, err := buildLink(role, cfg, a)
-		if err != nil {
-			errs = append(errs, err)
-			continue
+		if len(errs) > 0 {
+			return
 		}
-		chain = append(chain, link)
-	}
-	if len(errs) > 0 {
+		if !router {
+			errs = append(errs, errors.New("error: no routing agent was configured"))
+		}
 		return
-	}
-	if !router {
-		errs = append(errs, errors.New("error: no routing agent was configured"))
-	}
-	return
+
+	*/
 }
 
 // Run - run the agent
@@ -144,32 +145,4 @@ func (a *primaryAgentT) configure(m *messaging.Message) {
 		a.handler = h
 	}
 	messaging.Reply(m, messaging.StatusOK(), a.Name())
-}
-
-func buildLink(role string, cfg map[string]string, officer messaging.Agent) (any, error) {
-	name, ok := cfg[NameKey]
-	if !ok || name == "" {
-		return nil, errors.New(fmt.Sprintf("agent or exchange name not found or is empty for role: %v", role))
-	}
-	switch namespace.Kind(name) {
-	case namespace.Link:
-		// Since this is only code and no state, the same link can be used in all networks
-		link := repository.ExchangeLink(name)
-		if link == nil {
-			return nil, errors.New(fmt.Sprintf("exchange link is nil for name: %v and role: %v", name, role))
-		}
-		return link, nil
-	case namespace.AgentKind:
-		// Construct a new agent as each agent has state, and a new instance is required for each network
-		agent := repository.NewAgent(name)
-		if agent == nil {
-			return nil, errors.New(fmt.Sprintf("agent is nil for name: %v and role: %v", name, role))
-		}
-		// TODO: wait for reply?
-		agent.Message(messaging.NewMapMessage(cfg))
-		agent.Message(messaging.NewAgentMessage(officer))
-		return agent, nil
-	default:
-	}
-	return nil, errors.New(fmt.Sprintf("invalid Namespace kind: %v and role: %v", namespace.Kind(name), role))
 }
