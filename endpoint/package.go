@@ -24,8 +24,6 @@ var (
 	Health     = newHealthEndpoint(healthPattern)
 
 	Primary *rest.Endpoint
-
-	operationsName string
 )
 
 func Build(name string, chain []any) error {
@@ -47,6 +45,12 @@ func Build(name string, chain []any) error {
 	return nil
 }
 
+/*
+//operationsName string
 func SetOperationsName(name string) {
-	operationsName = name
+	//operationsName = name
 }
+
+
+
+*/

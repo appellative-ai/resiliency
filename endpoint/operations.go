@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/collective/repository"
 	"github.com/behavioral-ai/core/messaging"
+	"github.com/behavioral-ai/resiliency/module"
 	"net/http"
 	"strings"
 )
@@ -43,7 +44,7 @@ func (o *ops) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	err := validateEvent(event)
 	if err == nil {
-		repository.Message(messaging.NewMessage(messaging.ChannelControl, event).AddTo(operationsName))
+		repository.Message(messaging.NewMessage(messaging.ChannelControl, event).AddTo(module.NamespaceNameOps))
 		w.WriteHeader(http.StatusOK)
 	} else {
 		w.WriteHeader(http.StatusBadRequest)

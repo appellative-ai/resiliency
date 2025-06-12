@@ -4,7 +4,6 @@ import (
 	"github.com/behavioral-ai/collective/repository"
 	"github.com/behavioral-ai/core/access2"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/resiliency/endpoint"
 )
 
 const (
@@ -12,8 +11,9 @@ const (
 )
 
 func init() {
+	// Register access.Agent as it is in core and does not have access to the repository
 	repository.Register(access2.Agent)
-	endpoint.SetOperationsName(NamespaceName)
+
 }
 
 // TODO : need host name
