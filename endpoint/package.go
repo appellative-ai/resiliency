@@ -17,8 +17,6 @@ const (
 	healthPattern     = "/health"
 )
 
-//Root       = newRootEndpoint(rootPattern)
-
 var (
 	Operations = newOperationsEndpoint(operationsPattern)
 	Health     = newHealthEndpoint(healthPattern)
@@ -27,6 +25,9 @@ var (
 )
 
 func Build(name string, chain []any) error {
+	if len(chain) == 0 {
+		return errors.New(fmt.Sprintf("chain is nil or empty"))
+	}
 	switch name {
 	case caseofficer.NamespaceNamePrimary:
 		// In testing, need to override the Exchange for cache and routing
@@ -40,17 +41,7 @@ func Build(name string, chain []any) error {
 
 		Primary = host.NewEndpoint(primaryPattern, chain)
 	default:
-		return errors.New(fmt.Sprintf("error: agent not found for name: %v", name))
+		return errors.New(fmt.Sprintf("agent not found for name: %v", name))
 	}
 	return nil
 }
-
-/*
-//operationsName string
-func SetOperationsName(name string) {
-	//operationsName = name
-}
-
-
-
-*/

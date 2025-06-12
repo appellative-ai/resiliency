@@ -87,9 +87,9 @@ func ExampleBuildNetwork_Error() {
 	fmt.Printf("test: buildNetwork() -> [chain:%v] %v\n", chain, errs)
 
 	//Output:
-	//test: buildNetwork() -> [chain:[]] [error: agent is nil]
-	//test: buildNetwork() -> [chain:[]] [error: network configuration is nil or empty]
-	//test: buildNetwork() -> [chain:[]] [error: network configuration is nil or empty]
+	//test: buildNetwork() -> [chain:[]] [agent is nil]
+	//test: buildNetwork() -> [chain:[]] [network configuration is nil or empty]
+	//test: buildNetwork() -> [chain:[]] [network configuration is nil or empty]
 	//test: buildNetwork() -> [chain:[]] [agent or exchange name not found or is empty for role: authorization]
 
 }
@@ -110,7 +110,7 @@ func ExampleBuildNetwork() {
 	fmt.Printf("test: buildNetwork() -> [chain:%v] %v\n", len(chain), errs)
 
 	//Output:
-	//test: buildNetwork() -> [chain:1] [error: no routing agent was configured]
+	//test: buildNetwork() -> [chain:1] [no routing agent was configured]
 	//test: buildNetwork() -> [chain:2] []
-	
+
 }

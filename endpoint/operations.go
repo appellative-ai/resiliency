@@ -57,6 +57,6 @@ func validateEvent(event string) error {
 	case messaging.StartupEvent, messaging.ShutdownEvent, messaging.PauseEvent, messaging.ResumeEvent:
 		return nil
 	default:
-		return errors.New(fmt.Sprintf("error: invalid event: %v", event))
+		return errors.New(fmt.Sprintf("invalid event: %v", event))
 	}
 }
