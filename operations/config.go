@@ -34,9 +34,12 @@ func shapeNetworkConfig(cfg []map[string]string) map[string]map[string]string {
 }
 
 func validateOfficerType(name string) (caseofficer.Agent, error) {
+	if name == "" {
+		return nil, errors.New(fmt.Sprintf("case officer name is empty"))
+	}
 	agent := repository.Agent(name)
 	if agent == nil {
-		return nil, errors.New(fmt.Sprintf("agent is nil for case officer: %v", name))
+		return nil, errors.New(fmt.Sprintf("agent lookup is nil for case officer: %v", name))
 	}
 	officer, ok := any(agent).(caseofficer.Agent)
 	if !ok {

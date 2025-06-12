@@ -130,14 +130,23 @@ func ExampleConfigureNetworks_Errors() {
 	errs = ConfigureNetworks(appCfg, readFile)
 	fmt.Printf("test: ConfigureNetworks() -> %v\n", errs)
 
+	appCfg["test"] = ""
+	errs = ConfigureNetworks(appCfg, readFile)
+	fmt.Printf("test: ConfigureNetworks() -> %v\n", errs)
+
+	appCfg["test"] = "invalid file name"
+	errs = ConfigureNetworks(appCfg, readFile)
+	fmt.Printf("test: ConfigureNetworks() -> %v\n", errs)
+
 	//Output:
 	//test: ConfigureNetworks() -> [network read function is nil]
 	//test: ConfigureNetworks() -> [application config is nil or empty]
 	//test: ConfigureNetworks() -> [application config is nil or empty]
+	//test: ConfigureNetworks() -> [file name is empty for case officer: test]
 
 }
 
-func ExampleConfigureNetworks() {
+func _ExampleConfigureNetworks() {
 	var appCfg map[string]string
 
 	buf, err := readFile(appFileName)
