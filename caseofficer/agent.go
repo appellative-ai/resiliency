@@ -6,5 +6,5 @@ import (
 
 type Agent interface {
 	messaging.Agent
-	BuildNetwork(m map[string]map[string]string) []error
+	BuildNetwork(m map[string]map[string]string) ([]any, []error)
 }
