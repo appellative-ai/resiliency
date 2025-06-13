@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/collective/namespace"
 	"github.com/behavioral-ai/collective/repository"
+	"github.com/behavioral-ai/core/access2"
 	"github.com/behavioral-ai/core/messaging"
 )
 
@@ -56,8 +57,14 @@ func buildLink(role string, cfg map[string]string, officer messaging.Agent) (any
 		}
 		return link, nil
 	case namespace.AgentKind:
-		// Construct a new agent as each agent has state, and a new instance is required for each network
-		agent := repository.NewAgent(name)
+		var agent messaging.Agent
+		// Only one access agent for application
+		if name == access2.NamespaceName {
+			agent = repository.Agent(name)
+		} else {
+			// Construct a new agent as each agent has state, and a new instance is required for each network
+			agent = repository.NewAgent(name)
+		}
 		if agent == nil {
 			return nil, errors.New(fmt.Sprintf("agent is nil for name: %v and role: %v", name, role))
 		}
