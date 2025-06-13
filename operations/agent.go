@@ -1,6 +1,7 @@
 package operations
 
 import (
+	"github.com/behavioral-ai/collective/operations"
 	"github.com/behavioral-ai/collective/repository"
 	"github.com/behavioral-ai/core/access2"
 	"github.com/behavioral-ai/core/messaging"
@@ -13,26 +14,20 @@ const (
 func init() {
 	// Register access.Agent as it is in core and does not have access to the repository
 	repository.Register(access2.Agent)
+	repository.RegisterConstructor(NamespaceName, func() messaging.Agent {
+		return newAgent(operations.Serve)
+	})
 
 }
 
-// TODO : need host name
 type agentT struct {
-	//running bool
-	//notifier   eventing.NotifyFunc
-	//activity   eventing.ActivityFunc
-	//dispatcher messaging.Dispatcher
+	service *operations.Service
 }
 
-// New - create a new operations agent
-func New() messaging.Agent {
-	return newAgent()
-}
-
-func newAgent() *agentT {
+func newAgent(service *operations.Service) *agentT {
 	a := new(agentT)
-	//a.notifier = eventing.OutputNotify
-	//a.activity = eventing.OutputActivity
+	a.service = service
+
 	return a
 }
 

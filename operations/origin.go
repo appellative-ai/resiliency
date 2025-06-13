@@ -1,29 +1,36 @@
 package operations
 
-/*
+import (
+	"encoding/json"
+	"errors"
+	access "github.com/behavioral-ai/core/access2"
+	"github.com/behavioral-ai/core/messaging"
+)
 
-func originFromMap(m map[string]string) (o access.Origin, err error) {
-	o.Region = m[timeseries.RegionKey]
-	if o.Region == "" {
-		return o, errors.New("invalid argument: origin region is empty")
+// configureOrigin - map must provide region, zone, sub-zone, domain, collective, and service-name
+func configureOrigin(m map[string]string, read func() ([]byte, error)) error {
+	var m2 = make(map[string]string)
+
+	if read == nil {
+		return errors.New("origin read function is nil")
 	}
-	o.Zone = m[timeseries.ZoneKey]
-	if o.Zone == "" {
-		return o, errors.New("invalid argument: origin zone is empty")
+	// Read the origin JSON
+	buf, err := read()
+	if err != nil {
+		return err
 	}
-
-	// SubZone is optional
-	o.SubZone = m[timeseries.SubZoneKey]
-
-	o.Host = m[timeseries.HostKey]
-	if o.Host == "" {
-		return o, errors.New("invalid argument: origin host is empty")
+	err = json.Unmarshal(buf, &m2)
+	if err != nil {
+		return err
 	}
-
-	// InstanceId is optional
-	o.InstanceId = m[timeseries.InstanceIdKey]
-	return o, nil
+	// Add host created items
+	for k, v := range m {
+		m2[k] = v
+	}
+	status := messaging.SetOrigin(m2)
+	if !status.OK() {
+		return status.Err
+	}
+	access.Agent.SetOrigin(m2[messaging.RegionKey], m2[messaging.ZoneKey], m2[messaging.SubZoneKey], m2[messaging.HostKey], m2[messaging.InstanceIdKey])
+	return nil
 }
-
-
-*/

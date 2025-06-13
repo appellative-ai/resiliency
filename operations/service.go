@@ -1,4 +1,4 @@
-package endpoint
+package operations
 
 import (
 	"errors"
@@ -15,17 +15,17 @@ const (
 	//operationsNamespaceName = "test:resiliency:agent/operations/host"
 )
 
-type ops struct {
+type service struct {
 	Pattern string
 }
 
-func newOperationsEndpoint(pattern string) *ops {
-	o := new(ops)
+func newServiceEndpoint(pattern string) *service {
+	o := new(service)
 	o.Pattern = pattern
 	return o
 }
 
-func (o *ops) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (o *service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if !strings.HasPrefix(r.URL.Path, o.Pattern) {
 		w.WriteHeader(http.StatusBadRequest)
 		return

@@ -1,4 +1,4 @@
-package endpoint
+package operations
 
 import (
 	"net/http"

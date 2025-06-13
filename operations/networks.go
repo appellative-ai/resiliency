@@ -6,7 +6,53 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/collective/repository"
 	"github.com/behavioral-ai/resiliency/caseofficer"
+	//"github.com/behavioral-ai/resiliency/endpoint"
 )
+
+func configureNetworks(appCfg map[string]string, read func(fileName string) ([]byte, error)) (errs []error) {
+	if read == nil {
+		return []error{errors.New("network read function is nil")}
+	}
+	if len(appCfg) == 0 {
+		return []error{errors.New("application config is nil or empty")}
+	}
+
+	//var result = make([]error, len(appCfg)*2)
+	//var wg sync.WaitGroup
+	//var i int
+
+	for k, v := range appCfg {
+		if v == "" {
+			errs = append(errs, errors.New(fmt.Sprintf("file name is empty for case officer: %v", k)))
+			continue
+		}
+		officer, err1 := validateOfficerType(k)
+		if err1 != nil {
+			errs = append(errs, err1)
+			continue
+		}
+		netCfg, err := buildNetworkConfig(v, read)
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+		chain, errs1 := officer.BuildNetwork(netCfg)
+		if errs1 != nil {
+			errs = append(errs, errs1...)
+			continue
+		}
+		err = buildEndpoint(officer.Name(), chain)
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+		//wg.Add(1)
+		//buildEndpoint(officer, v, read, &result[i])
+	}
+	//wg.Wait()
+	// Need to create
+	return packErrors(errs)
+}
 
 func buildNetworkConfig(fileName string, read func(fileName string) ([]byte, error)) (map[string]map[string]string, error) {
 	var buf []byte
@@ -57,56 +103,3 @@ func packErrors(errs []error) []error {
 	}
 	return result
 }
-
-//([]byte, error), err *error)
-/*{
-	defer wg.Done()
-	var networkCfg []map[string]string
-
-	buf, err2 := read(fileName)
-	if err2 != nil {
-		*err = err2
-		return
-	}
-	err2 = json.Unmarshal(buf, networkCfg)
-	if err2 != nil {
-		*err = err2
-		return
-	}
-}(officer, fileName, read, &result[i])
-
-*/
-
-/*
-func validateOfficerConfig(caseOfficer string, m map[string]string) (name string, fileName string, err error) {
-	var ok bool
-	name, ok = m[NameKey]
-	if name == "" || !ok {
-		return "", "", errors.New(fmt.Sprintf("name is empty for case officer: %v", caseOfficer))
-	}
-	fileName, ok = m[PathKey]
-	if fileName == "" || !ok {
-		return "", "", errors.New(fmt.Sprintf("file name is empty for case officer: %v", caseOfficer))
-	}
-	return
-}
-
-
-*/
-
-/*
-func parseOfficerConfig(s string) map[string]string {
-	var m = make(map[string]string)
-
-	tokens := strings.Split(s, ",")
-	for _, t := range tokens {
-		pairs := strings.Split(t, "=")
-		if len(pairs) < 2 || pairs[1] == "" {
-			continue
-		}
-		m[pairs[0]] = pairs[1]
-	}
-	return m
-}
-
-*/

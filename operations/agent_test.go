@@ -1,13 +1,12 @@
 package operations
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/behavioral-ai/collective/operations/operationstest"
+)
 
 func ExampleNewAgent() {
-	agent := newAgent()
-	//status := messaging.NewStatusError(http.StatusTeapot, errors.New("error"), agent.Uri())
-	//status.WithMessage("notify message")
-	//status.WithRequestId("123-request-id")
-	//agent.Message(eventing.NewNotifyMessage(status))
+	agent := newAgent(operationstest.NewService())
 
 	fmt.Printf("test: NewAgent() -> [%v]\n", agent)
 

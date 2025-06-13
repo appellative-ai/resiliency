@@ -1,4 +1,4 @@
-package endpoint
+package operations
 
 import (
 	"errors"
@@ -12,22 +12,10 @@ import (
 )
 
 const (
-	operationsPattern = "/operations"
-	primaryPattern    = "/"
-	healthPattern     = "/health"
+	primaryPattern = "/"
 )
 
-var (
-	Operations = newOperationsEndpoint(operationsPattern)
-	Health     = newHealthEndpoint(healthPattern)
-
-	Primary *rest.Endpoint
-)
-
-func Build(name string, chain []any) error {
-	if len(chain) == 0 {
-		return errors.New(fmt.Sprintf("chain is nil or empty"))
-	}
+func buildEndpoint(name string, chain []any) error {
 	switch name {
 	case caseofficer.NamespaceNamePrimary:
 		// In testing, need to override the Exchange for cache and routing
@@ -39,7 +27,7 @@ func Build(name string, chain []any) error {
 		m.AddTo(caseofficer.NamespaceNamePrimary)
 		repository.Message(m)
 
-		Primary = host.NewEndpoint(primaryPattern, chain)
+		Endpoint.Primary = host.NewEndpoint(primaryPattern, chain)
 	default:
 		return errors.New(fmt.Sprintf("agent not found for name: %v", name))
 	}
