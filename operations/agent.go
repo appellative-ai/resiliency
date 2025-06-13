@@ -1,10 +1,13 @@
 package operations
 
 import (
+	"fmt"
 	"github.com/behavioral-ai/collective/operations"
 	"github.com/behavioral-ai/collective/repository"
 	"github.com/behavioral-ai/core/access2"
 	"github.com/behavioral-ai/core/messaging"
+	_ "github.com/behavioral-ai/resiliency/link"
+	_ "github.com/behavioral-ai/traffic/module"
 )
 
 const (
@@ -13,7 +16,11 @@ const (
 
 func init() {
 	// Register access.Agent as it is in core and does not have access to the repository
-	repository.Register(access2.Agent)
+	err := repository.Register(access2.Agent)
+	if err != nil {
+		fmt.Printf("repository register error: %v", err)
+	}
+
 	repository.RegisterConstructor(NamespaceName, func() messaging.Agent {
 		return newAgent(operations.Serve)
 	})

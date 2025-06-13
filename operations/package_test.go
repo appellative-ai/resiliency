@@ -61,17 +61,22 @@ func ExampleConfigureNetworks_Errors() {
 
 }
 
-func _ExampleConfigureNetworks() {
+func ExampleConfigureNetworks() {
 	var appCfg map[string]string
+	//s := traffic.Module
+	//fmt.Printf("test: Repository() -> [count:%v]\n",rep)
 
 	buf, err := readFile(appFileName)
-	fmt.Printf("test: readFile(\"%v\") -> [bytes:%v] [err:%v]\n", subDir+appFileName, len(buf), err)
-
+	if err != nil {
+		fmt.Printf("test: readFile(\"%v\") -> [bytes:%v] [err:%v]\n", subDir+appFileName, len(buf), err)
+	}
 	err = json.Unmarshal(buf, &appCfg)
-	fmt.Printf("test: json.Unmarshal() -> [err:%v]\n", err)
+	if err != nil {
+		fmt.Printf("test: json.Unmarshal() -> [err:%v]\n", err)
+	}
 
 	errs := ConfigureNetworks(appCfg, readFile)
-	fmt.Printf("test: ConfigureNetworks() -> [errs:%v]\n", errs)
+	fmt.Printf("test: ConfigureNetworks() -> [count:%v] [errs:%v]\n", len(errs), errs)
 
 	//Output:
 	//fail

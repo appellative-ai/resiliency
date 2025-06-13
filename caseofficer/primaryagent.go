@@ -13,7 +13,7 @@ const (
 	LoggingRole       = "logging"
 	AuthorizationRole = "authorization"
 	CacheRole         = "cache"
-	RateLimiterRole   = "rate-limiter"
+	RateLimitingRole  = "rate-limiting"
 	RoutingRole       = "routing"
 	NameKey           = "name"
 )
