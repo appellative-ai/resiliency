@@ -76,8 +76,9 @@ func ExampleConfigureNetworks() {
 	}
 
 	errs := ConfigureNetworks(appCfg, readFile)
-	fmt.Printf("test: ConfigureNetworks() -> [count:%v] [errs:%v]\n", len(errs), errs)
+	fmt.Printf("test: ConfigureNetworks() -> [agents:%v] [count:%v] [errs:%v]\n", 0, len(errs), errs)
 
 	//Output:
-	//fail
+	//test: ConfigureNetworks() -> [agents:0] [count:0] [errs:[]]
+
 }
