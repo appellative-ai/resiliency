@@ -15,7 +15,7 @@ const (
 )
 
 var (
-	agent *agentT
+	opsAgent *agentT
 )
 
 func init() {
@@ -27,8 +27,8 @@ func init() {
 	//repository.RegisterConstructor(NamespaceName, func() messaging.Agent {
 	//	return newAgent(operations.Serve)
 	//})
-	agent = newAgent(operations.Serve)
-	repository.Register(agent)
+	opsAgent = newAgent(operations.Serve)
+	repository.Register(opsAgent)
 }
 
 type agentT struct {
@@ -86,21 +86,14 @@ func (a *agentT) Message(m *messaging.Message) {
 
 // Run - run the agent
 func (a *agentT) run() {
-	//go primaryEmissaryAttend(a)
 }
 
 func (a *agentT) shutdown() {
-	//a.emissary.Close()
 }
 
-func (a *agentT) registerAgents(chain []any) {
-	if len(chain) == 0 {
-		return
-	}
-	for _, link := range chain {
-		if v, ok := link.(messaging.Agent); ok {
-			a.ex.Register(v)
-		}
+func (a *agentT) registerCaseOfficer(agent messaging.Agent) {
+	if agent != nil {
+		a.ex.Register(agent)
 	}
 }
 

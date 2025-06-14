@@ -4,12 +4,7 @@ import (
 	"errors"
 	access "github.com/behavioral-ai/core/access2"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/core/rest"
 	"net/http"
-)
-
-const (
-	RoleKey = "role"
 )
 
 // ConfigureOrigin - map must provide region, zone, sub-zone, domain, collective, and service-name
@@ -33,21 +28,20 @@ func ConfigureNetworks(appCfg map[string]string, read func(fileName string) ([]b
 
 // Http endpoints
 
-type EndpointT struct {
-	Service http.Handler
-	Health  http.Handler
-	Primary *rest.Endpoint
-}
+const (
+	ServiceEndpoint = "service"
+	HealthEndpoint  = "health"
+	PrimaryEndpoint = "primary"
+)
 
 var (
-	Endpoint = EndpointT{
-		Service: newServiceEndpoint("/operations"),
-		Health:  newHealthEndpoint("/health"),
-		Primary: nil,
+	Endpoint = map[string]http.Handler{
+		ServiceEndpoint: newServiceEndpoint("/operations"),
+		HealthEndpoint:  newHealthEndpoint("/health"),
 	}
 )
 
 // Startup - application
 func Startup() {
-	agent.Message(messaging.StartupMessage)
+	opsAgent.Message(messaging.StartupMessage)
 }

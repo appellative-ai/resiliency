@@ -27,7 +27,7 @@ func buildEndpoint(name string, chain []any) error {
 		m.AddTo(caseofficer.NamespaceNamePrimary)
 		repository.Message(m)
 
-		Endpoint.Primary = host.NewEndpoint(primaryPattern, chain)
+		Endpoint[PrimaryEndpoint] = host.NewEndpoint(primaryPattern, chain)
 	default:
 		return errors.New(fmt.Sprintf("agent not found for name: %v", name))
 	}

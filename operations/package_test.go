@@ -81,12 +81,19 @@ func ExampleConfigureNetworks() {
 	errs := ConfigureNetworks(appCfg, readFile)
 	fmt.Printf("test: ConfigureNetworks() -> [count:%v] [errs:%v]\n", len(errs), errs)
 
-	agent := repository.Agent(module.NamespaceNamePrimary)
-	if officer, ok := any(agent).(caseofficer.Agent); ok {
+	a := repository.Agent(module.NamespaceNamePrimary)
+	if officer, ok := any(a).(caseofficer.Agent); ok {
 		officer.Trace()
 	}
 
+	fmt.Printf("trace: Operations() -> %v\n", opsAgent.ex.List())
+
 	//Output:
 	//test: ConfigureNetworks() -> [count:0] [errs:[]]
+	//trace: operative -> test:core:agent/log/access/http
+	//trace: operative -> test:resiliency:agent/cache/request/http
+	//trace: operative -> test:resiliency:agent/rate-limiting/request/http
+	//trace: operative -> test:resiliency:agent/routing/request/http
+	//trace: Operations() -> [test:resiliency:agent/caseOfficer/service/traffic/ingress/primary]
 
 }

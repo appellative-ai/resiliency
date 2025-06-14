@@ -9,6 +9,10 @@ import (
 	//"github.com/behavioral-ai/resiliency/endpoint"
 )
 
+const (
+	roleKey = "role"
+)
+
 func configureNetworks(appCfg map[string]string, read func(fileName string) ([]byte, error)) (errs []error) {
 	if read == nil {
 		return []error{errors.New("network read function is nil")}
@@ -31,6 +35,7 @@ func configureNetworks(appCfg map[string]string, read func(fileName string) ([]b
 			errs = append(errs, err1)
 			continue
 		}
+		opsAgent.registerCaseOfficer(officer)
 		netCfg, err := buildNetworkConfig(v, read)
 		if err != nil {
 			errs = append(errs, err)
@@ -41,7 +46,6 @@ func configureNetworks(appCfg map[string]string, read func(fileName string) ([]b
 			errs = append(errs, errs1...)
 			continue
 		}
-		agent.registerAgents(chain)
 		err = buildEndpoint(officer.Name(), chain)
 		if err != nil {
 			errs = append(errs, err)
@@ -74,8 +78,8 @@ func buildNetworkConfig(fileName string, read func(fileName string) ([]byte, err
 func shapeNetworkConfig(cfg []map[string]string) map[string]map[string]string {
 	newCfg := make(map[string]map[string]string)
 	for _, m := range cfg {
-		newCfg[m[RoleKey]] = m
-		delete(m, RoleKey)
+		newCfg[m[roleKey]] = m
+		delete(m, roleKey)
 	}
 	return newCfg
 }
