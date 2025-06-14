@@ -58,6 +58,7 @@ func buildLink(role string, cfg map[string]string, officer messaging.Agent) (any
 		return link, nil
 	case namespace.AgentKind:
 		var agent messaging.Agent
+
 		// Only one access agent for application
 		if name == access2.NamespaceName {
 			agent = repository.Agent(name)
@@ -68,6 +69,11 @@ func buildLink(role string, cfg map[string]string, officer messaging.Agent) (any
 		if agent == nil {
 			return nil, errors.New(fmt.Sprintf("agent is nil for name: %v and role: %v", name, role))
 		}
+
+		// Add agent to case officer exchange
+		m := messaging.NewAgentMessage(agent)
+		officer.Message(m)
+
 		// TODO: wait for reply?
 		agent.Message(messaging.NewMapMessage(cfg))
 		agent.Message(messaging.NewAgentMessage(officer))

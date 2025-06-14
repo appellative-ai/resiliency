@@ -21,15 +21,10 @@ const (
 // TODO : need host name
 type primaryAgentT struct {
 	running bool
-	handler messaging.Agent
-
-	cfg map[string]map[string]string
 
 	ex       *messaging.Exchange
 	emissary *messaging.Channel
 	service  *operations.Service
-
-	//dispatcher messaging.Dispatcher
 }
 
 // NewPrimaryAgent - create a new agent
@@ -39,9 +34,8 @@ func NewPrimaryAgent(service *operations.Service) Agent {
 
 func newPrimaryAgent(service *operations.Service) *primaryAgentT {
 	a := new(primaryAgentT)
-	//a.cfg = cfg
-
 	a.service = service
+
 	a.ex = messaging.NewExchange()
 	a.emissary = messaging.NewEmissaryChannel()
 	return a
@@ -49,6 +43,12 @@ func newPrimaryAgent(service *operations.Service) *primaryAgentT {
 
 // Name - agent identifier
 func (a *primaryAgentT) Name() string { return NamespaceNamePrimary }
+
+func (a *primaryAgentT) Trace() {
+	for _, v := range a.ex.List() {
+		fmt.Printf("trace: operative -> %v\n", v)
+	}
+}
 
 // Message - message the agent
 func (a *primaryAgentT) Message(m *messaging.Message) {
@@ -109,12 +109,15 @@ func (a *primaryAgentT) shutdown() {
 func (a *primaryAgentT) configure(m *messaging.Message) {
 	switch m.ContentType() {
 	case messaging.ContentTypeAgent:
-		h, status := messaging.AgentContent(m)
+		agent, status := messaging.AgentContent(m)
 		if !status.OK() {
 			messaging.Reply(m, status, a.Name())
 			return
 		}
-		a.handler = h
+		err := a.ex.Register(agent)
+		if err != nil {
+			messaging.Reply(m, messaging.NewStatus(messaging.StatusInvalidContent, err.Error()), a.Name())
+		}
 	}
 	messaging.Reply(m, messaging.StatusOK(), a.Name())
 }

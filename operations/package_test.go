@@ -3,6 +3,9 @@ package operations
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/behavioral-ai/collective/repository"
+	"github.com/behavioral-ai/resiliency/caseofficer"
+	"github.com/behavioral-ai/resiliency/module"
 	"os"
 )
 
@@ -76,9 +79,14 @@ func ExampleConfigureNetworks() {
 	}
 
 	errs := ConfigureNetworks(appCfg, readFile)
-	fmt.Printf("test: ConfigureNetworks() -> [agents:%v] [count:%v] [errs:%v]\n", 0, len(errs), errs)
+	fmt.Printf("test: ConfigureNetworks() -> [count:%v] [errs:%v]\n", len(errs), errs)
+
+	agent := repository.Agent(module.NamespaceNamePrimary)
+	if officer, ok := any(agent).(caseofficer.Agent); ok {
+		officer.Trace()
+	}
 
 	//Output:
-	//test: ConfigureNetworks() -> [agents:0] [count:0] [errs:[]]
+	//test: ConfigureNetworks() -> [count:0] [errs:[]]
 
 }
