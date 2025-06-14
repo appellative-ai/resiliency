@@ -3,6 +3,7 @@ package operations
 import (
 	"errors"
 	access "github.com/behavioral-ai/core/access2"
+	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/rest"
 	"net/http"
 )
@@ -45,3 +46,8 @@ var (
 		Primary: nil,
 	}
 )
+
+// Startup - application
+func Startup() {
+	agent.Message(messaging.StartupMessage)
+}

@@ -8,7 +8,7 @@ import (
 
 const (
 	NamespaceNamePrimary = "test:resiliency:agent/caseOfficer/service/traffic/ingress/primary"
-	NetworkNamePrimary   = "test:resiliency:network/service/traffic/ingress/primary"
+	//NetworkNamePrimary   = "test:resiliency:network/service/traffic/ingress/primary"
 
 	LoggingRole       = "logging"
 	AuthorizationRole = "authorization"
@@ -63,6 +63,7 @@ func (a *primaryAgentT) Message(m *messaging.Message) {
 		if m.Name == messaging.StartupEvent {
 			a.run()
 			a.running = true
+			a.ex.Broadcast(m)
 			return
 		}
 		return
@@ -70,13 +71,16 @@ func (a *primaryAgentT) Message(m *messaging.Message) {
 	if m.Name == messaging.ShutdownEvent {
 		a.running = false
 	}
-	list := m.To()
-	if len(list) == 0 {
-		// Need to create some sort of error
+	// System events
+	switch m.Name {
+	case messaging.ShutdownEvent, messaging.PauseEvent, messaging.ResumeEvent:
+		a.emissary.C <- m
+		a.ex.Broadcast(m)
 		return
 	}
-	// If to is the current case officer, then send to channel
-	if list[0] == NetworkNamePrimary {
+	list := m.To()
+	// No recipient, or only the case officer recipient
+	if len(list) == 0 || len(list) == 1 && list[0] == NamespaceNamePrimary {
 		switch m.Channel() {
 		case messaging.ChannelEmissary:
 			a.emissary.C <- m
@@ -87,6 +91,20 @@ func (a *primaryAgentT) Message(m *messaging.Message) {
 		}
 		return
 	}
+	/*
+		if list[0] == NetworkNamePrimary {
+			switch m.Channel() {
+			case messaging.ChannelEmissary:
+				a.emissary.C <- m
+			case messaging.ChannelControl:
+				a.emissary.C <- m
+			default:
+				fmt.Printf("limiter - invalid channel %v\n", m)
+			}
+			return
+		}
+
+	*/
 	// Send to appropriate agent
 	a.ex.Message(m)
 }
@@ -97,12 +115,10 @@ func (a *primaryAgentT) BuildNetwork(net map[string]map[string]string) (chain []
 
 // Run - run the agent
 func (a *primaryAgentT) run() {
-	// TODO: initialize network
 	go primaryEmissaryAttend(a)
 }
 
 func (a *primaryAgentT) shutdown() {
-	a.ex.Broadcast(messaging.ShutdownMessage)
 	a.emissary.Close()
 }
 

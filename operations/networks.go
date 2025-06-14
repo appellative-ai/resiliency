@@ -41,6 +41,7 @@ func configureNetworks(appCfg map[string]string, read func(fileName string) ([]b
 			errs = append(errs, errs1...)
 			continue
 		}
+		agent.registerAgents(chain)
 		err = buildEndpoint(officer.Name(), chain)
 		if err != nil {
 			errs = append(errs, err)

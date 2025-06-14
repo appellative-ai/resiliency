@@ -12,7 +12,6 @@ import (
 
 const (
 	eventKey = "event"
-	//operationsNamespaceName = "test:resiliency:agent/operations/host"
 )
 
 type service struct {

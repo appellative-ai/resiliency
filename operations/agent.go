@@ -14,27 +14,33 @@ const (
 	NamespaceName = "test:resiliency:agent/operations/host"
 )
 
+var (
+	agent *agentT
+)
+
 func init() {
 	// Register access.Agent as it is in core and does not have access to the repository
 	err := repository.Register(access2.Agent)
 	if err != nil {
 		fmt.Printf("repository register error: %v", err)
 	}
-
-	repository.RegisterConstructor(NamespaceName, func() messaging.Agent {
-		return newAgent(operations.Serve)
-	})
-
+	//repository.RegisterConstructor(NamespaceName, func() messaging.Agent {
+	//	return newAgent(operations.Serve)
+	//})
+	agent = newAgent(operations.Serve)
+	repository.Register(agent)
 }
 
 type agentT struct {
+	running bool
 	service *operations.Service
+	ex      *messaging.Exchange
 }
 
 func newAgent(service *operations.Service) *agentT {
 	a := new(agentT)
 	a.service = service
-
+	a.ex = messaging.NewExchange()
 	return a
 }
 
@@ -49,23 +55,53 @@ func (a *agentT) Message(m *messaging.Message) {
 	if m == nil {
 		return
 	}
-	if m.Name == messaging.ConfigEvent {
-		a.configure(m)
+	if !a.running {
+		if m.Name == messaging.ConfigEvent {
+			a.configure(m)
+			return
+		}
+		if m.Name == messaging.StartupEvent {
+			a.run()
+			a.running = true
+			a.ex.Broadcast(m)
+			return
+		}
 		return
 	}
-	/*
-		switch m.Name {
-		case messaging.StartupEvent:
-			host.Broadcast(m)
-		case messaging.ShutdownEvent:
-			host.Broadcast(m)
-		case messaging.PauseEvent:
-			host.Broadcast(m)
-		case messaging.ResumeEvent:
-			host.Broadcast(m)
+	list := m.To()
+	// No recipient, or only the case officer recipient
+	if len(list) == 0 || len(list) == 1 && list[0] == NamespaceName {
+		switch m.Channel() {
+		case messaging.ChannelEmissary:
+			//a.emissary.C <- m
+		case messaging.ChannelControl:
+			//a.emissary.C <- m
+		default:
+			fmt.Printf("limiter - invalid channel %v\n", m)
 		}
+		return
+	}
+	a.ex.Broadcast(m)
+}
 
-	*/
+// Run - run the agent
+func (a *agentT) run() {
+	//go primaryEmissaryAttend(a)
+}
+
+func (a *agentT) shutdown() {
+	//a.emissary.Close()
+}
+
+func (a *agentT) registerAgents(chain []any) {
+	if len(chain) == 0 {
+		return
+	}
+	for _, link := range chain {
+		if v, ok := link.(messaging.Agent); ok {
+			a.ex.Register(v)
+		}
+	}
 }
 
 func (a *agentT) configure(m *messaging.Message) {
