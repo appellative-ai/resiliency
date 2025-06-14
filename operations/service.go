@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/collective/repository"
 	"github.com/behavioral-ai/core/messaging"
+	"github.com/behavioral-ai/core/rest"
 	"github.com/behavioral-ai/resiliency/module"
 	"net/http"
 	"strings"
@@ -15,17 +16,21 @@ const (
 )
 
 type service struct {
-	Pattern string
+	pattern string
 }
 
-func newServiceEndpoint(pattern string) *service {
+func newServiceEndpoint(pattern string) rest.Endpoint {
 	o := new(service)
-	o.Pattern = pattern
+	o.pattern = pattern
 	return o
 }
 
-func (o *service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if !strings.HasPrefix(r.URL.Path, o.Pattern) {
+func (s *service) Pattern() string {
+	return s.pattern
+}
+
+func (s *service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if !strings.HasPrefix(r.URL.Path, s.pattern) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

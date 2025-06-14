@@ -1,17 +1,22 @@
 package operations
 
 import (
+	"github.com/behavioral-ai/core/rest"
 	"net/http"
 )
 
 type health struct {
-	Pattern string
+	pattern string
 }
 
-func newHealthEndpoint(pattern string) *health {
+func newHealthEndpoint(pattern string) rest.Endpoint {
 	h := new(health)
-	h.Pattern = pattern
+	h.pattern = pattern
 	return h
+}
+
+func (h *health) Pattern() string {
+	return h.pattern
 }
 
 func (h *health) ServeHTTP(w http.ResponseWriter, r *http.Request) {

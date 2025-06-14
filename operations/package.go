@@ -4,7 +4,7 @@ import (
 	"errors"
 	access "github.com/behavioral-ai/core/access2"
 	"github.com/behavioral-ai/core/messaging"
-	"net/http"
+	"github.com/behavioral-ai/core/rest"
 )
 
 // ConfigureOrigin - map must provide region, zone, sub-zone, domain, collective, and service-name
@@ -35,7 +35,7 @@ const (
 )
 
 var (
-	Endpoint = map[string]http.Handler{
+	Endpoint = map[string]rest.Endpoint{
 		ServiceEndpoint: newServiceEndpoint("/operations"),
 		HealthEndpoint:  newHealthEndpoint("/health"),
 	}
