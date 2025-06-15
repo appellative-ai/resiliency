@@ -1,7 +1,6 @@
 package operations
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/behavioral-ai/collective/repository"
 	"github.com/behavioral-ai/resiliency/caseofficer"
@@ -65,17 +64,13 @@ func ExampleConfigureNetworks_Errors() {
 }
 
 func ExampleConfigureNetworks() {
-	var appCfg map[string]string
-	//s := traffic.Module
-	//fmt.Printf("test: Repository() -> [count:%v]\n",rep)
+	//var appCfg map[string]string
 
-	buf, err := readFile(appFileName)
+	appCfg, err := ReadAppConfig(func() ([]byte, error) {
+		return readFile(appFileName)
+	})
 	if err != nil {
-		fmt.Printf("test: readFile(\"%v\") -> [bytes:%v] [err:%v]\n", subDir+appFileName, len(buf), err)
-	}
-	err = json.Unmarshal(buf, &appCfg)
-	if err != nil {
-		fmt.Printf("test: json.Unmarshal() -> [err:%v]\n", err)
+		fmt.Printf("test: ReadAppConfig(\"%v\") -> [map:%v] [err:%v]\n", subDir+appFileName, len(appCfg), err)
 	}
 
 	errs := ConfigureNetworks(appCfg, readFile)
@@ -95,5 +90,17 @@ func ExampleConfigureNetworks() {
 	//trace: operative -> test:resiliency:agent/rate-limiting/request/http
 	//trace: operative -> test:resiliency:agent/routing/request/http
 	//trace: Operations() -> [test:resiliency:agent/caseOfficer/service/traffic/ingress/primary]
+
+}
+
+func ExampleReadAppConfig() {
+	cfg, err := ReadAppConfig(func() ([]byte, error) {
+		return readFile(appFileName)
+	})
+
+	fmt.Printf("test: ReadAppConfig() -> %v [err:%v]\n", cfg, err)
+
+	//Output:
+	//test: ReadAppConfig() -> map[test:resiliency:agent/caseOfficer/service/traffic/ingress/primary:network-config-primary.json] [err:<nil>]
 
 }
