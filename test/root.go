@@ -5,14 +5,13 @@ import (
 	"github.com/behavioral-ai/core/host"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/rest"
-	"github.com/behavioral-ai/resiliency/operations"
 	"github.com/behavioral-ai/traffic/cache"
 	"github.com/behavioral-ai/traffic/cache/cachetest"
 	"github.com/behavioral-ai/traffic/limiter"
 )
 
-func NewRootEndpoint() *rest.Endpoint {
-	_ = operations.Agent
+func NewRootEndpoint() rest.Endpoint {
+	//_ = operations.Agent
 	_ = cache.NamespaceName
 	_ = limiter.NamespaceName
 
@@ -29,7 +28,7 @@ func NewRootEndpoint() *rest.Endpoint {
 
 	*/
 
-	return host.NewEndpoint([]any{ //repository.Agent(redirect.NamespaceName),
+	return host.NewEndpoint("", []any{ //repository.Agent(redirect.NamespaceName),
 		cache, //repository.Agent(cache.Nurn2.CacheAgent),
 		repository.Agent(limiter.NamespaceName), RoutingLink})
 }

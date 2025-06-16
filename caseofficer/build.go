@@ -49,11 +49,11 @@ func buildLink(role string, cfg map[string]string, officer messaging.Agent) (any
 		return nil, errors.New(fmt.Sprintf("agent or exchange name not found or is empty for role: %v", role))
 	}
 	switch namespace.Kind(name) {
-	case namespace.Link:
+	case namespace.HandlerKind:
 		// Since this is only code and no state, the same link can be used in all networks
-		link := repository.ExchangeLink(name)
+		link := repository.ExchangeHandler(name)
 		if link == nil {
-			return nil, errors.New(fmt.Sprintf("exchange link is nil for name: %v and role: %v", name, role))
+			return nil, errors.New(fmt.Sprintf("exchange handler is nil for name: %v and role: %v", name, role))
 		}
 		return link, nil
 	case namespace.AgentKind:

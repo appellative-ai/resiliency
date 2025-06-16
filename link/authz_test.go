@@ -12,13 +12,15 @@ func ExampleAuthorization_Chain() {
 	chain := rest.BuildExchangeChain([]any{Authorization})
 	fmt.Printf("test: BuildExchangeChain() -> %v\n", chain != nil)
 
-	repository.RegisterExchangeLink(name, Authorization)
-	l := repository.ExchangeLink(name)
+	repository.RegisterExchangeHandler(name, Authorization)
+	l := repository.ExchangeHandler(name)
 	fmt.Printf("test: ExchangeLink() -> %v %v\n", reflect.TypeOf(Authorization), reflect.TypeOf(l))
 	chain = rest.BuildExchangeChain([]any{l})
 	fmt.Printf("test: repository.ExchangeLink() -> %v\n", chain != nil)
 
 	//Output:
-	//fail
+	//test: BuildExchangeChain() -> true
+	//test: ExchangeLink() -> func(rest.Exchange) rest.Exchange func(rest.Exchange) rest.Exchange
+	//test: repository.ExchangeLink() -> true
 
 }

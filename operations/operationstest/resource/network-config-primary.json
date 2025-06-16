@@ -1,7 +1,7 @@
 [
   {
     "role": "authorization",
-    "name": "test:resiliency:link/authorization/http"
+    "name": "test:resiliency:handler/authorization/http"
   },
   {
     "role": "logging",

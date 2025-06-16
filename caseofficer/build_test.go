@@ -34,19 +34,19 @@ func ExampleBuildLink_Error() {
 	//Output:
 	//test: buildLink("") -> [<nil>] [err:agent or exchange name not found or is empty for role: test-role]
 	//test: buildLink("any:any:aspect/test/one") -> [<nil>] [err:invalid Namespace kind: aspect and role: test-role]
-	//test: buildLink("any:any:link/test/one") -> [<nil>] [err:exchange link is nil for name: any:any:link/test/one and role: test-role]
+	//test: buildLink("any:any:link/test/one") -> [<nil>] [err:invalid Namespace kind: link and role: test-role]
 	//test: buildLink("any:any:agent/test/one") -> [<nil>] [err:agent is nil for name: any:any:agent/test/one and role: test-role]
 
 }
 
 func ExampleBuildLink() {
-	name := "any:any:link/test/one"
+	name := "any:any:handler/test/one"
 	role := "test-role"
 	cfg := make(map[string]string)
-	cfg[NameKey] = "any:any:link/test/one"
+	cfg[NameKey] = "any:any:handler/test/one"
 
 	agent := messagingtest.NewAgent("agent\test")
-	repository.RegisterExchangeLink(name, link.Authorization)
+	repository.RegisterExchangeHandler(name, link.Authorization)
 
 	cfg[NameKey] = name
 	t, err := buildLink(role, cfg, agent)
@@ -61,7 +61,7 @@ func ExampleBuildLink() {
 	fmt.Printf("test: buildLink() -> [%v] [err:%v]\n", reflect.TypeOf(t), err)
 
 	//Output:
-	//test: buildLink() -> [rest.ExchangeLink] [err:<nil>]
+	//test: buildLink() -> [func(rest.Exchange) rest.Exchange] [err:<nil>]
 	//test: buildLink() -> [*messagingtest.AgentT] [err:<nil>]
 
 }
@@ -80,7 +80,7 @@ func ExampleBuildNetwork_Error() {
 	chain, errs = buildNetwork(officer, netCfg)
 	fmt.Printf("test: buildNetwork() -> [chain:%v] %v\n", chain, errs)
 
-	repository.RegisterExchangeLink(name, link.Authorization)
+	repository.RegisterExchangeHandler(name, link.Authorization)
 
 	netCfg[AuthorizationRole] = map[string]string{}
 	chain, errs = buildNetwork(officer, netCfg)
@@ -99,7 +99,7 @@ func ExampleBuildNetwork() {
 	officer := messagingtest.NewAgent("*:*:agent/test")
 	netCfg := make(map[string]map[string]string)
 
-	repository.RegisterExchangeLink(name, link.Authorization)
+	repository.RegisterExchangeHandler(name, link.Authorization)
 
 	netCfg[AuthorizationRole] = map[string]string{NameKey: link.NamespaceNameAuth}
 	chain, errs := buildNetwork(officer, netCfg)
