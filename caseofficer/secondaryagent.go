@@ -7,13 +7,11 @@ import (
 )
 
 const (
-	NamespaceNamePrimary = "test:resiliency:agent/caseOfficer/service/traffic/ingress/primary"
-	//NetworkNamePrimary   = "test:resiliency:network/service/traffic/ingress/primary"
-
+	NamespaceNameSecondary = "test:resiliency:agent/caseOfficer/service/traffic/ingress/secondary"
 )
 
 // TODO : need host name
-type primaryAgentT struct {
+type secondaryAgentT struct {
 	running bool
 
 	ex       *messaging.Exchange
@@ -21,13 +19,13 @@ type primaryAgentT struct {
 	service  *operations.Service
 }
 
-// NewPrimaryAgent - create a new agent
-func NewPrimaryAgent(service *operations.Service) Agent {
-	return newPrimaryAgent(service)
+// NewSecondaryAgent - create a new agent
+func NewSecondaryAgent(service *operations.Service) Agent {
+	return newSecondaryAgent(service)
 }
 
-func newPrimaryAgent(service *operations.Service) *primaryAgentT {
-	a := new(primaryAgentT)
+func newSecondaryAgent(service *operations.Service) *secondaryAgentT {
+	a := new(secondaryAgentT)
 	a.service = service
 
 	a.ex = messaging.NewExchange()
@@ -36,16 +34,16 @@ func newPrimaryAgent(service *operations.Service) *primaryAgentT {
 }
 
 // Name - agent identifier
-func (a *primaryAgentT) Name() string { return NamespaceNamePrimary }
+func (a *secondaryAgentT) Name() string { return NamespaceNameSecondary }
 
-func (a *primaryAgentT) Trace() {
+func (a *secondaryAgentT) Trace() {
 	for _, v := range a.ex.List() {
 		fmt.Printf("trace: operative -> %v\n", v)
 	}
 }
 
 // Message - message the agent
-func (a *primaryAgentT) Message(m *messaging.Message) {
+func (a *secondaryAgentT) Message(m *messaging.Message) {
 	if m == nil {
 		return
 	}
@@ -103,24 +101,24 @@ func (a *primaryAgentT) Message(m *messaging.Message) {
 	a.ex.Message(m)
 }
 
-func (a *primaryAgentT) BuildNetwork(net map[string]map[string]string) (chain []any, errs []error) {
+func (a *secondaryAgentT) BuildNetwork(net map[string]map[string]string) (chain []any, errs []error) {
 	return buildNetwork(a, net)
 }
 
-func (a *primaryAgentT) Operative(name string) messaging.Agent {
+func (a *secondaryAgentT) Operative(name string) messaging.Agent {
 	return a.ex.Get(name)
 }
 
 // Run - run the agent
-func (a *primaryAgentT) run() {
-	go primaryEmissaryAttend(a)
+func (a *secondaryAgentT) run() {
+	go secondaryEmissaryAttend(a)
 }
 
-func (a *primaryAgentT) shutdown() {
+func (a *secondaryAgentT) shutdown() {
 	a.emissary.Close()
 }
 
-func (a *primaryAgentT) configure(m *messaging.Message) {
+func (a *secondaryAgentT) configure(m *messaging.Message) {
 	switch m.ContentType() {
 	case messaging.ContentTypeAgent:
 		agent, status := messaging.AgentContent(m)
