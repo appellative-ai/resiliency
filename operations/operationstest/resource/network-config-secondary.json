@@ -1,6 +1,7 @@
 [
   {
     "role": "routing",
+    "share": "true",
     "name":"test:resiliency:agent/routing/request/http",
     "app-host": "localhost:8080",
     "cache-host": "localhost:8081",
