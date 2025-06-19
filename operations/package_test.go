@@ -90,11 +90,9 @@ func ExampleConfigureNetworks() {
 
 	//Output:
 	//test: ConfigureNetworks() -> [count:0] [errs:[]]
-	//trace: operative -> test:core:agent/log/access/http
-	//trace: operative -> test:resiliency:agent/cache/request/http
-	//trace: operative -> test:resiliency:agent/rate-limiting/request/http
-	//trace: operative -> test:resiliency:agent/routing/request/http
-	//trace: Operations() -> [test:resiliency:agent/caseOfficer/service/traffic/ingress/primary]
+	//trace: test:resiliency:agent/caseOfficer/service/traffic/ingress/primary -> test:resiliency:agent/rate-limiting/request/http
+	//trace: test:resiliency:agent/caseOfficer/service/traffic/ingress/secondary -> test:resiliency:agent/routing/request/http
+	//trace: Operations() -> [test:resiliency:agent/caseOfficer/service/traffic/ingress/primary test:resiliency:agent/caseOfficer/service/traffic/ingress/secondary]
 
 }
 
@@ -106,6 +104,6 @@ func ExampleReadAppConfig() {
 	fmt.Printf("test: ReadAppConfig() -> %v [err:%v]\n", cfg, err)
 
 	//Output:
-	//test: ReadAppConfig() -> map[test:resiliency:agent/caseOfficer/service/traffic/ingress/primary:network-config-primary.json] [err:<nil>]
+	//test: ReadAppConfig() -> map[test:resiliency:agent/caseOfficer/service/traffic/ingress/primary:network-config-primary.json test:resiliency:agent/caseOfficer/service/traffic/ingress/secondary:network-config-secondary.json] [err:<nil>]
 
 }

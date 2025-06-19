@@ -44,6 +44,8 @@ github.com/behavioral-ai/traffic v0.0.0-20250614224521-e4b9733a9197 h1:EkoTqtY5r
 github.com/behavioral-ai/traffic v0.0.0-20250614224521-e4b9733a9197/go.mod h1:hMs2uA5vQyopEMTPW6JlK2fTLx4hRCta1HrEK9uhBf8=
 github.com/behavioral-ai/traffic v0.0.0-20250619131715-5d08ea6e0a05 h1:DIhe5rp1LXRX5KdUjbu01D8nCr2JwIsf5wtheW4D7BU=
 github.com/behavioral-ai/traffic v0.0.0-20250619131715-5d08ea6e0a05/go.mod h1:soad8vuz87ycUILdpe5OohD5KGNEBXTrFpPUHlp35ZQ=
+github.com/behavioral-ai/traffic v0.0.0-20250619155817-f3b17b526444 h1:iaGVGIZT0ewJmZSnToPmkiG7lGCxvnOv1VODQl2KCfo=
+github.com/behavioral-ai/traffic v0.0.0-20250619155817-f3b17b526444/go.mod h1:soad8vuz87ycUILdpe5OohD5KGNEBXTrFpPUHlp35ZQ=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dchest/siphash v1.2.2/go.mod h1:q+IRvb2gOSrUnYoPqHiyHXS0FOBBOdl6tONBlVnOnt4=

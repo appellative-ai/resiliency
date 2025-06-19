@@ -7,7 +7,9 @@ import (
 	"github.com/behavioral-ai/core/host"
 	"github.com/behavioral-ai/core/rest"
 	"github.com/behavioral-ai/resiliency/caseofficer"
+	"github.com/behavioral-ai/traffic/cache"
 	"github.com/behavioral-ai/traffic/cache/cachetest"
+	"github.com/behavioral-ai/traffic/routing"
 	"github.com/behavioral-ai/traffic/routing/routingtest"
 )
 
@@ -21,11 +23,11 @@ func buildEndpoint(name string, chain []any) error {
 	case caseofficer.NamespaceNamePrimary:
 		// In testing, need to override the Exchange for cache and routing
 		m := rest.NewExchangeMessage(cachetest.Exchange)
-		m.AddTo(caseofficer.NamespaceNamePrimary)
+		m.AddTo(cache.NamespaceName)
 		exchange.Message(m)
 
 		m = rest.NewExchangeMessage(routingtest.Exchange)
-		m.AddTo(caseofficer.NamespaceNamePrimary)
+		m.AddTo(routing.NamespaceName)
 		exchange.Message(m)
 
 		Endpoint[PrimaryEndpoint] = host.NewEndpoint(primaryPattern, chain)
