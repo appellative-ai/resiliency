@@ -40,7 +40,7 @@ func (a *primaryAgentT) Name() string { return NamespaceNamePrimary }
 
 func (a *primaryAgentT) Trace() {
 	for _, v := range a.ex.List() {
-		fmt.Printf("trace: operative -> %v\n", v)
+		fmt.Printf("trace: %v -> %v\n", NamespaceNamePrimary, v)
 	}
 }
 

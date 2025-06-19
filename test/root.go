@@ -1,7 +1,7 @@
 package test
 
 import (
-	"github.com/behavioral-ai/collective/repository"
+	"github.com/behavioral-ai/collective/exchange"
 	"github.com/behavioral-ai/core/host"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/rest"
@@ -15,7 +15,7 @@ func NewRootEndpoint() rest.Endpoint {
 	_ = cache.NamespaceName
 	_ = limiter.NamespaceName
 
-	cache := repository.Agent(cache.NamespaceName)
+	cache := exchange.Agent(cache.NamespaceName)
 	cache.Message(rest.NewExchangeMessage(cachetest.Exchange))
 	m := make(map[string]string)
 	m["host"] = "localhost:8082"
@@ -30,5 +30,5 @@ func NewRootEndpoint() rest.Endpoint {
 
 	return host.NewEndpoint("", []any{ //repository.Agent(redirect.NamespaceName),
 		cache, //repository.Agent(cache.Nurn2.CacheAgent),
-		repository.Agent(limiter.NamespaceName), RoutingLink})
+		exchange.Agent(limiter.NamespaceName), RoutingLink})
 }

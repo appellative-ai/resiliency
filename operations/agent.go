@@ -2,8 +2,8 @@ package operations
 
 import (
 	"fmt"
+	"github.com/behavioral-ai/collective/exchange"
 	"github.com/behavioral-ai/collective/operations"
-	"github.com/behavioral-ai/collective/repository"
 	"github.com/behavioral-ai/core/access2"
 	"github.com/behavioral-ai/core/messaging"
 	_ "github.com/behavioral-ai/resiliency/link"
@@ -20,7 +20,7 @@ var (
 
 func init() {
 	// Register access.Agent as it is in core and does not have access to the repository
-	err := repository.Register(access2.Agent)
+	err := exchange.Register(access2.Agent)
 	if err != nil {
 		fmt.Printf("repository register error: %v", err)
 	}
@@ -28,7 +28,7 @@ func init() {
 	//	return newAgent(operations.Serve)
 	//})
 	opsAgent = newAgent(operations.Serve)
-	repository.Register(opsAgent)
+	exchange.Register(opsAgent)
 }
 
 type agentT struct {

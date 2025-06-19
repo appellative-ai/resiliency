@@ -2,7 +2,7 @@ package operations
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/collective/repository"
+	"github.com/behavioral-ai/collective/exchange"
 	"github.com/behavioral-ai/core/rest"
 	"reflect"
 )
@@ -12,8 +12,8 @@ func ExampleAuthorization_Chain() {
 	chain := rest.BuildExchangeChain([]any{Authorization})
 	fmt.Printf("test: BuildExchangeChain() -> %v\n", chain != nil)
 
-	repository.RegisterExchangeHandler(name, Authorization)
-	l := repository.ExchangeHandler(name)
+	exchange.RegisterExchangeHandler(name, Authorization)
+	l := exchange.ExchangeHandler(name)
 	fmt.Printf("test: ExchangeLink() -> %v %v\n", reflect.TypeOf(Authorization), reflect.TypeOf(l))
 	chain = rest.BuildExchangeChain([]any{l})
 	fmt.Printf("test: repository.ExchangeLink() -> %v\n", chain != nil)

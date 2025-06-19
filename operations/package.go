@@ -44,9 +44,10 @@ func ReadAppConfig(read func() ([]byte, error)) (map[string]string, error) {
 // Http endpoints
 
 const (
-	ServiceEndpoint = "service"
-	HealthEndpoint  = "health"
-	PrimaryEndpoint = "primary"
+	ServiceEndpoint   = "service"
+	HealthEndpoint    = "health"
+	PrimaryEndpoint   = "primary"
+	SecondaryEndpoint = "secondary"
 )
 
 var (
@@ -59,4 +60,10 @@ var (
 // Startup - application
 func Startup() {
 	opsAgent.Message(messaging.StartupMessage)
+}
+
+// Shutdown -
+// TODO: need to shutdown all global assigned agents
+func Shutdown() {
+	opsAgent.Message(messaging.ShutdownMessage)
 }

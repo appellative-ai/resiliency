@@ -18,7 +18,7 @@ func ExampleReadConfig() {
 
 	//Output:
 	//test: ReadConfig("/resource/app-config.json") -> [map:2] [<nil>]
-	//test: readConfig("/resource/network-config-primary.json") -> [map:4] [<nil>]
+	//test: readConfig("/resource/network-config-primary.json") -> [map:6] [<nil>]
 
 }
 

@@ -3,8 +3,8 @@ package caseofficer
 import (
 	"errors"
 	"fmt"
+	"github.com/behavioral-ai/collective/exchange"
 	"github.com/behavioral-ai/collective/namespace"
-	"github.com/behavioral-ai/collective/repository"
 	"github.com/behavioral-ai/core/access2"
 	"github.com/behavioral-ai/core/messaging"
 )
@@ -51,32 +51,36 @@ func buildLink(role string, cfg map[string]string, officer messaging.Agent) (any
 	switch namespace.Kind(name) {
 	case namespace.HandlerKind:
 		// Since this is only code and no state, the same link can be used in all networks
-		link := repository.ExchangeHandler(name)
+		link := exchange.ExchangeHandler(name)
 		if link == nil {
 			return nil, errors.New(fmt.Sprintf("exchange handler is nil for name: %v and role: %v", name, role))
 		}
 		return link, nil
 	case namespace.AgentKind:
 		var agent messaging.Agent
+		var global bool
 
-		// Only one access agent for application
-		if name == access2.NamespaceName {
-			agent = repository.Agent(name)
+		// Determine if a global assignment is requested, or if the access agent is configured
+		if name == access2.NamespaceName || cfg[AssignmentKey] != AssignmentLocal {
+			global = true
+			agent = exchange.Agent(name)
 		} else {
 			// Construct a new agent as each agent has state, and a new instance is required for each network
-			agent = repository.NewAgent(name)
+			agent = exchange.NewAgent(name)
 		}
 		if agent == nil {
 			return nil, errors.New(fmt.Sprintf("agent is nil for name: %v and role: %v", name, role))
 		}
 
-		// Add agent to case officer exchange
-		m := messaging.NewAgentMessage(agent)
-		officer.Message(m)
+		// Add agent to case officer exchange if not global
+		if !global {
+			m := messaging.NewAgentMessage(agent)
+			officer.Message(m)
 
-		// TODO: wait for reply?
-		agent.Message(messaging.NewMapMessage(cfg))
-		agent.Message(messaging.NewAgentMessage(officer))
+			// TODO: wait for reply?
+			agent.Message(messaging.NewMapMessage(cfg))
+			agent.Message(messaging.NewAgentMessage(officer))
+		}
 		return agent, nil
 	default:
 	}

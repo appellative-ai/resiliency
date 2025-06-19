@@ -2,7 +2,7 @@ package caseofficer
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/collective/repository"
+	"github.com/behavioral-ai/collective/exchange"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/messaging/messagingtest"
 	link "github.com/behavioral-ai/resiliency/link"
@@ -46,7 +46,7 @@ func ExampleBuildLink() {
 	cfg[NameKey] = "any:any:handler/test/one"
 
 	agent := messagingtest.NewAgent("agent\test")
-	repository.RegisterExchangeHandler(name, link.Authorization)
+	exchange.RegisterExchangeHandler(name, link.Authorization)
 
 	cfg[NameKey] = name
 	t, err := buildLink(role, cfg, agent)
@@ -54,7 +54,7 @@ func ExampleBuildLink() {
 
 	name = "any:any:agent/test/one"
 	cfg[NameKey] = name
-	repository.RegisterConstructor(name, func() messaging.Agent {
+	exchange.RegisterConstructor(name, func() messaging.Agent {
 		return messagingtest.NewAgent("agent\test2")
 	})
 	t, err = buildLink(role, cfg, agent)
@@ -80,7 +80,7 @@ func ExampleBuildNetwork_Error() {
 	chain, errs = buildNetwork(officer, netCfg)
 	fmt.Printf("test: buildNetwork() -> [chain:%v] %v\n", chain, errs)
 
-	repository.RegisterExchangeHandler(name, link.Authorization)
+	exchange.RegisterExchangeHandler(name, link.Authorization)
 
 	netCfg[AuthorizationRole] = map[string]string{}
 	chain, errs = buildNetwork(officer, netCfg)
@@ -99,7 +99,7 @@ func ExampleBuildNetwork() {
 	officer := messagingtest.NewAgent("*:*:agent/test")
 	netCfg := make(map[string]map[string]string)
 
-	repository.RegisterExchangeHandler(name, link.Authorization)
+	exchange.RegisterExchangeHandler(name, link.Authorization)
 
 	netCfg[AuthorizationRole] = map[string]string{NameKey: link.NamespaceNameAuth}
 	chain, errs := buildNetwork(officer, netCfg)

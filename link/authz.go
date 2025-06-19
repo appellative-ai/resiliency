@@ -1,7 +1,7 @@
 package operations
 
 import (
-	"github.com/behavioral-ai/collective/repository"
+	"github.com/behavioral-ai/collective/exchange"
 	"github.com/behavioral-ai/core/rest"
 	"net/http"
 )
@@ -12,7 +12,7 @@ const (
 )
 
 func init() {
-	repository.RegisterExchangeHandler(NamespaceNameAuth, Authorization)
+	exchange.RegisterExchangeHandler(NamespaceNameAuth, Authorization)
 }
 
 func Authorization(next rest.Exchange) rest.Exchange {

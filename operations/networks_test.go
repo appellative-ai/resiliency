@@ -2,7 +2,7 @@ package operations
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/collective/repository"
+	"github.com/behavioral-ai/collective/exchange"
 	"github.com/behavioral-ai/core/messaging/messagingtest"
 	"github.com/behavioral-ai/resiliency/caseofficer"
 )
@@ -16,7 +16,7 @@ func ExampleBuildNetworkConfig() {
 	fmt.Printf("test: buildNetworkConfig() -> [%v] [err:%v]\n", cfg, err)
 
 	//Output:
-	//test: buildNetworkConfig() -> [map[authorization:map[name:test:resiliency:link/authorization/http] cache:map[cache-control:no-store, no-cache, max-age=0 fri:22-23 host:localhost:8081 interval:4m mon:8-16 name:test:resiliency:agent/cache/request/http sat:3-8 sun:13-15 thu:0-23 timeout:750ms tue:6-10 wed:12-12] logging:map[name:test:resiliency:link/logging/access] rate-limiting:map[load-size:567 name:test:resiliency:agent/rate-limiting/request/http off-peak-duration:5m peak-duration:750ms rate-burst:12 rate-limit:1234] routing:map[app-host:localhost:8080 cache-host:localhost:8081 interval:4m name:test:resiliency:agent/routing/request/http timeout:2m]]] [err:<nil>]
+	//test: buildNetworkConfig() -> [map[authorization:map[name:test:resiliency:handler/authorization/http] cache:map[cache-control:no-store, no-cache, max-age=0 fri:22-23 host:localhost:8081 interval:4m mon:8-16 name:test:resiliency:agent/cache/request/http sat:3-8 sun:13-15 thu:0-23 timeout:750ms tue:6-10 wed:12-12] logging:map[name:test:core:agent/log/access/http] rate-limiting:map[assignment:local load-size:567 name:test:resiliency:agent/rate-limiting/request/http off-peak-duration:5m peak-duration:750ms rate-burst:12 rate-limit:1234] routing:map[app-host:localhost:8080 assignment:global cache-host:localhost:8081 interval:4m name:test:resiliency:agent/routing/request/http timeout:2m]]] [err:<nil>]
 
 }
 
@@ -29,7 +29,7 @@ func ExampleValidateOfficer() {
 
 	name := "test-agent"
 	a := messagingtest.NewAgent(name)
-	repository.Register(a)
+	exchange.Register(a)
 	agent, err = validateOfficerType(name)
 	fmt.Printf("test: validateOfficerType() -> [agent:%v] [err:%v]\n", agent, err)
 

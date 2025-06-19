@@ -2,7 +2,7 @@ package operations
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/collective/repository"
+	"github.com/behavioral-ai/collective/exchange"
 	"github.com/behavioral-ai/resiliency/caseofficer"
 	"github.com/behavioral-ai/resiliency/module"
 	"os"
@@ -76,7 +76,12 @@ func ExampleConfigureNetworks() {
 	errs := ConfigureNetworks(appCfg, readFile)
 	fmt.Printf("test: ConfigureNetworks() -> [count:%v] [errs:%v]\n", len(errs), errs)
 
-	a := repository.Agent(module.NamespaceNamePrimary)
+	a := exchange.Agent(module.NamespaceNamePrimary)
+	if officer, ok := any(a).(caseofficer.Agent); ok {
+		officer.Trace()
+	}
+
+	a = exchange.Agent(module.NamespaceNameSecondary)
 	if officer, ok := any(a).(caseofficer.Agent); ok {
 		officer.Trace()
 	}

@@ -10,6 +10,7 @@
   {
     "role": "rate-limiting",
     "name":"test:resiliency:agent/rate-limiting/request/http",
+    "assignment": "local",
     "rate-limit": "1234",
     "rate-burst": "12",
     "peak-duration": "750ms",
@@ -34,6 +35,7 @@
   {
     "role": "routing",
     "name":"test:resiliency:agent/routing/request/http",
+    "assignment": "global",
     "app-host": "localhost:8080",
     "cache-host": "localhost:8081",
     "timeout": "2m",

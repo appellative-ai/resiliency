@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/behavioral-ai/collective/repository"
+	"github.com/behavioral-ai/collective/exchange"
 	"github.com/behavioral-ai/resiliency/caseofficer"
 	//"github.com/behavioral-ai/resiliency/endpoint"
 )
@@ -88,7 +88,7 @@ func validateOfficerType(name string) (caseofficer.Agent, error) {
 	if name == "" {
 		return nil, errors.New(fmt.Sprintf("case officer name is empty"))
 	}
-	agent := repository.Agent(name)
+	agent := exchange.Agent(name)
 	if agent == nil {
 		return nil, errors.New(fmt.Sprintf("agent lookup is nil for case officer: %v", name))
 	}
