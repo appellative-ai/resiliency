@@ -40,6 +40,12 @@ github.com/behavioral-ai/core v0.0.0-20250614220351-99a9d26282a5 h1:GfLIAEgoKN5l
 github.com/behavioral-ai/core v0.0.0-20250614220351-99a9d26282a5/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
 github.com/behavioral-ai/core v0.0.0-20250619125058-acf2360b876a h1:6jl4NfOELI3kR8Eg84FKRsSlG1IIVvIQ3Jegoaylp00=
 github.com/behavioral-ai/core v0.0.0-20250619125058-acf2360b876a/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
+github.com/behavioral-ai/core v0.0.0-20250619223513-f78bc91871ec h1:J8dojVUdozgWjAhqZt47gYtDIV3JqwRsFCDzfwwRRnQ=
+github.com/behavioral-ai/core v0.0.0-20250619223513-f78bc91871ec/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
+github.com/behavioral-ai/core v0.0.0-20250619225314-5db7e2790cd3 h1:974H7S3MclSp3as8FO91UPcTSNBOhoTgQcIBiNEN7Xs=
+github.com/behavioral-ai/core v0.0.0-20250619225314-5db7e2790cd3/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
+github.com/behavioral-ai/core v0.0.0-20250619231026-497e42358dc1 h1:NgRTVev7BdoCozgNFE0FsPwPXp/jRRZHuAjAoEb95nc=
+github.com/behavioral-ai/core v0.0.0-20250619231026-497e42358dc1/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
 github.com/behavioral-ai/traffic v0.0.0-20250610194916-ded913a6d54f h1:gCknnkNDUqJTYMceu4bQST550KTbZ6tBrAF0M7IE6hQ=
 github.com/behavioral-ai/traffic v0.0.0-20250610194916-ded913a6d54f/go.mod h1:aJjFVsje3rW7Ex4bTUGGbVV4v3kwU9qh9mQ6p4i6pRI=
 github.com/behavioral-ai/traffic v0.0.0-20250614224521-e4b9733a9197 h1:EkoTqtY5r4UIldUkts+uKbHgt2zOAAblLSdwXuOlNmw=
@@ -50,6 +56,8 @@ github.com/behavioral-ai/traffic v0.0.0-20250619155817-f3b17b526444 h1:iaGVGIZT0
 github.com/behavioral-ai/traffic v0.0.0-20250619155817-f3b17b526444/go.mod h1:soad8vuz87ycUILdpe5OohD5KGNEBXTrFpPUHlp35ZQ=
 github.com/behavioral-ai/traffic v0.0.0-20250619212236-aa439127d313 h1:Ykr6QpQMFlc/Ne0tWi4qyoSpEYTuyF2LaaIll7sLfjA=
 github.com/behavioral-ai/traffic v0.0.0-20250619212236-aa439127d313/go.mod h1:o6mPsprwRZVapsJ/uZliLLL5JeSGSeixIbQwltJ4ib4=
+github.com/behavioral-ai/traffic v0.0.0-20250619220018-bda97c44bbaa h1:Xony4NhqhNtG0hoihF/qbil3/9YrtcWUuWuM8zrhFPk=
+github.com/behavioral-ai/traffic v0.0.0-20250619220018-bda97c44bbaa/go.mod h1:o6mPsprwRZVapsJ/uZliLLL5JeSGSeixIbQwltJ4ib4=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dchest/siphash v1.2.2/go.mod h1:q+IRvb2gOSrUnYoPqHiyHXS0FOBBOdl6tONBlVnOnt4=

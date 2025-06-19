@@ -74,7 +74,7 @@ func buildLink(role string, cfg map[string]string, officer messaging.Agent) (any
 
 		// Add agent to case officer exchange if not global
 		if !global {
-			m := messaging.NewAgentMessage(agent)
+			m := messaging.NewAgentMessage(agent).AddTo(officer.Name())
 			officer.Message(m)
 
 			// TODO: wait for reply?

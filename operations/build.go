@@ -32,13 +32,10 @@ func buildEndpoint(name string, chain []any) error {
 
 		Endpoint[PrimaryEndpoint] = host.NewEndpoint(primaryPattern, chain)
 	case caseofficer.NamespaceNameSecondary:
-		// In testing, need to override the Exchange for cache and routing
-		//m := rest.NewExchangeMessage(cachetest.Exchange)
-		//m.AddTo(caseofficer.NamespaceNamePrimary)
-		//repository.Message(m)
-
+		// In testing, need to override the Exchange for routing
 		m := rest.NewExchangeMessage(routingtest.Exchange)
-		m.AddTo(caseofficer.NamespaceNameSecondary)
+		m.AddTo(routing.NamespaceName)
+		m.SetCareOf(caseofficer.NamespaceNameSecondary)
 		exchange.Message(m)
 
 		Endpoint[SecondaryEndpoint] = host.NewEndpoint(secondaryPattern, chain)

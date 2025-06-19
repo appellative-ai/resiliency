@@ -49,7 +49,11 @@ func (a *secondaryAgentT) Message(m *messaging.Message) {
 	}
 	if !a.running {
 		if m.Name == messaging.ConfigEvent {
-			a.configure(m)
+			if m.IsRecipient(NamespaceNameSecondary) {
+				a.configure(m)
+			} else {
+				a.ex.Message(m)
+			}
 			return
 		}
 		if m.Name == messaging.StartupEvent {
