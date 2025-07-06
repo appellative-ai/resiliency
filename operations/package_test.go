@@ -2,7 +2,7 @@ package operations
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/resiliency/caseofficer2"
+	"github.com/behavioral-ai/resiliency/caseofficer"
 	"os"
 )
 
@@ -75,12 +75,12 @@ func ExampleConfigureNetworks() {
 	fmt.Printf("test: ConfigureNetworks() -> [count:%v] [errs:%v]\n", len(errs), errs)
 
 	a := opsAgent.Operative("core:common:agent/caseofficer/request/http/primary")
-	if officer, ok := any(a).(caseofficer2.Agent); ok {
+	if officer, ok := any(a).(caseofficer.Agent); ok {
 		officer.Trace()
 	}
 
 	a = opsAgent.Operative("core:common:agent/caseofficer/request/http/secondary")
-	if officer, ok := any(a).(caseofficer2.Agent); ok {
+	if officer, ok := any(a).(caseofficer.Agent); ok {
 		officer.Trace()
 	}
 

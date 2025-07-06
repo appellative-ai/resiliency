@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/behavioral-ai/resiliency/caseofficer2"
+	"github.com/behavioral-ai/resiliency/caseofficer"
 	//"github.com/behavioral-ai/resiliency/endpoint"
 )
 
@@ -12,7 +12,7 @@ const (
 	roleKey = "role"
 )
 
-func Configure(agent caseofficer2.Agent, buildEndpoint func(name string, chain []any) error, appCfg map[string]string, read func(fileName string) ([]byte, error)) (errs []error) {
+func Configure(agent caseofficer.Agent, buildEndpoint func(name string, chain []any) error, appCfg map[string]string, read func(fileName string) ([]byte, error)) (errs []error) {
 	if read == nil {
 		return []error{errors.New("network read function is nil")}
 	}

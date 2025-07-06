@@ -5,10 +5,34 @@ import (
 	"github.com/behavioral-ai/collective/exchange"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/messaging/messagingtest"
-	link "github.com/behavioral-ai/resiliency/link"
-	"github.com/behavioral-ai/traffic/routing"
+	"github.com/behavioral-ai/core/rest"
+	"net/http"
 	"reflect"
 )
+
+const (
+	loggingRole       = "logging"
+	authorizationRole = "authorization"
+	cacheRole         = "cache"
+	rateLimitingRole  = "rate-limiting"
+	routingRole       = "routing"
+	authorizationName = "Authorization"
+	namespaceNameAuth = "test:resiliency:handler/authorization/http"
+)
+
+var (
+	roles = []string{loggingRole, authorizationRole, cacheRole, rateLimitingRole, routingRole}
+)
+
+func authorization(next rest.Exchange) rest.Exchange {
+	return func(r *http.Request) (resp *http.Response, err error) {
+		auth := r.Header.Get(authorizationName)
+		if auth == "" {
+			return &http.Response{StatusCode: http.StatusUnauthorized}, nil
+		}
+		return next(r)
+	}
+}
 
 func ExampleBuildLink_Error() {
 	//name := "any:any:aspect/test/one"
@@ -46,7 +70,7 @@ func ExampleBuildLink() {
 	cfg[NameKey] = "any:any:handler/test/one"
 
 	agent := messagingtest.NewAgent("agent\test")
-	exchange.RegisterExchangeHandler(name, link.Authorization)
+	exchange.RegisterExchangeHandler(name, authorization)
 
 	cfg[NameKey] = name
 	t, err := buildLink(role, cfg, agent)
@@ -71,19 +95,19 @@ func ExampleBuildNetwork_Error() {
 	officer := messagingtest.NewAgent("*:*:agent/test")
 	netCfg := make(map[string]map[string]string)
 
-	chain, errs := buildNetwork(nil, nil)
+	chain, errs := buildNetwork(nil, nil, nil)
 	fmt.Printf("test: buildNetwork() -> [chain:%v] %v\n", chain, errs)
 
-	chain, errs = buildNetwork(officer, nil)
+	chain, errs = buildNetwork(officer, nil, nil)
 	fmt.Printf("test: buildNetwork() -> [chain:%v] %v\n", chain, errs)
 
-	chain, errs = buildNetwork(officer, netCfg)
+	chain, errs = buildNetwork(officer, netCfg, roles)
 	fmt.Printf("test: buildNetwork() -> [chain:%v] %v\n", chain, errs)
 
-	exchange.RegisterExchangeHandler(name, link.Authorization)
+	exchange.RegisterExchangeHandler(name, authorization)
 
-	netCfg[AuthorizationRole] = map[string]string{}
-	chain, errs = buildNetwork(officer, netCfg)
+	netCfg[authorizationRole] = map[string]string{}
+	chain, errs = buildNetwork(officer, netCfg, roles)
 	fmt.Printf("test: buildNetwork() -> [chain:%v] %v\n", chain, errs)
 
 	//Output:
@@ -95,22 +119,20 @@ func ExampleBuildNetwork_Error() {
 }
 
 func ExampleBuildNetwork() {
-	name := "*:*:link/test/one"
 	officer := messagingtest.NewAgent("*:*:agent/test")
 	netCfg := make(map[string]map[string]string)
 
-	exchange.RegisterExchangeHandler(name, link.Authorization)
+	exchange.RegisterExchangeHandler(namespaceNameAuth, authorization)
 
-	netCfg[AuthorizationRole] = map[string]string{NameKey: link.NamespaceNameAuth}
-	chain, errs := buildNetwork(officer, netCfg)
+	netCfg[authorizationRole] = map[string]string{NameKey: namespaceNameAuth}
+	chain, errs := buildNetwork(officer, netCfg, roles)
 	fmt.Printf("test: buildNetwork() -> [chain:%v] %v\n", len(chain), errs)
 
-	netCfg[RoutingRole] = map[string]string{NameKey: routing.NamespaceName}
-	chain, errs = buildNetwork(officer, netCfg)
-	fmt.Printf("test: buildNetwork() -> [chain:%v] %v\n", len(chain), errs)
+	//netCfg[routingRole] = map[string]string{NameKey: routing.NamespaceName}
+	//chain, errs = buildNetwork(officer, netCfg, roles)
+	//fmt.Printf("test: buildNetwork() -> [chain:%v] %v\n", len(chain), errs)
 
 	//Output:
-	//test: buildNetwork() -> [chain:1] [no routing agent was configured]
-	//test: buildNetwork() -> [chain:2] []
+	//test: buildNetwork() -> [chain:1] []
 
 }

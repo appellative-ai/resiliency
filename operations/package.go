@@ -16,10 +16,11 @@ const (
 	CacheRole         = "cache"
 	RateLimitingRole  = "rate-limiting"
 	RoutingRole       = "routing"
-	roleKey           = "role"
-	endpointKey       = "endpoint"
-	patternKey        = "pattern"
-	networkKey        = "network"
+
+	roleKey     = "role"
+	endpointKey = "endpoint"
+	patternKey  = "pattern"
+	networkKey  = "network"
 )
 
 var (

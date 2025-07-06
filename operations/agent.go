@@ -6,7 +6,7 @@ import (
 	"github.com/behavioral-ai/collective/operations"
 	"github.com/behavioral-ai/core/access2"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/resiliency/caseofficer2"
+	"github.com/behavioral-ai/resiliency/caseofficer"
 	_ "github.com/behavioral-ai/resiliency/link"
 	_ "github.com/behavioral-ai/traffic/module"
 )
@@ -97,9 +97,9 @@ func (a *agentT) run() {
 func (a *agentT) shutdown() {
 }
 
-func (a *agentT) registerCaseOfficer(name string) caseofficer2.Agent {
+func (a *agentT) registerCaseOfficer(name string) caseofficer.Agent {
 	//for name, _ := range appCfg {
-	agent := caseofficer2.NewAgent(fmt.Sprintf(caseOfficerNameFmt, name))
+	agent := caseofficer.NewAgent(fmt.Sprintf(caseOfficerNameFmt, name))
 	a.ex.Register(agent)
 	//}
 	return agent

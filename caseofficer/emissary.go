@@ -5,7 +5,7 @@ import (
 )
 
 // emissary attention
-func primaryEmissaryAttend(a *primaryAgentT) {
+func emissaryAttend(a *agentT) {
 	paused := false
 	if paused {
 	}
