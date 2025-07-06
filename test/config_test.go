@@ -3,8 +3,8 @@ package test
 import "fmt"
 
 const (
-	//appConfig     = "file://[cwd]/resource/app-config.json"
-	appConfig = "/resource/app-config.json"
+	//appConfig     = "file://[cwd]/resource/endpoint-config-old.json"
+	appConfig = "/resource/endpoint-config-old.json"
 	//networkConfig = "file://[cwd]/resource/network-config-primary.json"
 	networkConfig = "/resource/network-config-primary.json"
 )
@@ -17,7 +17,7 @@ func ExampleReadConfig() {
 	fmt.Printf("test: readConfig(\"%v\") -> [map:%v] [%v]\n", networkConfig, len(cfg2), err2)
 
 	//Output:
-	//test: ReadConfig("/resource/app-config.json") -> [map:2] [<nil>]
+	//test: ReadConfig("/resource/endpoint-config-old.json") -> [map:2] [<nil>]
 	//test: readConfig("/resource/network-config-primary.json") -> [map:6] [<nil>]
 
 }

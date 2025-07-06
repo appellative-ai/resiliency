@@ -4,9 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/behavioral-ai/collective/exchange"
-	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/resiliency/caseofficer"
+	"github.com/behavioral-ai/resiliency/caseofficer2"
 	//"github.com/behavioral-ai/resiliency/endpoint"
 )
 
@@ -14,15 +12,15 @@ const (
 	roleKey = "role"
 )
 
-func Configure(register func(agent messaging.Agent), buildEndpoint func(name string, chain []any) error, appCfg map[string]string, read func(fileName string) ([]byte, error)) (errs []error) {
+func Configure(agent caseofficer2.Agent, buildEndpoint func(name string, chain []any) error, appCfg map[string]string, read func(fileName string) ([]byte, error)) (errs []error) {
 	if read == nil {
 		return []error{errors.New("network read function is nil")}
 	}
 	if len(appCfg) == 0 {
 		return []error{errors.New("application config is nil or empty")}
 	}
-	if register == nil {
-		return []error{errors.New("case officer register function is nil")}
+	if agent == nil {
+		return []error{errors.New("case officer is nil")}
 	}
 
 	//var result = make([]error, len(appCfg)*2)
@@ -34,41 +32,41 @@ func Configure(register func(agent messaging.Agent), buildEndpoint func(name str
 			errs = append(errs, errors.New(fmt.Sprintf("file name is empty for case officer: %v", k)))
 			continue
 		}
-		officer, err1 := validateOfficerType(k)
-		if err1 != nil {
-			errs = append(errs, err1)
-			continue
-		}
-		//opsAgent.registerCaseOfficer(officer)
-		register(officer)
-		netCfg, err := buildNetworkConfig(v, read)
+		netCfg, err := BuildConfig(v, "", read)
 		if err != nil {
 			errs = append(errs, err)
 			continue
 		}
-		chain, errs1 := officer.BuildNetwork(netCfg)
+		chain, errs1 := agent.BuildNetwork(netCfg, nil)
 		if errs1 != nil {
 			errs = append(errs, errs1...)
 			continue
 		}
-		err = buildEndpoint(officer.Name(), chain)
+		err = buildEndpoint(agent.Name(), chain)
 		if err != nil {
 			errs = append(errs, err)
 			continue
 		}
+
 		//wg.Add(1)
 		//buildEndpoint(officer, v, read, &result[i])
 	}
 	//wg.Wait()
 	// Need to create
-	return packErrors(errs)
+	return errs
 }
 
-func buildNetworkConfig(fileName string, read func(fileName string) ([]byte, error)) (map[string]map[string]string, error) {
+func BuildConfig(mapKey, fileName string, read func(fileName string) ([]byte, error)) (map[string]map[string]string, error) {
 	var buf []byte
 	var err error
 	var appCfg []map[string]string
 
+	if read == nil {
+		return nil, errors.New("network read function is nil")
+	}
+	if fileName == "" {
+		return nil, errors.New("application config is nil or empty")
+	}
 	buf, err = read(fileName)
 	if err != nil {
 		return nil, err
@@ -77,18 +75,19 @@ func buildNetworkConfig(fileName string, read func(fileName string) ([]byte, err
 	if err != nil {
 		return nil, err
 	}
-	return shapeNetworkConfig(appCfg), nil
+	return ShapeConfig(mapKey, appCfg), nil
 }
 
-func shapeNetworkConfig(cfg []map[string]string) map[string]map[string]string {
+func ShapeConfig(mapKey string, cfg []map[string]string) map[string]map[string]string {
 	newCfg := make(map[string]map[string]string)
 	for _, m := range cfg {
-		newCfg[m[roleKey]] = m
-		delete(m, roleKey)
+		newCfg[m[mapKey]] = m
+		delete(m, mapKey)
 	}
 	return newCfg
 }
 
+/*
 func validateOfficerType(name string) (caseofficer.Agent, error) {
 	if name == "" {
 		return nil, errors.New(fmt.Sprintf("case officer name is empty"))
@@ -113,3 +112,6 @@ func packErrors(errs []error) []error {
 	}
 	return result
 }
+
+
+*/

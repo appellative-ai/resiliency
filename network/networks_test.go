@@ -2,16 +2,13 @@ package network
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/collective/exchange"
-	"github.com/behavioral-ai/core/messaging/messagingtest"
-	"github.com/behavioral-ai/resiliency/caseofficer"
 	"os"
 )
 
 const (
 	networkFileName = "network-config-primary.json"
 	subDir          = "/networktest/resource/"
-	appFileName     = "app-config.json"
+	appFileName     = "endpoint-config-old.json"
 )
 
 func readFile(fileName string) ([]byte, error) {
@@ -23,7 +20,7 @@ func readFile(fileName string) ([]byte, error) {
 }
 
 func ExampleBuildNetworkConfig() {
-	cfg, err := buildNetworkConfig(networkFileName, readFile)
+	cfg, err := BuildConfig("role", networkFileName, readFile)
 	fmt.Printf("test: buildNetworkConfig() -> [%v] [err:%v]\n", cfg, err)
 
 	//Output:
@@ -31,6 +28,7 @@ func ExampleBuildNetworkConfig() {
 
 }
 
+/*
 func ExampleValidateOfficer() {
 	agent, err := validateOfficerType("")
 	fmt.Printf("test: validateOfficerType() -> [agent:%v] [err:%v]\n", agent, err)
@@ -54,3 +52,6 @@ func ExampleValidateOfficer() {
 	//test: validateOfficerType() -> [agent:true] [err:<nil>]
 
 }
+
+
+*/

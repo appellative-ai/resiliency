@@ -6,13 +6,20 @@ import (
 	"github.com/behavioral-ai/collective/operations"
 	"github.com/behavioral-ai/core/access2"
 	"github.com/behavioral-ai/core/messaging"
+	"github.com/behavioral-ai/resiliency/caseofficer2"
 	_ "github.com/behavioral-ai/resiliency/link"
 	_ "github.com/behavioral-ai/traffic/module"
 )
 
 const (
-	NamespaceName = "test:resiliency:agent/operations/host"
+	NamespaceName      = "test:resiliency:agent/operations/host"
+	caseOfficerNameFmt = "core:common:agent/caseofficer/request/http/%v"
 )
+
+type Agent interface {
+	messaging.Agent
+	Operative(mame string) messaging.Agent
+}
 
 var (
 	opsAgent *agentT
@@ -90,8 +97,14 @@ func (a *agentT) run() {
 func (a *agentT) shutdown() {
 }
 
-func (a *agentT) registerCaseOfficer(agent messaging.Agent) {
-	if agent != nil {
-		a.ex.Register(agent)
-	}
+func (a *agentT) registerCaseOfficer(name string) caseofficer2.Agent {
+	//for name, _ := range appCfg {
+	agent := caseofficer2.NewAgent(fmt.Sprintf(caseOfficerNameFmt, name))
+	a.ex.Register(agent)
+	//}
+	return agent
+}
+
+func (a *agentT) Operative(name string) messaging.Agent {
+	return a.ex.Get(name)
 }

@@ -1,0 +1,12 @@
+[
+  {
+    "endpoint": "primary",
+    "pattern": "/primary",
+    "network": "network-config-primary.json"
+  },
+  {
+    "endpoint": "secondary",
+    "pattern": "/secondary",
+    "network": "network-config-secondary.json"
+  }
+]

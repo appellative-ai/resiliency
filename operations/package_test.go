@@ -2,16 +2,15 @@ package operations
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/collective/exchange"
-	"github.com/behavioral-ai/resiliency/caseofficer"
-	"github.com/behavioral-ai/resiliency/module"
+	"github.com/behavioral-ai/resiliency/caseofficer2"
 	"os"
 )
 
 var (
 	subDir            = "/operationstest/resource/"
 	operatorsFileName = "logging-operators.json"
-	appFileName       = "app-config.json"
+	appFileName       = "endpoint-config-old.json"
+	endpointFileName  = "endpoint-config.json"
 )
 
 func readFile(fileName string) ([]byte, error) {
@@ -34,7 +33,7 @@ func ExampleConfigureLogging() {
 }
 
 func ExampleConfigureNetworks_Errors() {
-	var appCfg map[string]string
+	var appCfg map[string]map[string]string
 
 	errs := ConfigureNetworks(appCfg, nil)
 	fmt.Printf("test: ConfigureNetworks() -> %v\n", errs)
@@ -42,47 +41,46 @@ func ExampleConfigureNetworks_Errors() {
 	errs = ConfigureNetworks(nil, readFile)
 	fmt.Printf("test: ConfigureNetworks() -> %v\n", errs)
 
-	appCfg = make(map[string]string)
+	appCfg = make(map[string]map[string]string)
 	errs = ConfigureNetworks(appCfg, readFile)
 	fmt.Printf("test: ConfigureNetworks() -> %v\n", errs)
 
-	appCfg["test"] = ""
+	appCfg["test"] = make(map[string]string)
 	errs = ConfigureNetworks(appCfg, readFile)
 	fmt.Printf("test: ConfigureNetworks() -> %v\n", errs)
 
-	appCfg["test"] = "invalid file name"
-	errs = ConfigureNetworks(appCfg, readFile)
-	fmt.Printf("test: ConfigureNetworks() -> %v\n", errs)
+	//appCfg["test"] = "invalid file name"
+	//errs = ConfigureNetworks(appCfg, readFile)
+	//fmt.Printf("test: ConfigureNetworks() -> %v\n", errs)
 
 	//Output:
 	//test: ConfigureNetworks() -> [network read function is nil]
 	//test: ConfigureNetworks() -> [application config is nil or empty]
 	//test: ConfigureNetworks() -> [application config is nil or empty]
-	//test: ConfigureNetworks() -> [file name is empty for case officer: test]
-	//test: ConfigureNetworks() -> [agent lookup is nil for case officer: test]
+	//test: ConfigureNetworks() -> [network file name is empty for case officer: test]
 
 }
 
 func ExampleConfigureNetworks() {
 	//var appCfg map[string]string
 
-	appCfg, err := ReadAppConfig(func() ([]byte, error) {
-		return readFile(appFileName)
+	appCfg, err := ReadEndpointConfig(func() ([]byte, error) {
+		return readFile(endpointFileName)
 	})
 	if err != nil {
-		fmt.Printf("test: ReadAppConfig(\"%v\") -> [map:%v] [err:%v]\n", subDir+appFileName, len(appCfg), err)
+		fmt.Printf("test: ReadEndpointConfig(\"%v\") -> [map:%v] [err:%v]\n", subDir+appFileName, len(appCfg), err)
 	}
 
 	errs := ConfigureNetworks(appCfg, readFile)
 	fmt.Printf("test: ConfigureNetworks() -> [count:%v] [errs:%v]\n", len(errs), errs)
 
-	a := exchange.Agent(module.NamespaceNamePrimary)
-	if officer, ok := any(a).(caseofficer.Agent); ok {
+	a := opsAgent.Operative("core:common:agent/caseofficer/request/http/primary")
+	if officer, ok := any(a).(caseofficer2.Agent); ok {
 		officer.Trace()
 	}
 
-	a = exchange.Agent(module.NamespaceNameSecondary)
-	if officer, ok := any(a).(caseofficer.Agent); ok {
+	a = opsAgent.Operative("core:common:agent/caseofficer/request/http/secondary")
+	if officer, ok := any(a).(caseofficer2.Agent); ok {
 		officer.Trace()
 	}
 
@@ -90,20 +88,20 @@ func ExampleConfigureNetworks() {
 
 	//Output:
 	//test: ConfigureNetworks() -> [count:0] [errs:[]]
-	//trace: test:resiliency:agent/caseOfficer/service/traffic/ingress/primary -> test:resiliency:agent/rate-limiting/request/http
-	//trace: test:resiliency:agent/caseOfficer/service/traffic/ingress/secondary -> test:resiliency:agent/routing/request/http
-	//trace: Operations() -> [test:resiliency:agent/caseOfficer/service/traffic/ingress/primary test:resiliency:agent/caseOfficer/service/traffic/ingress/secondary]
+	//trace: core:common:agent/caseofficer/request/http/primary -> test:resiliency:agent/rate-limiting/request/http
+	//trace: core:common:agent/caseofficer/request/http/secondary -> test:resiliency:agent/routing/request/http
+	//trace: Operations() -> [core:common:agent/caseofficer/request/http/primary core:common:agent/caseofficer/request/http/secondary]
 
 }
 
-func ExampleReadAppConfig() {
-	cfg, err := ReadAppConfig(func() ([]byte, error) {
-		return readFile(appFileName)
+func ExampleReadEndpointConfig() {
+	cfg, err := ReadEndpointConfig(func() ([]byte, error) {
+		return readFile(endpointFileName)
 	})
 
-	fmt.Printf("test: ReadAppConfig() -> %v [err:%v]\n", cfg, err)
+	fmt.Printf("test: ReadEndpointConfig() -> %v [err:%v]\n", cfg, err)
 
 	//Output:
-	//test: ReadAppConfig() -> map[test:resiliency:agent/caseOfficer/service/traffic/ingress/primary:network-config-primary.json test:resiliency:agent/caseOfficer/service/traffic/ingress/secondary:network-config-secondary.json] [err:<nil>]
+	//test: ReadEndpointConfig() -> map[primary:map[network:network-config-primary.json pattern:/primary] secondary:map[network:network-config-secondary.json pattern:/secondary]] [err:<nil>]
 
 }
