@@ -6,6 +6,8 @@ github.com/behavioral-ai/core v0.0.0-20250704151427-55d1095fc5a5 h1:9azQ0VsU+xgM
 github.com/behavioral-ai/core v0.0.0-20250704151427-55d1095fc5a5/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
 github.com/behavioral-ai/core v0.0.0-20250705135539-b42d40e13995 h1:SFxbZMDLQBguM/k3A7Og4/rrYLOX5EBhjiVY41fbi9E=
 github.com/behavioral-ai/core v0.0.0-20250705135539-b42d40e13995/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
+github.com/behavioral-ai/core v0.0.0-20250706124958-e53aeb18ba28 h1:mDcEgevpugNuox6SSWakav8Kpu3q6bineQ/x9DwZB40=
+github.com/behavioral-ai/core v0.0.0-20250706124958-e53aeb18ba28/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
 github.com/behavioral-ai/traffic v0.0.0-20250705134716-5880d5ada129 h1:T+wKP8jln9AHR8pdjYYYUpoJG0ay04Pa82D208n6UtA=
 github.com/behavioral-ai/traffic v0.0.0-20250705134716-5880d5ada129/go.mod h1:caagLpXGOCtZGHTru+NJvlYHkzo3UmCBiXzk2vtfKbI=
 github.com/behavioral-ai/traffic v0.0.0-20250705153604-641c7571ced9 h1:51O+0EEZlQDrn8QP6edvZHPxwZ2zJavdCfXJYf9fNik=

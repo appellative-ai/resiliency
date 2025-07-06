@@ -5,12 +5,12 @@ import (
 	"github.com/behavioral-ai/collective/operations/operationstest"
 )
 
-func ExampleNewPrimaryAgent() {
+func ExampleNewAgent() {
 	a := newAgent("core:common:agent/caseofficer/request/http/test", operationstest.NewService())
 
-	fmt.Printf("test: NewPrimaryAgent() -> [%v]\n", a.Name())
+	fmt.Printf("test: NewAgent() -> [%v]\n", a.Name())
 
 	//Output:
-	//test: NewPrimaryAgent() -> [core:common:agent/caseofficer/request/http/test]
+	//test: NewAgent() -> [core:common:agent/caseofficer/request/http/test]
 
 }

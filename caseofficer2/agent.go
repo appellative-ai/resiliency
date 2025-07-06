@@ -30,8 +30,8 @@ type agentT struct {
 }
 
 // NewAgent - create a new agent
-func NewAgent(name string, service *operations.Service) Agent {
-	return newAgent(name, service)
+func NewAgent(name string) Agent {
+	return newAgent(name, operations.Serve)
 }
 
 func newAgent(name string, service *operations.Service) *agentT {
@@ -61,7 +61,12 @@ func (a *agentT) Message(m *messaging.Message) {
 	if !a.running {
 		if m.Name == messaging.ConfigEvent {
 			if m.IsRecipient(a.name) {
-				a.configure(m)
+				messaging.UpdateAgent(a.name, func(agent messaging.Agent) {
+					err := a.ex.Register(agent)
+					if err != nil {
+						messaging.Reply(m, messaging.NewStatus(messaging.StatusInvalidContent, err.Error()), a.Name())
+					}
+				}, m)
 			} else {
 				a.ex.Message(m)
 			}
@@ -133,6 +138,7 @@ func (a *agentT) shutdown() {
 	a.emissary.Close()
 }
 
+/*
 func (a *agentT) configure(m *messaging.Message) {
 	switch m.ContentType() {
 	case messaging.ContentTypeAgent:
@@ -148,3 +154,6 @@ func (a *agentT) configure(m *messaging.Message) {
 	}
 	messaging.Reply(m, messaging.StatusOK(), a.Name())
 }
+
+
+*/
