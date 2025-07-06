@@ -1,0 +1,10 @@
+{
+  "region":"region",
+  "zone":"zone",
+  "sub-zone":"sub-zone",
+  "host":"host",
+  "instance-id":"instance-id",
+  "service-name":"service-name",
+  "collective":"collective",
+  "domain":"domain"
+}

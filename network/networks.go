@@ -1,10 +1,11 @@
-package operations
+package network
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/behavioral-ai/collective/exchange"
+	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/resiliency/caseofficer"
 	//"github.com/behavioral-ai/resiliency/endpoint"
 )
@@ -13,12 +14,15 @@ const (
 	roleKey = "role"
 )
 
-func configureNetworks(appCfg map[string]string, read func(fileName string) ([]byte, error)) (errs []error) {
+func Configure(register func(agent messaging.Agent), buildEndpoint func(name string, chain []any) error, appCfg map[string]string, read func(fileName string) ([]byte, error)) (errs []error) {
 	if read == nil {
 		return []error{errors.New("network read function is nil")}
 	}
 	if len(appCfg) == 0 {
 		return []error{errors.New("application config is nil or empty")}
+	}
+	if register == nil {
+		return []error{errors.New("case officer register function is nil")}
 	}
 
 	//var result = make([]error, len(appCfg)*2)
@@ -35,7 +39,8 @@ func configureNetworks(appCfg map[string]string, read func(fileName string) ([]b
 			errs = append(errs, err1)
 			continue
 		}
-		opsAgent.registerCaseOfficer(officer)
+		//opsAgent.registerCaseOfficer(officer)
+		register(officer)
 		netCfg, err := buildNetworkConfig(v, read)
 		if err != nil {
 			errs = append(errs, err)

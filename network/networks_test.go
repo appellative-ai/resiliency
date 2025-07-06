@@ -1,15 +1,26 @@
-package operations
+package network
 
 import (
 	"fmt"
 	"github.com/behavioral-ai/collective/exchange"
 	"github.com/behavioral-ai/core/messaging/messagingtest"
 	"github.com/behavioral-ai/resiliency/caseofficer"
+	"os"
 )
 
 const (
 	networkFileName = "network-config-primary.json"
+	subDir          = "/networktest/resource/"
+	appFileName     = "app-config.json"
 )
+
+func readFile(fileName string) ([]byte, error) {
+	dir, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
+	return os.ReadFile(dir + subDir + fileName)
+}
 
 func ExampleBuildNetworkConfig() {
 	cfg, err := buildNetworkConfig(networkFileName, readFile)

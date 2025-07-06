@@ -57,7 +57,6 @@ func (a *agentT) Message(m *messaging.Message) {
 	}
 	if !a.running {
 		if m.Name == messaging.ConfigEvent {
-			a.configure(m)
 			return
 		}
 		if m.Name == messaging.StartupEvent {
@@ -95,8 +94,4 @@ func (a *agentT) registerCaseOfficer(agent messaging.Agent) {
 	if agent != nil {
 		a.ex.Register(agent)
 	}
-}
-
-func (a *agentT) configure(m *messaging.Message) {
-	messaging.Reply(m, messaging.StatusOK(), a.Name())
 }

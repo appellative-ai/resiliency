@@ -1,0 +1,6 @@
+{
+  "app-host": "localhost:8082",
+  "cache-host": "localhost:8083",
+  "timeout": "2m",
+  "interval": "5m"
+}

@@ -3,9 +3,9 @@ module github.com/behavioral-ai/resiliency
 go 1.23.0
 
 require (
-	github.com/behavioral-ai/collective v0.0.0-20250619211801-0e5c34d0a6e1
-	github.com/behavioral-ai/core v0.0.0-20250619231026-497e42358dc1
-	github.com/behavioral-ai/traffic v0.0.0-20250619220018-bda97c44bbaa
+	github.com/behavioral-ai/collective v0.0.0-20250705142106-af45d8806b5f
+	github.com/behavioral-ai/core v0.0.0-20250705135539-b42d40e13995
+	github.com/behavioral-ai/traffic v0.0.0-20250705153604-641c7571ced9
 )
 
 require (

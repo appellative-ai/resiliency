@@ -6,11 +6,12 @@ import (
 	access "github.com/behavioral-ai/core/access2"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/rest"
+	"github.com/behavioral-ai/resiliency/network"
 )
 
 // ConfigureOrigin - map must provide region, zone, sub-zone, domain, collective, and service-name
 func ConfigureOrigin(m map[string]string, read func() ([]byte, error)) error {
-	return configureOrigin(m, read)
+	return network.ConfigureOrigin(m, read)
 }
 
 func ConfigureLogging(read func() ([]byte, error)) error {
@@ -24,7 +25,9 @@ func ConfigureLogging(read func() ([]byte, error)) error {
 
 // ConfigureNetworks - configure application networks
 func ConfigureNetworks(appCfg map[string]string, read func(fileName string) ([]byte, error)) (errs []error) {
-	return configureNetworks(appCfg, read)
+	return network.Configure(func(a messaging.Agent) {
+		opsAgent.registerCaseOfficer(a)
+	}, buildEndpoint, appCfg, read)
 }
 
 func ReadAppConfig(read func() ([]byte, error)) (map[string]string, error) {

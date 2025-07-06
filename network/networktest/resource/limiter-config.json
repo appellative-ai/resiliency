@@ -1,0 +1,7 @@
+{
+  "rate-limit": "1234",
+  "rate-burst": "12",
+  "peak-duration": "750ms",
+  "off-peak-duration": "5m",
+  "load-size": "567"
+}

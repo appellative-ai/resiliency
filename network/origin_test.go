@@ -1,4 +1,4 @@
-package operations
+package network
 
 import (
 	"fmt"
@@ -16,7 +16,7 @@ var (
 		Collective:  "collective",
 		Domain:      "domain",
 	}
-	//subDir            = "/operationstest/resource/"
+	//subDir            = "/networktest/resource/"
 	originFileName = "origin-config.json"
 )
 
@@ -50,11 +50,11 @@ func ExampleConfigureOrigin() {
 	fmt.Printf("test: messaging.SetOrigin() -> %v [host:%v]\n", messaging.Origin, messaging.Origin.Host)
 
 	//Output:
-	//test: ConfigOrigin("/operationstest/resource/origin-config.json") -> [err:<nil>]
+	//test: ConfigOrigin("/networktest/resource/origin-config.json") -> [err:<nil>]
 	//test: messaging.SetOrigin() -> google-collective:search:service/us-west1/oregon/portland/google-search#123456789 [host:www.google.com]
-	//test: ConfigOrigin("/operationstest/resource/origin-config.json") -> [err:config map does not contain key: region]
+	//test: ConfigOrigin("/networktest/resource/origin-config.json") -> [err:config map does not contain key: region]
 	//test: messaging.SetOrigin() ->  [host:]
-	//test: ConfigOrigin("/operationstest/resource/origin-config.json") -> [err:config map does not contain key: zone]
+	//test: ConfigOrigin("/networktest/resource/origin-config.json") -> [err:config map does not contain key: zone]
 	//test: messaging.SetOrigin() ->  [host:]
 
 }

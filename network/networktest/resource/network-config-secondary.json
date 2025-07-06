@@ -1,0 +1,12 @@
+[
+  {
+    "role": "routing",
+    "name":"test:resiliency:agent/routing/request/http",
+    "assignment": "local",
+    "app-host": "localhost:8080",
+    "cache-host": "localhost:8081",
+    "timeout": "2m",
+    "interval": "4m"
+  }
+]
+

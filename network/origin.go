@@ -1,4 +1,4 @@
-package operations
+package network
 
 import (
 	"encoding/json"
@@ -7,8 +7,8 @@ import (
 	"github.com/behavioral-ai/core/messaging"
 )
 
-// configureOrigin - map must provide region, zone, sub-zone, domain, collective, and service-name
-func configureOrigin(m map[string]string, read func() ([]byte, error)) error {
+// ConfigureOrigin - map must provide region, zone, sub-zone, domain, collective, and service-name
+func ConfigureOrigin(m map[string]string, read func() ([]byte, error)) error {
 	var m2 = make(map[string]string)
 
 	if read == nil {
