@@ -91,10 +91,8 @@ func ReadEndpointConfig(read func() ([]byte, error)) (map[string]map[string]stri
 // Http endpoints
 
 const (
-	ServiceEndpoint   = "service"
-	HealthEndpoint    = "health"
-	PrimaryEndpoint   = "primary"
-	SecondaryEndpoint = "secondary"
+	ServiceEndpoint = "service"
+	HealthEndpoint  = "health"
 )
 
 var (
