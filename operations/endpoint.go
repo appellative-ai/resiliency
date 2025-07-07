@@ -50,24 +50,21 @@ func setTestOverrides() {
 	agent1 := opsAgent.Operative("core:common:agent/caseofficer/request/http/primary")
 	agent2 := opsAgent.Operative("core:common:agent/caseofficer/request/http/secondary")
 
-	// Global overrides - cache and routing
+	// Cache overrides - global
 	m := rest.NewExchangeMessage(cachetest.Exchange)
 	m.AddTo(cache.NamespaceName)
 	exchange.Message(m)
 
+	// Cache overrides - Local
+	agent1.Message(m)
+	agent2.Message(m)
+
+	// Routing overrides - global
 	m = rest.NewExchangeMessage(routingtest.Exchange)
 	m.AddTo(routing.NamespaceName)
 	exchange.Message(m)
 
-	// Local assignment overrides - cache
-	m = rest.NewExchangeMessage(cachetest.Exchange)
-	m.AddTo(cache.NamespaceName)
-	agent1.Message(m)
-	agent2.Message(m)
-
-	// Local assignment overrides - routing
-	m = rest.NewExchangeMessage(routingtest.Exchange)
-	m.AddTo(routing.NamespaceName)
+	// Routing overrides - local
 	agent1.Message(m)
 	agent2.Message(m)
 
