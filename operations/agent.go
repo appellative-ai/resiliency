@@ -2,12 +2,12 @@ package operations
 
 import (
 	"fmt"
+	"github.com/behavioral-ai/agency/caseofficer"
 	"github.com/behavioral-ai/collective/exchange"
 	"github.com/behavioral-ai/collective/operations"
 	"github.com/behavioral-ai/core/access2"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/resiliency/caseofficer"
-	_ "github.com/behavioral-ai/resiliency/link"
+	_ "github.com/behavioral-ai/resiliency/handler"
 	_ "github.com/behavioral-ai/traffic/module"
 )
 

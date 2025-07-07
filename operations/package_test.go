@@ -3,7 +3,7 @@ package operations
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/behavioral-ai/resiliency/caseofficer"
+	"github.com/behavioral-ai/agency/caseofficer"
 	"os"
 )
 

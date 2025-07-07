@@ -3,10 +3,10 @@ package operations
 import (
 	"errors"
 	"fmt"
+	"github.com/behavioral-ai/agency/network"
 	access "github.com/behavioral-ai/core/access2"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/rest"
-	"github.com/behavioral-ai/resiliency/network"
 )
 
 const (
