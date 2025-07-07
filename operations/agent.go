@@ -98,13 +98,18 @@ func (a *agentT) shutdown() {
 }
 
 func (a *agentT) registerCaseOfficer(name string) caseofficer.Agent {
-	//for name, _ := range appCfg {
 	agent := caseofficer.NewAgent(fmt.Sprintf(caseOfficerNameFmt, name))
 	a.ex.Register(agent)
-	//}
 	return agent
 }
 
 func (a *agentT) Operative(name string) messaging.Agent {
 	return a.ex.Get(name)
+}
+
+func (a *agentT) trace() {
+	list := a.ex.List()
+	for _, v := range list {
+		fmt.Printf("trace: %v -> %v\n", a.Name(), v)
+	}
 }

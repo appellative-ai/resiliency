@@ -48,7 +48,8 @@ func newAgent(name string, service *operations.Service) *agentT {
 func (a *agentT) Name() string { return a.name }
 
 func (a *agentT) Trace() {
-	for _, v := range a.ex.List() {
+	list := a.ex.List()
+	for _, v := range list {
 		fmt.Printf("trace: %v -> %v\n", a.Name(), v)
 	}
 }

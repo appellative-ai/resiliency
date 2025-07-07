@@ -71,6 +71,9 @@ func ConfigureNetworks(endpointCfg []map[string]string, read func(fileName strin
 			continue
 		}
 	}
+	if len(errs) == 0 {
+		setTestOverrides()
+	}
 	return errs
 }
 

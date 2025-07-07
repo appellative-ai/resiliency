@@ -97,6 +97,7 @@ func ExampleConfigureNetworks() {
 
 	//Output:
 	//test: ConfigureNetworks() -> [count:0] [errs:[]]
+	//trace: core:common:agent/caseofficer/request/http/primary -> test:resiliency:agent/cache/request/http
 	//trace: core:common:agent/caseofficer/request/http/primary -> test:resiliency:agent/rate-limiting/request/http
 	//trace: core:common:agent/caseofficer/request/http/secondary -> test:resiliency:agent/routing/request/http
 	//trace: Operations() -> [core:common:agent/caseofficer/request/http/primary core:common:agent/caseofficer/request/http/secondary]
