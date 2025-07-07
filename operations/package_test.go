@@ -1,6 +1,7 @@
 package operations
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/behavioral-ai/resiliency/caseofficer"
 	"os"
@@ -9,7 +10,6 @@ import (
 var (
 	subDir            = "/operationstest/resource/"
 	operatorsFileName = "logging-operators.json"
-	appFileName       = "endpoint-config-old.json"
 	endpointFileName  = "endpoint-config.json"
 )
 
@@ -19,6 +19,20 @@ func readFile(fileName string) ([]byte, error) {
 		return nil, err
 	}
 	return os.ReadFile(dir + subDir + fileName)
+}
+
+func readEndpointConfig(read func() ([]byte, error)) ([]map[string]string, error) {
+	var cfg []map[string]string
+
+	buf, err := read()
+	if err != nil {
+		return nil, err //fmt.Printf("test: readFile(\"%v\") -> [bytes:%v] [err:%v]\n", subDir+appFileName, len(buf), err)
+	}
+	err = json.Unmarshal(buf, &cfg)
+	if err != nil {
+		return nil, err //fmt.Printf("test: json.Unmarshal() -> [err:%v]\n", err)
+	}
+	return cfg, nil
 }
 
 func ExampleConfigureLogging() {
@@ -33,7 +47,7 @@ func ExampleConfigureLogging() {
 }
 
 func ExampleConfigureNetworks_Errors() {
-	var appCfg map[string]map[string]string
+	var appCfg []map[string]string
 
 	errs := ConfigureNetworks(appCfg, nil)
 	fmt.Printf("test: ConfigureNetworks() -> %v\n", errs)
@@ -41,34 +55,29 @@ func ExampleConfigureNetworks_Errors() {
 	errs = ConfigureNetworks(nil, readFile)
 	fmt.Printf("test: ConfigureNetworks() -> %v\n", errs)
 
-	appCfg = make(map[string]map[string]string)
+	appCfg = []map[string]string{make(map[string]string)}
 	errs = ConfigureNetworks(appCfg, readFile)
 	fmt.Printf("test: ConfigureNetworks() -> %v\n", errs)
 
-	appCfg["test"] = make(map[string]string)
+	appCfg[0] = make(map[string]string)
+	appCfg[0]["endpoint"] = "test"
 	errs = ConfigureNetworks(appCfg, readFile)
 	fmt.Printf("test: ConfigureNetworks() -> %v\n", errs)
-
-	//appCfg["test"] = "invalid file name"
-	//errs = ConfigureNetworks(appCfg, readFile)
-	//fmt.Printf("test: ConfigureNetworks() -> %v\n", errs)
 
 	//Output:
-	//test: ConfigureNetworks() -> [network read function is nil]
-	//test: ConfigureNetworks() -> [application config is nil or empty]
-	//test: ConfigureNetworks() -> [application config is nil or empty]
-	//test: ConfigureNetworks() -> [network file name is empty for case officer: test]
+	//test: ConfigureNetworks() -> [network configuration read function is nil]
+	//test: ConfigureNetworks() -> [endpoint configuration is nil or empty]
+	//test: ConfigureNetworks() -> [endpoint name is empty]
+	//test: ConfigureNetworks() -> [network file name is empty for endpoint: test]
 
 }
 
 func ExampleConfigureNetworks() {
-	//var appCfg map[string]string
-
-	appCfg, err := ReadEndpointConfig(func() ([]byte, error) {
+	appCfg, err := readEndpointConfig(func() ([]byte, error) {
 		return readFile(endpointFileName)
 	})
 	if err != nil {
-		fmt.Printf("test: ReadEndpointConfig(\"%v\") -> [map:%v] [err:%v]\n", subDir+appFileName, len(appCfg), err)
+		fmt.Printf("test: ReadEndpointConfig(\"%v\") -> [map:%v] [err:%v]\n", subDir+endpointFileName, len(appCfg), err)
 	}
 
 	errs := ConfigureNetworks(appCfg, readFile)
@@ -94,6 +103,7 @@ func ExampleConfigureNetworks() {
 
 }
 
+/*
 func ExampleReadEndpointConfig() {
 	cfg, err := ReadEndpointConfig(func() ([]byte, error) {
 		return readFile(endpointFileName)
@@ -105,3 +115,6 @@ func ExampleReadEndpointConfig() {
 	//test: ReadEndpointConfig() -> map[primary:map[network:network-config-primary.json pattern:/primary] secondary:map[network:network-config-secondary.json pattern:/secondary]] [err:<nil>]
 
 }
+
+
+*/

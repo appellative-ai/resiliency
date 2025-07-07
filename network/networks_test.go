@@ -8,7 +8,6 @@ import (
 const (
 	networkFileName = "network-config-primary.json"
 	subDir          = "/networktest/resource/"
-	appFileName     = "endpoint-config-old.json"
 )
 
 func readFile(fileName string) ([]byte, error) {
@@ -20,7 +19,7 @@ func readFile(fileName string) ([]byte, error) {
 }
 
 func ExampleBuildNetworkConfig() {
-	cfg, err := BuildConfig("role", networkFileName, readFile)
+	cfg, err := BuildConfig(networkFileName, readFile)
 	fmt.Printf("test: buildNetworkConfig() -> [%v] [err:%v]\n", cfg, err)
 
 	//Output:

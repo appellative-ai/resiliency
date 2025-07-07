@@ -1,7 +1,6 @@
 package operations
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	access "github.com/behavioral-ai/core/access2"
@@ -17,14 +16,9 @@ const (
 	RateLimitingRole  = "rate-limiting"
 	RoutingRole       = "routing"
 
-	roleKey     = "role"
 	endpointKey = "endpoint"
 	patternKey  = "pattern"
 	networkKey  = "network"
-)
-
-var (
-	roles = []string{LoggingRole, AuthorizationRole, CacheRole, RateLimitingRole, RoutingRole}
 )
 
 // ConfigureOrigin - map must provide region, zone, sub-zone, domain, collective, and service-name
@@ -42,21 +36,26 @@ func ConfigureLogging(read func() ([]byte, error)) error {
 }
 
 // ConfigureNetworks - configure application networks
-func ConfigureNetworks(endpointCfg map[string]map[string]string, read func(fileName string) ([]byte, error)) (errs []error) {
+func ConfigureNetworks(endpointCfg []map[string]string, read func(fileName string) ([]byte, error)) (errs []error) {
 	if read == nil {
-		return []error{errors.New("network read function is nil")}
+		return []error{errors.New("network configuration read function is nil")}
 	}
 	if len(endpointCfg) == 0 {
-		return []error{errors.New("application config is nil or empty")}
+		return []error{errors.New("endpoint configuration is nil or empty")}
 	}
-
-	for k, v := range endpointCfg {
+	cfg := network.ShapeConfig(endpointKey, endpointCfg)
+	roles := []string{LoggingRole, AuthorizationRole, CacheRole, RateLimitingRole, RoutingRole}
+	for k, v := range cfg {
+		if k == "" {
+			errs = append(errs, errors.New(fmt.Sprintf("endpoint name is empty")))
+			continue
+		}
 		if v[networkKey] == "" {
-			errs = append(errs, errors.New(fmt.Sprintf("network file name is empty for case officer: %v", k)))
+			errs = append(errs, errors.New(fmt.Sprintf("network file name is empty for endpoint: %v", k)))
 			continue
 		}
 		agent := opsAgent.registerCaseOfficer(k)
-		netCfg, err := network.BuildConfig(roleKey, v[networkKey], read)
+		netCfg, err := network.BuildConfig(v[networkKey], read)
 		if err != nil {
 			errs = append(errs, err)
 			continue
@@ -73,20 +72,6 @@ func ConfigureNetworks(endpointCfg map[string]map[string]string, read func(fileN
 		}
 	}
 	return errs
-}
-
-func ReadEndpointConfig(read func() ([]byte, error)) (map[string]map[string]string, error) {
-	var cfg []map[string]string
-
-	buf, err := read()
-	if err != nil {
-		return nil, err //fmt.Printf("test: readFile(\"%v\") -> [bytes:%v] [err:%v]\n", subDir+appFileName, len(buf), err)
-	}
-	err = json.Unmarshal(buf, &cfg)
-	if err != nil {
-		return nil, err //fmt.Printf("test: json.Unmarshal() -> [err:%v]\n", err)
-	}
-	return network.ShapeConfig(endpointKey, cfg), nil
 }
 
 // Http endpoints
