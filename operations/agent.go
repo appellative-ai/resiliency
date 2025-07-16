@@ -2,13 +2,13 @@ package operations
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/agency/caseofficer"
-	"github.com/behavioral-ai/collective/exchange"
-	"github.com/behavioral-ai/collective/operations"
-	"github.com/behavioral-ai/core/access"
-	"github.com/behavioral-ai/core/messaging"
-	_ "github.com/behavioral-ai/resiliency/handler"
-	_ "github.com/behavioral-ai/traffic/module"
+	"github.com/appellative-ai/agency/caseofficer"
+	"github.com/appellative-ai/collective/exchange"
+	"github.com/appellative-ai/collective/operations"
+	"github.com/appellative-ai/core/access"
+	"github.com/appellative-ai/core/messaging"
+	_ "github.com/appellative-ai/resiliency/handler"
+	_ "github.com/appellative-ai/traffic/module"
 )
 
 const (

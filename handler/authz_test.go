@@ -2,8 +2,8 @@ package operations
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/collective/exchange"
-	"github.com/behavioral-ai/core/rest"
+	"github.com/appellative-ai/collective/exchange"
+	"github.com/appellative-ai/core/rest"
 	"reflect"
 )
 

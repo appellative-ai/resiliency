@@ -6,7 +6,7 @@ import (
 )
 
 func ExampleNewAgent() {
-	agent := newAgent(operationstest.NewService())
+	agent := newAgent(operationstest.NewNService())
 
 	fmt.Printf("test: NewAgent() -> [%v]\n", agent)
 
