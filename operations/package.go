@@ -5,8 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/appellative-ai/agency/network"
+	"github.com/appellative-ai/collective/exchange"
 	"github.com/appellative-ai/core/messaging"
 	"github.com/appellative-ai/core/rest"
+	"github.com/appellative-ai/traffic/access"
 )
 
 const (
@@ -48,18 +50,25 @@ func ConfigureOrigin(m map[string]string, read func() ([]byte, error)) error {
 	return nil
 }
 
-/*
+// ConfigureLogging -
 func ConfigureLogging(read func() ([]byte, error)) error {
 	if read == nil {
 		return errors.New("logging operators read function is nil")
 	}
-	return access.Agent.ConfigureOperators(func() ([]byte, error) {
-		return read()
-	})
+	buf, err := read()
+	if err != nil {
+		return err
+	}
+	var ops []access.Operator
+
+	err = json.Unmarshal(buf, &ops)
+	if err != nil {
+		return err
+	}
+	m := access.NewOperatorsMessage(ops).AddTo(access.NamespaceName)
+	exchange.Message(m)
+	return nil
 }
-
-
-*/
 
 // ConfigureNetworks - configure application networks
 func ConfigureNetworks(endpointCfg []map[string]string, read func(fileName string) ([]byte, error)) (errs []error) {
@@ -103,6 +112,7 @@ func ConfigureNetworks(endpointCfg []map[string]string, read func(fileName strin
 	return errs
 }
 
+// ReadEndpointConfig -
 func ReadEndpointConfig(read func() ([]byte, error)) ([]map[string]string, error) {
 	return network.ReadEndpointConfig(read)
 }

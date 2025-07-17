@@ -1,10 +1,11 @@
 package operations
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/appellative-ai/agency/caseofficer"
+	"github.com/appellative-ai/collective/exchange"
 	"github.com/appellative-ai/core/messaging"
+	"github.com/appellative-ai/traffic/access"
 	"os"
 )
 
@@ -23,6 +24,7 @@ func readFile(fileName string) ([]byte, error) {
 	return os.ReadFile(dir + subDir + fileName)
 }
 
+/*
 func readEndpointConfig(read func() ([]byte, error)) ([]map[string]string, error) {
 	var cfg []map[string]string
 
@@ -37,10 +39,13 @@ func readEndpointConfig(read func() ([]byte, error)) ([]map[string]string, error
 	return cfg, nil
 }
 
-/*
+
+*/
+
 func ExampleConfigureLogging() {
-	//err := ConfigureLogging(func() ([]byte, error) {
-	//	return readFile(operatorsFileName)
+	exchange.Agent(access.NamespaceName) //access.Log(nil, "", time.Now().UTC(), 0, "", nil, nil)
+	err := ConfigureLogging(func() ([]byte, error) {
+		return readFile(operatorsFileName)
 	})
 	fmt.Printf("test: ConfigureLogging(\"%v\") -> [err:%v]\n", subDir+operatorsFileName, err)
 
@@ -48,9 +53,6 @@ func ExampleConfigureLogging() {
 	//test: ConfigureLogging("/operationstest/resource/logging-operators.json") -> [err:<nil>]
 
 }
-
-
-*/
 
 func ExampleConfigureNetworks_Errors() {
 	var appCfg []map[string]string
@@ -79,7 +81,7 @@ func ExampleConfigureNetworks_Errors() {
 }
 
 func ExampleConfigureNetworks() {
-	appCfg, err := readEndpointConfig(func() ([]byte, error) {
+	appCfg, err := ReadEndpointConfig(func() ([]byte, error) {
 		return readFile(endpointFileName)
 	})
 	if err != nil {
