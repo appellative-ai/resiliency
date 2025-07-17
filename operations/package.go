@@ -126,8 +126,8 @@ const (
 
 var (
 	Endpoint = map[string]rest.Endpoint{
-		ServiceEndpoint: newServiceEndpoint("/operations*"),
-		HealthEndpoint:  newHealthEndpoint("/health*"),
+		ServiceEndpoint: newServiceEndpoint("/operations/"),
+		HealthEndpoint:  newHealthEndpoint("/health/"),
 	}
 )
 
