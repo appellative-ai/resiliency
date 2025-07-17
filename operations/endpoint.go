@@ -2,13 +2,13 @@ package operations
 
 import (
 	"errors"
-	"github.com/behavioral-ai/collective/exchange"
-	"github.com/behavioral-ai/core/host"
-	"github.com/behavioral-ai/core/rest"
-	"github.com/behavioral-ai/traffic/cache"
-	"github.com/behavioral-ai/traffic/cache/cachetest"
-	"github.com/behavioral-ai/traffic/routing"
-	"github.com/behavioral-ai/traffic/routing/routingtest"
+	"github.com/appellative-ai/collective/exchange"
+	"github.com/appellative-ai/core/host"
+	"github.com/appellative-ai/core/rest"
+	"github.com/appellative-ai/traffic/cache"
+	"github.com/appellative-ai/traffic/cache/cachetest"
+	"github.com/appellative-ai/traffic/routing"
+	"github.com/appellative-ai/traffic/routing/routingtest"
 )
 
 func buildEndpoint(name string, m map[string]string, chain []any) error {

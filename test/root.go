@@ -1,13 +1,13 @@
 package test
 
 import (
-	"github.com/behavioral-ai/collective/exchange"
-	"github.com/behavioral-ai/core/host"
-	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/core/rest"
-	"github.com/behavioral-ai/traffic/cache"
-	"github.com/behavioral-ai/traffic/cache/cachetest"
-	"github.com/behavioral-ai/traffic/limiter"
+	"github.com/appellative-ai/collective/exchange"
+	"github.com/appellative-ai/core/host"
+	"github.com/appellative-ai/core/messaging"
+	"github.com/appellative-ai/core/rest"
+	"github.com/appellative-ai/traffic/cache"
+	"github.com/appellative-ai/traffic/cache/cachetest"
+	"github.com/appellative-ai/traffic/limiter"
 )
 
 func NewRootEndpoint() rest.Endpoint {

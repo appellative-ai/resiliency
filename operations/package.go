@@ -1,12 +1,12 @@
 package operations
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/behavioral-ai/agency/network"
-	"github.com/behavioral-ai/core/access"
-	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/core/rest"
+	"github.com/appellative-ai/agency/network"
+	"github.com/appellative-ai/core/messaging"
+	"github.com/appellative-ai/core/rest"
 )
 
 const (
@@ -23,9 +23,32 @@ const (
 
 // ConfigureOrigin - map must provide region, zone, sub-zone, domain, collective, and service-name
 func ConfigureOrigin(m map[string]string, read func() ([]byte, error)) error {
-	return network.ConfigureOrigin(m, read)
+	var m2 = make(map[string]string)
+
+	if read == nil {
+		return errors.New("origin read function is nil")
+	}
+	// Read the origin JSON
+	buf, err := read()
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal(buf, &m2)
+	if err != nil {
+		return err
+	}
+	// Add host created items
+	for k, v := range m {
+		m2[k] = v
+	}
+	status := messaging.SetOrigin(m2)
+	if !status.OK() {
+		return status.Err
+	}
+	return nil
 }
 
+/*
 func ConfigureLogging(read func() ([]byte, error)) error {
 	if read == nil {
 		return errors.New("logging operators read function is nil")
@@ -34,6 +57,9 @@ func ConfigureLogging(read func() ([]byte, error)) error {
 		return read()
 	})
 }
+
+
+*/
 
 // ConfigureNetworks - configure application networks
 func ConfigureNetworks(endpointCfg []map[string]string, read func(fileName string) ([]byte, error)) (errs []error) {

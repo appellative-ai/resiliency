@@ -5,9 +5,9 @@ import (
 	"github.com/appellative-ai/agency/caseofficer"
 	"github.com/appellative-ai/collective/exchange"
 	"github.com/appellative-ai/collective/operations"
-	"github.com/appellative-ai/core/access"
+
 	"github.com/appellative-ai/core/messaging"
-	_ "github.com/appellative-ai/resiliency/handler"
+
 	_ "github.com/appellative-ai/traffic/module"
 )
 
@@ -26,27 +26,22 @@ var (
 )
 
 func init() {
-	// Register access.Agent as it is in core and does not have access to the repository
-	err := exchange.Register(access.Agent)
-	if err != nil {
-		fmt.Printf("repository register error: %v", err)
-	}
 	//repository.RegisterConstructor(NamespaceName, func() messaging.Agent {
 	//	return newAgent(operations.Serve)
 	//})
-	opsAgent = newAgent(operations.Serve)
+	opsAgent = newAgent(operations.Notifier)
 	exchange.Register(opsAgent)
 }
 
 type agentT struct {
-	running bool
-	service *operations.Service
-	ex      *messaging.Exchange
+	running  bool
+	notifier *operations.Notification
+	ex       *messaging.Exchange
 }
 
-func newAgent(service *operations.Service) *agentT {
+func newAgent(notifier *operations.Notification) *agentT {
 	a := new(agentT)
-	a.service = service
+	a.notifier = notifier
 	a.ex = messaging.NewExchange()
 	return a
 }

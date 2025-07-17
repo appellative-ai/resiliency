@@ -5,7 +5,7 @@
   },
   {
     "role": "logging",
-    "name": "test:core:agent/log/access/http"
+    "name": "test:resiliency:agent/log/access/http"
   },
   {
     "role": "rate-limiting",

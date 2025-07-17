@@ -2,7 +2,7 @@ package test
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/core/iox"
+	"github.com/appellative-ai/core/iox"
 	"net/http"
 	"net/http/httptest"
 )

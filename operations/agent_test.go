@@ -2,11 +2,11 @@ package operations
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/collective/operations/operationstest"
+	"github.com/appellative-ai/collective/operations/operationstest"
 )
 
 func ExampleNewAgent() {
-	agent := newAgent(operationstest.NewNService())
+	agent := newAgent(operationstest.NewNotifier())
 
 	fmt.Printf("test: NewAgent() -> [%v]\n", agent)
 
