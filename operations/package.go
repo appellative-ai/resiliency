@@ -103,6 +103,10 @@ func ConfigureNetworks(endpointCfg []map[string]string, read func(fileName strin
 	return errs
 }
 
+func ReadEndpointConfig(read func() ([]byte, error)) ([]map[string]string, error) {
+	return network.ReadEndpointConfig(read)
+}
+
 // Http endpoints
 
 const (
