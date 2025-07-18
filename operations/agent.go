@@ -57,16 +57,19 @@ func (a *agentT) Message(m *messaging.Message) {
 	if m == nil {
 		return
 	}
-	if !a.running {
-		if m.Name == messaging.ConfigEvent {
+	switch m.Name {
+	case messaging.ConfigEvent:
+		if a.running {
 			return
 		}
-		if m.Name == messaging.StartupEvent {
-			a.run()
-			a.running = true
-			a.ex.Broadcast(m)
+		return
+	case messaging.StartupEvent:
+		if a.running {
 			return
 		}
+		a.running = true
+		a.run()
+		a.ex.Broadcast(m)
 		return
 	}
 	list := m.To()

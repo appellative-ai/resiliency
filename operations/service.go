@@ -6,7 +6,6 @@ import (
 	"github.com/appellative-ai/collective/exchange"
 	"github.com/appellative-ai/core/messaging"
 	"github.com/appellative-ai/core/rest"
-	"github.com/appellative-ai/resiliency/module"
 	"net/http"
 	"strings"
 )
@@ -48,7 +47,7 @@ func (s *service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	err := validateEvent(event)
 	if err == nil {
-		exchange.Message(messaging.NewMessage(messaging.ChannelControl, event).AddTo(module.NamespaceNameOps))
+		exchange.Message(messaging.NewMessage(messaging.ChannelControl, event).AddTo(NamespaceName))
 		w.WriteHeader(http.StatusOK)
 	} else {
 		w.WriteHeader(http.StatusBadRequest)
