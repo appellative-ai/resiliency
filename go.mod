@@ -3,10 +3,10 @@ module github.com/appellative-ai/resiliency
 go 1.23.11
 
 require (
-	github.com/appellative-ai/agency v0.0.0-20250717200200-2beaeca17414
-	github.com/appellative-ai/collective v0.0.0-20250718220634-d73cc4a14675
-	github.com/appellative-ai/core v0.0.0-20250718223558-769e4fd3e765
-	github.com/appellative-ai/traffic v0.0.0-20250718131959-e1bb1352d392
+	github.com/appellative-ai/agency v0.0.0-20250730201057-7ea287aaca67
+	github.com/appellative-ai/collective v0.0.0-20250804131734-88eca7e58d61
+	github.com/appellative-ai/core v0.0.0-20250802190705-60a5cea3c61a
+	github.com/appellative-ai/traffic v0.0.0-20250804181849-8544479b14cc
 )
 
 require (

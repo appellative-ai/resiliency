@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/appellative-ai/collective/exchange"
 	"github.com/appellative-ai/core/host"
+	"github.com/appellative-ai/core/messaging"
 	"github.com/appellative-ai/core/rest"
 	"github.com/appellative-ai/traffic/cache"
 	"github.com/appellative-ai/traffic/cache/cachetest"
@@ -51,7 +52,7 @@ func setTestOverrides() {
 	agent2 := opsAgent.Operative("core:common:agent/caseofficer/request/http/secondary")
 
 	// Cache overrides - global
-	m := rest.NewExchangeMessage(cachetest.Exchange)
+	m := messaging.NewConfigMessage(rest.Exchange(cachetest.Exchange))
 	m.AddTo(cache.NamespaceName)
 	exchange.Message(m)
 
@@ -60,7 +61,7 @@ func setTestOverrides() {
 	agent2.Message(m)
 
 	// Routing overrides - global
-	m = rest.NewExchangeMessage(routingtest.Exchange)
+	m = messaging.NewConfigMessage(rest.Exchange(routingtest.Exchange))
 	m.AddTo(routing.NamespaceName)
 	exchange.Message(m)
 

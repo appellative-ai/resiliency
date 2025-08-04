@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/appellative-ai/agency/caseofficer"
 	"github.com/appellative-ai/collective/exchange"
-	"github.com/appellative-ai/core/messaging"
-	"github.com/appellative-ai/traffic/access"
+	"github.com/appellative-ai/core/std"
+	"github.com/appellative-ai/traffic/logger"
 	"os"
 )
 
@@ -43,7 +43,7 @@ func readEndpointConfig(read func() ([]byte, error)) ([]map[string]string, error
 */
 
 func ExampleConfigureLogging() {
-	exchange.Agent(access.NamespaceName) //access.Log(nil, "", time.Now().UTC(), 0, "", nil, nil)
+	exchange.Agent(logger.NamespaceName) //access.Log(nil, "", time.Now().UTC(), 0, "", nil, nil)
 	err := ConfigureLogging(func() ([]byte, error) {
 		return readFile(operatorsFileName)
 	})
@@ -129,7 +129,7 @@ func ExampleReadEndpointConfig() {
 */
 
 var (
-	o = messaging.OriginT{
+	o = std.OriginT{
 		Region:      "region",
 		Zone:        "zone",
 		SubZone:     "sub-zone",
@@ -143,32 +143,32 @@ var (
 
 func ExampleConfigureOrigin() {
 	m := map[string]string{
-		messaging.RegionKey:     "us-west1",
-		messaging.ZoneKey:       "oregon",
-		messaging.SubZoneKey:    "portland",
-		messaging.InstanceIdKey: "123456789",
+		std.RegionKey:     "us-west1",
+		std.ZoneKey:       "oregon",
+		std.SubZoneKey:    "portland",
+		std.InstanceIdKey: "123456789",
 	}
 	read := func() ([]byte, error) {
 		return readFile(originFileName)
 	}
 	err := ConfigureOrigin(m, read)
 	fmt.Printf("test: ConfigOrigin(\"%v\") -> [err:%v]\n", subDir+originFileName, err)
-	fmt.Printf("test: messaging.SetOrigin() -> %v [host:%v]\n", messaging.Origin, messaging.Origin.Host)
+	fmt.Printf("test: messaging.SetOrigin() -> %v [host:%v]\n", std.Origin, std.Origin.Host)
 
 	m2 := make(map[string]string)
 	err = ConfigureOrigin(m2, read)
 	fmt.Printf("test: ConfigOrigin(\"%v\") -> [err:%v]\n", subDir+originFileName, err)
-	fmt.Printf("test: messaging.SetOrigin() -> %v [host:%v]\n", messaging.Origin, messaging.Origin.Host)
+	fmt.Printf("test: messaging.SetOrigin() -> %v [host:%v]\n", std.Origin, std.Origin.Host)
 
 	m2 = map[string]string{
-		messaging.RegionKey: "us-west1",
-		//messaging.ZoneKey:    "oregon",
-		messaging.SubZoneKey: "portland",
-		//messaging.InstanceIdKey: "123456789",
+		std.RegionKey: "us-west1",
+		//std.ZoneKey:    "oregon",
+		std.SubZoneKey: "portland",
+		//std.InstanceIdKey: "123456789",
 	}
 	err = ConfigureOrigin(m2, read)
 	fmt.Printf("test: ConfigOrigin(\"%v\") -> [err:%v]\n", subDir+originFileName, err)
-	fmt.Printf("test: messaging.SetOrigin() -> %v [host:%v]\n", messaging.Origin, messaging.Origin.Host)
+	fmt.Printf("test: messaging.SetOrigin() -> %v [host:%v]\n", std.Origin, std.Origin.Host)
 
 	//Output:
 	//test: ConfigOrigin("/operationstest/resource/origin-config.json") -> [err:<nil>]

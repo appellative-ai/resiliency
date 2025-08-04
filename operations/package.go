@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"github.com/appellative-ai/agency/network"
 	"github.com/appellative-ai/collective/exchange"
+	"github.com/appellative-ai/core/logx"
 	"github.com/appellative-ai/core/messaging"
 	"github.com/appellative-ai/core/rest"
-	"github.com/appellative-ai/traffic/access"
+	"github.com/appellative-ai/core/std"
+	"github.com/appellative-ai/traffic/logger"
 )
 
 const (
@@ -43,7 +45,7 @@ func ConfigureOrigin(m map[string]string, read func() ([]byte, error)) error {
 	for k, v := range m {
 		m2[k] = v
 	}
-	status := messaging.SetOrigin(m2)
+	status := std.SetOrigin(m2)
 	if !status.OK() {
 		return status.Err
 	}
@@ -59,13 +61,13 @@ func ConfigureLogging(read func() ([]byte, error)) error {
 	if err != nil {
 		return err
 	}
-	var ops []access.Operator
+	var ops []logx.Operator
 
 	err = json.Unmarshal(buf, &ops)
 	if err != nil {
 		return err
 	}
-	m := access.NewOperatorsMessage(ops).AddTo(access.NamespaceName)
+	m := messaging.NewConfigMessage(ops).AddTo(logger.NamespaceName)
 	exchange.Message(m)
 	return nil
 }
