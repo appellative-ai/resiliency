@@ -14,11 +14,11 @@ import (
 )
 
 const (
-	LoggingRole       = "logging"
-	AuthorizationRole = "authorization"
-	CacheRole         = "cache"
-	RateLimitingRole  = "rate-limiting"
-	RoutingRole       = "routing"
+	LoggingRole       = "common:core:role/logging/request"
+	AuthorizationRole = "common:core:role/authorization/http"
+	CacheRole         = "common:core:role/cache/request/http"
+	RateLimitingRole  = "common:core:role/rate-limiting/request/http"
+	RoutingRole       = "common:core:role/routing/request/http"
 
 	endpointKey = "endpoint"
 	patternKey  = "pattern"
