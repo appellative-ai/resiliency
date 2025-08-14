@@ -6,6 +6,7 @@ import (
 	"github.com/appellative-ai/collective/exchange"
 	"github.com/appellative-ai/collective/notification"
 	"github.com/appellative-ai/core/messaging"
+	"sync/atomic"
 
 	_ "github.com/appellative-ai/traffic/module"
 )
@@ -30,13 +31,14 @@ func init() {
 }
 
 type agentT struct {
-	running  bool
-	notifier *notification.Interface
+	running  atomic.Bool
 	ex       *messaging.Exchange
+	notifier *notification.Interface
 }
 
 func newAgent() *agentT {
 	a := new(agentT)
+	a.running.Store(false)
 	opsAgent = a
 	a.notifier = notification.Notifier
 	a.ex = messaging.NewExchange()
@@ -56,15 +58,15 @@ func (a *agentT) Message(m *messaging.Message) {
 	}
 	switch m.Name {
 	case messaging.ConfigEvent:
-		if a.running {
+		if a.running.Load() {
 			return
 		}
 		return
 	case messaging.StartupEvent:
-		if a.running {
+		if a.running.Load() {
 			return
 		}
-		a.running = true
+		a.running.Store(true)
 		a.run()
 		a.ex.Broadcast(m)
 		return

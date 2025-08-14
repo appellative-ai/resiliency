@@ -43,7 +43,7 @@ func readEndpointConfig(read func() ([]byte, error)) ([]map[string]string, error
 */
 
 func ExampleConfigureLogging() {
-	exchange.Agent(logger.NamespaceName) //access.Log(nil, "", time.Now().UTC(), 0, "", nil, nil)
+	exchange.Agent(logger.AgentName) //access.Log(nil, "", time.Now().UTC(), 0, "", nil, nil)
 	err := ConfigureLogging(func() ([]byte, error) {
 		return readFile(operatorsFileName)
 	})

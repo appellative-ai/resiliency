@@ -67,7 +67,7 @@ func ConfigureLogging(read func() ([]byte, error)) error {
 	if err != nil {
 		return err
 	}
-	m := messaging.NewConfigMessage(ops).AddTo(logger.NamespaceName)
+	m := messaging.NewConfigMessage(ops).AddTo(logger.AgentName)
 	exchange.Message(m)
 	return nil
 }

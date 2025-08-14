@@ -53,7 +53,7 @@ func setTestOverrides() {
 
 	// Cache overrides - global
 	m := messaging.NewConfigMessage(rest.Exchange(cachetest.Exchange))
-	m.AddTo(cache.NamespaceName)
+	m.AddTo(cache.AgentName)
 	exchange.Message(m)
 
 	// Cache overrides - Local
@@ -62,7 +62,7 @@ func setTestOverrides() {
 
 	// Routing overrides - global
 	m = messaging.NewConfigMessage(rest.Exchange(routingtest.Exchange))
-	m.AddTo(routing.NamespaceName)
+	m.AddTo(routing.AgentName)
 	exchange.Message(m)
 
 	// Routing overrides - local
