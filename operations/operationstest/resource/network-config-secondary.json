@@ -1,11 +1,10 @@
 [
   {
-    "role": "common:core:role/routing/request/http",
     "name":"common:resiliency:agent/routing/request/http",
     "assignment": "local",
     "app-host": "localhost:8080",
     "cache-host": "localhost:8081",
-    "timeout-duration": "2m",
+    "timeout-duration": "2s",
     "review-duration": "4m"
   }
 ]
