@@ -2,11 +2,13 @@
   {
     "endpoint": "primary",
     "pattern": "/primary",
-    "network": "network-config-primary.json"
+    "network": "network-config-primary.json",
+    "test": "true"
   },
   {
     "endpoint": "secondary",
     "pattern": "/secondary",
-    "network": "network-config-secondary.json"
+    "network": "network-config-secondary.json",
+    "test": "true"
   }
 ]

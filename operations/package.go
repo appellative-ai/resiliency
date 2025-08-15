@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/appellative-ai/agency/network"
 	"github.com/appellative-ai/collective/exchange"
+	"github.com/appellative-ai/core/host"
 	"github.com/appellative-ai/core/logx"
 	"github.com/appellative-ai/core/messaging"
 	"github.com/appellative-ai/core/rest"
@@ -14,15 +15,21 @@ import (
 )
 
 const (
-	LoggingRole       = "common:core:role/logging/request"
-	AuthorizationRole = "common:core:role/authorization/http"
-	CacheRole         = "common:core:role/cache/request/http"
-	RateLimitingRole  = "common:core:role/rate-limiting/request/http"
-	RoutingRole       = "common:core:role/routing/request/http"
+	serviceEndpoint = "service"
+	healthEndpoint  = "health"
 
 	endpointKey = "endpoint"
 	patternKey  = "pattern"
 	networkKey  = "network"
+	testKey     = "test"
+)
+
+// Endpoint - HTTP endpoints
+var (
+	Endpoint = map[string]rest.Endpoint{
+		serviceEndpoint: newServiceEndpoint("/operations/"),
+		healthEndpoint:  newHealthEndpoint("/health/"),
+	}
 )
 
 // ConfigureOrigin - map must provide region, zone, sub-zone, domain, collective, and service-name
@@ -80,36 +87,39 @@ func ConfigureNetworks(endpointCfg []map[string]string, read func(fileName strin
 	if len(endpointCfg) == 0 {
 		return []error{errors.New("endpoint configuration is nil or empty")}
 	}
-	cfg := network.ShapeConfig(endpointKey, endpointCfg)
-	roles := []string{LoggingRole, AuthorizationRole, CacheRole, RateLimitingRole, RoutingRole}
-	for k, v := range cfg {
-		if k == "" {
+	//roles := []string{LoggingRole, AuthorizationRole, CacheRole, RateLimitingRole, RoutingRole}
+	for _, m := range endpointCfg {
+		if m[endpointKey] == "" {
 			errs = append(errs, errors.New(fmt.Sprintf("endpoint name is empty")))
 			continue
 		}
-		if v[networkKey] == "" {
-			errs = append(errs, errors.New(fmt.Sprintf("network file name is empty for endpoint: %v", k)))
+		if m[networkKey] == "" {
+			errs = append(errs, errors.New(fmt.Sprintf("network file name is empty for endpoint: %v", m[endpointKey])))
 			continue
 		}
-		agent := opsAgent.registerCaseOfficer(k)
-		netCfg, err := network.BuildConfig(v[networkKey], read)
+		if m[patternKey] == "" {
+			errs = append(errs, errors.New(fmt.Sprintf("pattern is empty for endpoint: %v", m[endpointKey])))
+			continue
+		}
+		agent := opsAgent.registerCaseOfficer(m[endpointKey])
+		if m[testKey] == "true" {
+			setTestOverrides(agent)
+		}
+		netCfg, err := network.BuildConfig(m[networkKey], read)
 		if err != nil {
 			errs = append(errs, err)
 			continue
 		}
-		chain, errs1 := agent.BuildNetwork(netCfg, roles)
+		operatives, errs1 := agent.BuildNetwork(netCfg)
 		if errs1 != nil {
 			errs = append(errs, errs1...)
 			continue
 		}
-		err = buildEndpoint(k, v, chain)
-		if err != nil {
-			errs = append(errs, err)
+		if len(operatives) == 0 {
+			errs = append(errs, errors.New(fmt.Sprintf("no operatives configured for network: %v", m[networkKey])))
 			continue
 		}
-	}
-	if len(errs) == 0 {
-		setTestOverrides()
+		Endpoint[m[endpointKey]] = host.NewEndpoint(m[patternKey], operatives)
 	}
 	return errs
 }
@@ -118,20 +128,6 @@ func ConfigureNetworks(endpointCfg []map[string]string, read func(fileName strin
 func ReadEndpointConfig(read func() ([]byte, error)) ([]map[string]string, error) {
 	return network.ReadEndpointConfig(read)
 }
-
-// Http endpoints
-
-const (
-	ServiceEndpoint = "service"
-	HealthEndpoint  = "health"
-)
-
-var (
-	Endpoint = map[string]rest.Endpoint{
-		ServiceEndpoint: newServiceEndpoint("/operations/"),
-		HealthEndpoint:  newHealthEndpoint("/health/"),
-	}
-)
 
 // Startup - application
 func Startup() {

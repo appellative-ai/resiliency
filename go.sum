@@ -10,6 +10,8 @@ github.com/appellative-ai/agency v0.0.0-20250814180842-2bdf00635aba h1:VHKB7XreJ
 github.com/appellative-ai/agency v0.0.0-20250814180842-2bdf00635aba/go.mod h1:UfBx32dH9DyMNEpIsnpWYKLLAWsepfSjrT1DWLa06po=
 github.com/appellative-ai/agency v0.0.0-20250814193935-c3fe4192c865 h1:jz6Z7VkcRmhHJA+kB4gAoIhFmwy1gnqKkQPIOnzzHy4=
 github.com/appellative-ai/agency v0.0.0-20250814193935-c3fe4192c865/go.mod h1:UfBx32dH9DyMNEpIsnpWYKLLAWsepfSjrT1DWLa06po=
+github.com/appellative-ai/agency v0.0.0-20250815112106-cf3b9563e437 h1:hk6+2CQ/W/cIpdZDINjFLJLc2EsHz9LA4oVqnni0rYg=
+github.com/appellative-ai/agency v0.0.0-20250815112106-cf3b9563e437/go.mod h1:UfBx32dH9DyMNEpIsnpWYKLLAWsepfSjrT1DWLa06po=
 github.com/appellative-ai/collective v0.0.0-20250716192820-806bbc60d6dc h1:3BJ6rbZQzDVTngo8feLpmkq/g4F1t1qB0irzsEVGsFc=
 github.com/appellative-ai/collective v0.0.0-20250716192820-806bbc60d6dc/go.mod h1:WLgXEq90cU+gcj/k2D+qa8ZuXL0McOtduEOC82WiPW0=
 github.com/appellative-ai/collective v0.0.0-20250718103010-04756c5ec6e5 h1:SiUWJ5Gl5uXCD9kKnd/gcA6brz8RGufgz5W9KoQqA+c=
@@ -31,6 +33,8 @@ github.com/appellative-ai/core v0.0.0-20250802190705-60a5cea3c61a/go.mod h1:a8kf
 github.com/appellative-ai/core v0.0.0-20250807112339-6f7f35d978be/go.mod h1:a8kfuZMJHcdtdksSK+aYw2Mp6lT+i25oQEB+UCqwyhs=
 github.com/appellative-ai/core v0.0.0-20250812104341-e45bd6077904 h1:aSbjnAs8qCpAamkDe75el8WKB5cTnoNe4WoGQmmQINw=
 github.com/appellative-ai/core v0.0.0-20250812104341-e45bd6077904/go.mod h1:a8kfuZMJHcdtdksSK+aYw2Mp6lT+i25oQEB+UCqwyhs=
+github.com/appellative-ai/core v0.0.0-20250815113507-4091ce28c306 h1:1EbqveWAfBoka1Vd6/MRjPUBxTVjiMjsUMHqPLO9Z7g=
+github.com/appellative-ai/core v0.0.0-20250815113507-4091ce28c306/go.mod h1:a8kfuZMJHcdtdksSK+aYw2Mp6lT+i25oQEB+UCqwyhs=
 github.com/appellative-ai/traffic v0.0.0-20250717152501-7e3e2093fb2e h1:5JcJU1bwQrwuZNYaObK8vqhRRTa6F/M2TyxgjawWrho=
 github.com/appellative-ai/traffic v0.0.0-20250717152501-7e3e2093fb2e/go.mod h1:PQtyil/vrteNkHU0Rq2Bt8QPZACQJ/KRQR/4M2jamGg=
 github.com/appellative-ai/traffic v0.0.0-20250717191732-b5b4b27412f6 h1:IwRjFlPmilFSPmQfBkzlPfGFd1fRHmHu289RhnUNszU=

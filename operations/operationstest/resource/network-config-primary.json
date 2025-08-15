@@ -1,14 +1,11 @@
 [
   {
-    "role": "common:core:role/authorization/http",
     "name": "common:resiliency:handler/authorization/http"
   },
   {
-    "role": "common:core:role/logging/request",
     "name": "common:resiliency:agent/logging/request"
   },
   {
-    "role": "common:core:role/rate-limiting/request/http",
     "name":"common:resiliency:agent/rate-limiting/request/http",
     "assignment": "local",
     "rate-limit": "1234",
@@ -17,7 +14,6 @@
     "review-duration": "5m"
   },
   {
-    "role": "common:core:role/cache/request/http",
     "name":"common:resiliency:agent/cache/request/http",
     "assignment": "local",
     "timeout-duration":"750ms",
@@ -32,7 +28,6 @@
     "sat":"3-8"
   },
   {
-    "role": "common:core:role/routing/request/http",
     "name":"common:resiliency:agent/routing/request/http",
     "assignment": "global",
     "app-host": "localhost:8080",
