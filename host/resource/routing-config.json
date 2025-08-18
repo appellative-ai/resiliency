@@ -1,0 +1,6 @@
+{
+  "app-host": "localhost:8082",
+  "log": "true",
+  "route-name": "test-route",
+  "timeout": "2m"
+}

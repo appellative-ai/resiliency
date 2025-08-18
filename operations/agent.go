@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	NamespaceName      = "test:resiliency:agent/operations/host"
+	AgentName          = "core:resiliency:agent/operations/host"
 	caseOfficerNameFmt = "core:common:agent/caseofficer/request/http/%v"
 )
 
@@ -49,7 +49,7 @@ func newAgent() *agentT {
 func (a *agentT) String() string { return a.Name() }
 
 // Name - agent identifier
-func (a *agentT) Name() string { return NamespaceName }
+func (a *agentT) Name() string { return AgentName }
 
 // Message - message the agent
 func (a *agentT) Message(m *messaging.Message) {
@@ -73,7 +73,7 @@ func (a *agentT) Message(m *messaging.Message) {
 	}
 	list := m.To()
 	// No recipient, or only the case officer recipient
-	if len(list) == 0 || len(list) == 1 && list[0] == NamespaceName {
+	if len(list) == 0 || len(list) == 1 && list[0] == AgentName {
 		switch m.Channel() {
 		case messaging.ChannelEmissary:
 			//a.emissary.C <- m

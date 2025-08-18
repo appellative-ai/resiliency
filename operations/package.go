@@ -5,13 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/appellative-ai/agency/network"
-	"github.com/appellative-ai/collective/exchange"
-	"github.com/appellative-ai/core/host"
-	"github.com/appellative-ai/core/logx"
 	"github.com/appellative-ai/core/messaging"
 	"github.com/appellative-ai/core/rest"
-	"github.com/appellative-ai/core/std"
-	"github.com/appellative-ai/traffic/logger"
+	"github.com/appellative-ai/resiliency/host"
 )
 
 const (
@@ -52,14 +48,15 @@ func ConfigureOrigin(m map[string]string, read func() ([]byte, error)) error {
 	for k, v := range m {
 		m2[k] = v
 	}
-	status := std.SetOrigin(m2)
-	if !status.OK() {
-		return status.Err
-	}
+	//status := std.SetOrigin(m2)
+	///if !status.OK() {
+	//	return status.Err
+	//	}
 	return nil
 }
 
 // ConfigureLogging -
+/*
 func ConfigureLogging(read func() ([]byte, error)) error {
 	if read == nil {
 		return errors.New("logging operators read function is nil")
@@ -78,6 +75,9 @@ func ConfigureLogging(read func() ([]byte, error)) error {
 	exchange.Message(m)
 	return nil
 }
+
+
+*/
 
 // ConfigureNetworks - configure application networks
 func ConfigureNetworks(endpointCfg []map[string]string, read func(fileName string) ([]byte, error)) (errs []error) {

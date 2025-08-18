@@ -47,7 +47,7 @@ func (s *service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	err := validateEvent(event)
 	if err == nil {
-		exchange.Message(messaging.NewMessage(messaging.ChannelControl, event).AddTo(NamespaceName))
+		exchange.Message(messaging.NewMessage(messaging.ChannelControl, event).AddTo(AgentName))
 		w.WriteHeader(http.StatusOK)
 	} else {
 		w.WriteHeader(http.StatusBadRequest)

@@ -43,6 +43,8 @@ github.com/appellative-ai/core v0.0.0-20250815122620-d6c9ef48503c h1:PXOO8rVhSLA
 github.com/appellative-ai/core v0.0.0-20250815122620-d6c9ef48503c/go.mod h1:a8kfuZMJHcdtdksSK+aYw2Mp6lT+i25oQEB+UCqwyhs=
 github.com/appellative-ai/core v0.0.0-20250815132121-7ff782c70496 h1:POJiTR7dYEgMaGcbD8PRvS/nukMti+SEpa0fcrNEuIY=
 github.com/appellative-ai/core v0.0.0-20250815132121-7ff782c70496/go.mod h1:a8kfuZMJHcdtdksSK+aYw2Mp6lT+i25oQEB+UCqwyhs=
+github.com/appellative-ai/core v0.0.0-20250818185237-3fb7bbad9ea8 h1:9ukX8lOTYnRHYJpa67oe1alJB2RBVK+dUK9s4DxFNhU=
+github.com/appellative-ai/core v0.0.0-20250818185237-3fb7bbad9ea8/go.mod h1:a8kfuZMJHcdtdksSK+aYw2Mp6lT+i25oQEB+UCqwyhs=
 github.com/appellative-ai/traffic v0.0.0-20250717152501-7e3e2093fb2e h1:5JcJU1bwQrwuZNYaObK8vqhRRTa6F/M2TyxgjawWrho=
 github.com/appellative-ai/traffic v0.0.0-20250717152501-7e3e2093fb2e/go.mod h1:PQtyil/vrteNkHU0Rq2Bt8QPZACQJ/KRQR/4M2jamGg=
 github.com/appellative-ai/traffic v0.0.0-20250717191732-b5b4b27412f6 h1:IwRjFlPmilFSPmQfBkzlPfGFd1fRHmHu289RhnUNszU=

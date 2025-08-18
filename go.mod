@@ -5,7 +5,7 @@ go 1.23.11
 require (
 	github.com/appellative-ai/agency v0.0.0-20250815125332-f6d4c990f8cc
 	github.com/appellative-ai/collective v0.0.0-20250815125425-a64c7ffda950
-	github.com/appellative-ai/core v0.0.0-20250815132121-7ff782c70496
+	github.com/appellative-ai/core v0.0.0-20250818185237-3fb7bbad9ea8
 	github.com/appellative-ai/traffic v0.0.0-20250814180922-4352f14452ce
 )
 
