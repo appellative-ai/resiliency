@@ -1,13 +1,15 @@
 package operations
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/appellative-ai/agency/logger"
+	"github.com/appellative-ai/agency/logx"
 	"github.com/appellative-ai/agency/network"
+	"github.com/appellative-ai/collective/exchange"
+	cops "github.com/appellative-ai/collective/operations"
 	"github.com/appellative-ai/core/messaging"
 	"github.com/appellative-ai/core/rest"
-	"github.com/appellative-ai/resiliency/host"
 )
 
 const (
@@ -29,55 +31,28 @@ var (
 )
 
 // ConfigureOrigin - map must provide region, zone, sub-zone, domain, collective, and service-name
-func ConfigureOrigin(m map[string]string, read func() ([]byte, error)) error {
-	var m2 = make(map[string]string)
+func ConfigureOrigin(origin map[string]string) error {
+	return cops.ConfigOrigin(origin)
+}
 
-	if read == nil {
-		return errors.New("origin read function is nil")
-	}
-	// Read the origin JSON
-	buf, err := read()
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(buf, &m2)
-	if err != nil {
-		return err
-	}
-	// Add host created items
-	for k, v := range m {
-		m2[k] = v
-	}
-	//status := std.SetOrigin(m2)
-	///if !status.OK() {
-	//	return status.Err
-	//	}
-	return nil
+// ConfigureRegistry - map must provide region, zone, sub-zone, domain, collective, and service-name
+func ConfigureRegistry(hosts []string) error {
+	return cops.ConfigRegistry(hosts)
 }
 
 // ConfigureLogging -
-/*
-func ConfigureLogging(read func() ([]byte, error)) error {
-	if read == nil {
-		return errors.New("logging operators read function is nil")
+func ConfigureLogging(ops []logx.Operator) error {
+	if len(ops) == 0 {
+		return nil
 	}
-	buf, err := read()
+	newOps, err := logx.InitOperators(ops)
 	if err != nil {
 		return err
 	}
-	var ops []logx.Operator
-
-	err = json.Unmarshal(buf, &ops)
-	if err != nil {
-		return err
-	}
-	m := messaging.NewConfigMessage(ops).AddTo(logger.AgentName)
+	m := messaging.NewConfigMessage(newOps).AddTo(logger.AgentName)
 	exchange.Message(m)
 	return nil
 }
-
-
-*/
 
 // ConfigureNetworks - configure application networks
 func ConfigureNetworks(endpointCfg []map[string]string, read func(fileName string) ([]byte, error)) (errs []error) {
@@ -87,7 +62,6 @@ func ConfigureNetworks(endpointCfg []map[string]string, read func(fileName strin
 	if len(endpointCfg) == 0 {
 		return []error{errors.New("endpoint configuration is nil or empty")}
 	}
-	//roles := []string{LoggingRole, AuthorizationRole, CacheRole, RateLimitingRole, RoutingRole}
 	for _, m := range endpointCfg {
 		if m[endpointKey] == "" {
 			errs = append(errs, errors.New(fmt.Sprintf("endpoint name is empty")))
@@ -101,16 +75,16 @@ func ConfigureNetworks(endpointCfg []map[string]string, read func(fileName strin
 			errs = append(errs, errors.New(fmt.Sprintf("pattern is empty for endpoint: %v", m[endpointKey])))
 			continue
 		}
-		agent := opsAgent.registerCaseOfficer(m[endpointKey])
+		caseOfficer := agent.registerCaseOfficer(m[endpointKey])
 		if m[testKey] == "true" {
-			setTestOverrides(agent)
+			setTestOverrides(caseOfficer)
 		}
 		netCfg, err := network.BuildConfig(m[networkKey], read)
 		if err != nil {
 			errs = append(errs, err)
 			continue
 		}
-		operatives, errs1 := agent.BuildNetwork(netCfg)
+		operatives, errs1 := caseOfficer.BuildNetwork(netCfg)
 		if errs1 != nil {
 			errs = append(errs, errs1...)
 			continue
@@ -119,23 +93,26 @@ func ConfigureNetworks(endpointCfg []map[string]string, read func(fileName strin
 			errs = append(errs, errors.New(fmt.Sprintf("no operatives configured for network: %v", m[networkKey])))
 			continue
 		}
-		Endpoint[m[endpointKey]] = host.NewEndpoint(m[patternKey], operatives)
+		Endpoint[m[endpointKey]] = NewEndpoint(m[patternKey], operatives)
 	}
 	return errs
 }
 
-// ReadEndpointConfig -
-func ReadEndpointConfig(read func() ([]byte, error)) ([]map[string]string, error) {
-	return network.ReadEndpointConfig(read)
-}
-
 // Startup - application
-func Startup() {
-	opsAgent.Message(messaging.StartupMessage)
+func Startup() error {
+	// Start the collective first
+	cops.ConfigLogging(logger.Agent.LogEgress)
+	err := cops.Startup()
+	if err != nil {
+		return err
+	}
+	agent.Message(messaging.StartupMessage)
+	return nil
 }
 
 // Shutdown -
 // TODO: need to shutdown all global assigned agents
 func Shutdown() {
-	opsAgent.Message(messaging.ShutdownMessage)
+	cops.Shutdown()
+	agent.Message(messaging.ShutdownMessage)
 }

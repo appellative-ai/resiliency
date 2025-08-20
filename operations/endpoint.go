@@ -1,4 +1,4 @@
-package host
+package operations
 
 import (
 	"github.com/appellative-ai/core/httpx"
@@ -10,11 +10,11 @@ func ExchangeHandler(w http.ResponseWriter, req *http.Request, resp *http.Respon
 	httpx.WriteResponse(w, resp.Header, resp.StatusCode, resp.Body, req.Header)
 }
 
-func Init(r *http.Request) {
+func Init(r *http.Request) *http.Request {
 	httpx.AddRequestId(r)
+	return r
 }
 
 func NewEndpoint(pattern string, operatives []any) rest.Endpoint {
-	net := rest.BuildNetwork(operatives)
-	return rest.NewEndpoint(pattern, ExchangeHandler, Init, net)
+	return rest.NewEndpoint(pattern, ExchangeHandler, Init, operatives)
 }

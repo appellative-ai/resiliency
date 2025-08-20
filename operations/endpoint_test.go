@@ -1,4 +1,4 @@
-package host
+package operations
 
 import (
 	"fmt"
@@ -9,20 +9,20 @@ import (
 	"net/http/httptest"
 )
 
-type agentT struct{}
+type agentT2 struct{}
 
-func newTestAgent() *agentT {
-	return new(agentT)
+func newTestAgent() *agentT2 {
+	return new(agentT2)
 }
-func (a *agentT) String() string { return a.Uri() }
+func (a *agentT2) String() string { return a.Uri() }
 
 // Uri - agent identifier
-func (a *agentT) Uri() string { return "agent:test" }
+func (a *agentT2) Uri() string { return "agent:test" }
 
 // Message - message the agent
-func (a *agentT) Message(m *messaging.Message) {}
+func (a *agentT2) Message(m *messaging.Message) {}
 
-func (a *agentT) Link(next rest.Exchange) rest.Exchange {
+func (a *agentT2) Link(next rest.Exchange) rest.Exchange {
 	return func(r *http.Request) (*http.Response, error) {
 		return nil, nil
 	}

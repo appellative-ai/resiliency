@@ -1,11 +1,13 @@
 package operations
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/appellative-ai/agency/caseofficer"
+	"github.com/appellative-ai/agency/logger"
+	"github.com/appellative-ai/agency/logx"
+	"github.com/appellative-ai/agency/network"
 	"github.com/appellative-ai/collective/exchange"
-	"github.com/appellative-ai/core/std"
-	"github.com/appellative-ai/traffic/logger"
 	"os"
 )
 
@@ -22,6 +24,11 @@ func readFile(fileName string) ([]byte, error) {
 		return nil, err
 	}
 	return os.ReadFile(dir + subDir + fileName)
+}
+
+// readEndpointConfig -
+func readEndpointConfig(read func() ([]byte, error)) ([]map[string]string, error) {
+	return network.ReadEndpointConfig(read)
 }
 
 /*
@@ -44,9 +51,16 @@ func readEndpointConfig(read func() ([]byte, error)) ([]map[string]string, error
 
 func ExampleConfigureLogging() {
 	exchange.Agent(logger.AgentName) //access.Log(nil, "", time.Now().UTC(), 0, "", nil, nil)
-	err := ConfigureLogging(func() ([]byte, error) {
-		return readFile(operatorsFileName)
-	})
+	buf, err := readFile(operatorsFileName)
+	if err != nil {
+		fmt.Printf("test: ConfigureLogging() [buf:%v] [err:%v]\n", len(buf), err)
+	}
+	var ops []logx.Operator
+	err = json.Unmarshal(buf, &ops)
+	if err != nil {
+		fmt.Printf("test: json.Unmarshal() [err:%v]\n", err)
+	}
+	err = ConfigureLogging(ops)
 	fmt.Printf("test: ConfigureLogging(\"%v\") -> [err:%v]\n", subDir+operatorsFileName, err)
 
 	//Output:
@@ -81,7 +95,7 @@ func ExampleConfigureNetworks_Errors() {
 }
 
 func ExampleConfigureNetworks() {
-	appCfg, err := ReadEndpointConfig(func() ([]byte, error) {
+	appCfg, err := readEndpointConfig(func() ([]byte, error) {
 		return readFile(endpointFileName)
 	})
 	if err != nil {
@@ -91,25 +105,25 @@ func ExampleConfigureNetworks() {
 	errs := ConfigureNetworks(appCfg, readFile)
 	fmt.Printf("test: ConfigureNetworks() -> [count:%v] [errs:%v]\n", len(errs), errs)
 
-	a := opsAgent.Operative("core:common:agent/caseofficer/request/http/primary")
+	a := agent.Operative("core:common:agent/caseofficer/request/http/primary")
 	if officer, ok := any(a).(caseofficer.Agent); ok {
 		officer.Trace()
 	}
 
-	a = opsAgent.Operative("core:common:agent/caseofficer/request/http/secondary")
+	a = agent.Operative("core:common:agent/caseofficer/request/http/secondary")
 	if officer, ok := any(a).(caseofficer.Agent); ok {
 		officer.Trace()
 	}
 
-	fmt.Printf("trace: Operations() -> %v\n", opsAgent.ex.List())
+	fmt.Printf("trace: Operations() -> %v\n", agent.ex.List())
 
 	//Output:
 	//test: ConfigureNetworks() -> [count:0] [errs:[]]
-	//trace: core:common:agent/caseofficer/request/http/primary -> test:resiliency:agent/cache/request/http
-	//trace: core:common:agent/caseofficer/request/http/primary -> test:resiliency:agent/rate-limiting/request/http
-	//trace: core:common:agent/caseofficer/request/http/secondary -> test:resiliency:agent/routing/request/http
+	//trace: core:common:agent/caseofficer/request/http/primary -> common:resiliency:agent/cache/request/http
+	//trace: core:common:agent/caseofficer/request/http/primary -> common:resiliency:agent/rate-limiting/request/http
+	//trace: core:common:agent/caseofficer/request/http/secondary -> common:resiliency:agent/routing/request/http
 	//trace: Operations() -> [core:common:agent/caseofficer/request/http/primary core:common:agent/caseofficer/request/http/secondary]
-
+	
 }
 
 /*
@@ -128,6 +142,7 @@ func ExampleReadEndpointConfig() {
 
 */
 
+/*
 var (
 	o = std.OriginT{
 		Region:      "region",
@@ -179,3 +194,6 @@ func ExampleConfigureOrigin() {
 	//test: messaging.SetOrigin() ->  [host:]
 
 }
+
+
+*/

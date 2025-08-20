@@ -22,7 +22,7 @@ type Agent interface {
 }
 
 var (
-	opsAgent *agentT
+	agent *agentT
 )
 
 func init() {
@@ -38,8 +38,8 @@ type agentT struct {
 
 func newAgent() *agentT {
 	a := new(agentT)
+	agent = a
 	a.running.Store(false)
-	opsAgent = a
 	a.notifier = notification.Notifier
 	a.ex = messaging.NewExchange()
 	return a

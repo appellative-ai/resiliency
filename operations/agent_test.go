@@ -5,11 +5,11 @@ import (
 )
 
 func ExampleNewAgent() {
-	agent := newAgent()
+	a := newAgent()
 
-	fmt.Printf("test: NewAgent() -> [%v]\n", agent)
+	fmt.Printf("test: NewAgent() -> [%v]\n", a)
 
 	//Output:
-	//test: NewAgent() -> [test:resiliency:agent/operations/host]
+	//test: NewAgent() -> [core:resiliency:agent/operations/host]
 
 }
